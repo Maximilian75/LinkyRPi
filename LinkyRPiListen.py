@@ -14,7 +14,7 @@ import configparser
 import posix_ipc
 import subprocess
 import json
-import linky
+import linkyRPiTranslate
 
 global connection
 global connectDB
