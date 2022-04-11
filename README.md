@@ -1,81 +1,5 @@
 LinkyRPi – documentation
 
-# Sommaire
-
-[Objet du projet	3](#_Toc99110520)
-
-[Considérations	3](#_Toc99110521)
-
-[Références	3](#_Toc99110522)
-
-[Architecture matérielle	4](#_Toc99110523)
-
-[La carte d’interface	4](#_Toc99110524)
-
-[Architecture logicielle	4](#_Toc99110525)
-
-[Framework technique	4](#_Toc99110526)
-
-[Le listener	5](#_Toc99110527)
-
-[Première étape : détection du mode de fonctionnement de la TIC	5](#_Toc99110528)
-
-[Deuxième étape : décoder les trames de la TIC	5](#_Toc99110529)
-
-[Troisième étape : émission des trames décodées vers les modules GUI et DB	5](#_Toc99110530)
-
-[Le module d’enregistrement en base de données	5](#_Toc99110531)
-
-[Le module d’affichage des données à l’écran	6](#_Toc99110532)
-
-[Première étape : initialisation de l’interface graphique	6](#_Toc99110533)
-
-[Deuxième étape : scheduling des procédures de rafraichissement	6](#_Toc99110534)
-
-[Troisième étape : réception des données et rafraichissement des écrans	6](#_Toc99110535)
-
-[Le fichier de configuration « linky.conf »	6](#_Toc99110536)
-
-[Procédure d’installation de l’application « stand alone »	8](#_Toc99110537)
-
-[Outils à télécharger	8](#_Toc99110538)
-
-[Initialisation de la carte SD et installation du système d’exploitation	8](#_Toc99110539)
-
-[Formatage de la carte SD	8](#_Toc99110540)
-
-[Installation de l’OS (Raspbian Lite) sur la carte SD	8](#_Toc99110541)
-
-[Connexion SSH via Putty	8](#_Toc99110542)
-
-[Configuration du Raspberry Pi	8](#_Toc99110543)
-
-[Installation des paquets nécessaires à l’application	9](#_Toc99110544)
-
-[Déploiement de l’application sur le Raspberry Pi	9](#_Toc99110545)
-
-[Arborescence des répertoires du Raspberry Pi	9](#_Toc99110546)
-
-[Création des services pour démarrage automatique de l’application	9](#_Toc99110547)
-
-[Fonctionnement avec base de données	10](#_Toc99110548)
-
-[Installation de Postgresql	10](#_Toc99110549)
-
-[Installation de PgAdmin	10](#_Toc99110550)
-
-[Création de l’utilisateur technique qui sera utilisé par le process de stockage	10](#_Toc99110551)
-
-[Création des tables nécessaires à l’application	10](#_Toc99110552)
-
-[Le fichier de configuration « linky.conf »	10](#_Toc99110553)
-
-[Création du service pour démarrage automatique du process de stockage	11](#_Toc99110554)
-
-[Exploitation des données sauvegardées dans la base de données	11](#_Toc99110555)
-
-
-
 
 # Objet du projet
 L’objet de ce projet est d’exploiter les données émises par les compteurs communicants Enedis via la Télé-Information Client (TIC).
@@ -136,6 +60,7 @@ La résistance de pull-up (R2 dans le schéma ci-dessous) étant raccordée au +
 ##
 ## Schéma de la carte d’interface
 
+![alt text](https://github.com/Maximilian75/LinkyRPi/blob/main/Picture1.jpg)
 
 
 ## Connecteur GPIO du Raspberry-Pi
