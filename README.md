@@ -28,7 +28,7 @@ Il peut aussi fonctionner avec une base de données externe Postgresql, install�
 | :-: | :-: |
 |[Enedis-NOI-CPT_54E](https://www.enedis.fr/media/2035/download)|Documentation technique de la TIC|
 |[Page Wikipedia du compteur Linky](https://fr.wikipedia.org/wiki/Linky#T%C3%A9l%C3%A9-information_client)|Informations générales sur le compteur Linky et la TIC|
-|[Magdiblog](https://www.magdiblog.fr/gpio/teleinfo-edf-suivi-conso-de-votre-compteur-electrique/)|Base de la conception de cette application|
+|[Magdiblog](https://www.magdiblog.fr/gpio/teleinfo-edf-suivi-conso-de-votre-compteur-electrique/)|Inspiration de base pour la conception de cette application|
 
 
 # Architecture matérielle
