@@ -67,12 +67,12 @@ La résistance de pull-up (R2 dans le schéma ci-dessous) étant raccordée au +
 
 |**Raspberry-Pi modèle 1**|<p>**Raspberry-Pi modèles 2+**</p><p></p>|
 | :-: | :-: |
-|||
+|![alt text](https://github.com/Maximilian75/LinkyRPi/blob/main/Picture2.png)|![alt text](https://github.com/Maximilian75/LinkyRPi/blob/main/Picture3.png|
 
 
 
 # Architecture logicielle
-
+![alt text](https://github.com/Maximilian75/LinkyRPi/blob/main/Picture4.jpg)
 ## Framework technique
 Le système d’exploitation installé sur le Raspberry Pi est une distribution Linux « Raspbian Lite ».
 
