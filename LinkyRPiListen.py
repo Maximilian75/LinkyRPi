@@ -14,13 +14,14 @@ import configparser
 import posix_ipc
 import subprocess
 import json
-import linky
+import linkyRPiTranslate
 
 global connection
 global connectDB
 global firstTrame
 
-oldTime = datetime.now()
+
+syllabus, dataFormat = linkyRPiTranslate.generateSyllabus()
 
 # On ouvre le fichier de param et on recup les param
 config = configparser.RawConfigParser()
@@ -28,7 +29,6 @@ config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
 ldebug = int(config.get('PARAM','debugLevel'))
 
 traceFile = config.get('PARAM','traceFile')
-tracePath = config.get('PATH','tracePath')
 traceFreq = int(config.get('PARAM','traceFreq'))
 
 #Liste de toutes les mesures d'une trame Linky
@@ -107,13 +107,13 @@ def init():
 
                 rateFound = False
                 if baud_rate == 1200 and "ADCO" in line_str :
-                    print("Trouvé 1200")
+                    #print("Trouvé 1200")
                     ar = line_str.split(" ")
                     rateFound = True
                     rateValue = 1200
                     break
                 elif baud_rate == 9600 and "ADSC" in line_str :
-                    print("Trouvé 9600")
+                    #print("Trouvé 9600")
                     ar = line_str.split('\t')
                     rateFound = True
                     rateValue = 9600
@@ -125,10 +125,10 @@ def init():
     if rateFound :
         if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Baud rate détecté : " + str(rateValue))
         if rateValue == 1200 :
-            modeTIC = "HISTO"
+            modeTIC = "Historique"
             if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] TIC en mode HISTORIQUE")
         else :
-            modeTIC = "STD"
+            modeTIC = "Standard"
             if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] TIC en mode STANDARD")
 
     else :
@@ -155,25 +155,10 @@ def treatmesure(mesureCode,mesureValue,mesureValue2) :
 
 
 #==============================================================================#
-# Procedure qui s'execute régulièrement pour tracer les trames dans un fichier #
-#==============================================================================#
-def traceTrame(analysedDict):
-
-    #Ouverture du fichier de log des trame
-    filename = tracePath + "/" + analysedDict["AdresseCompteur"] + ".log"
-    f = open(filename,'a')
-    f.write(str(analysedDict) + "\n")
-    f.close()
-    if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Enregistrement de la trame courante dans le fichier " + filename)
-
-#==============================================================================#
 # Traitement de la fin de trame                                                #
 #==============================================================================#
 def treattrame(list_measures):
-    global connectDB
-    global nbTrame
-    global oldTime
-    global activeDB
+    global connectDB ,nbTrame, oldTime, activeDB, syllabus, dataFormat
 
     #On ajoute les données techniques en fin de trame
     mesure = ("TICMODE", modeTIC)
@@ -183,25 +168,22 @@ def treattrame(list_measures):
 
     #On traduit la trame reçue en un dictionnaire agnostique du type de fonctionnement de la TIC
     analysedDict = {}
-    analysedDict = linky.analyseTrame(dict(list_measures))
+    analysedDict = linkyRPiTranslate.analyseTrame(syllabus, dataFormat, dict(list_measures))
 
     #On envoie le dictionnaire traduit à la UI sous forme de Json
     trameJson = json.dumps(analysedDict, indent=4)
     q1.send(trameJson)
 
+    #On trace le dictionnaire dans un fichier texte (si actif)
+    writeToFile(analysedDict)
+
     #Si la DB est en ligne on sauvegarde les données
     if activeDB :
         q2.send(trameJson)
 
-    #On trace les trames dans un fichier en cas de besoin, c'est pratique pour debugger la GUI sans faire tourner le listener !
-    if "AdresseCompteur" in analysedDict :
-        nbTrame = nbTrame + 1
-        if nbTrame >= traceFreq :
-            nbTrame = 0
-            traceTrame(analysedDict)
-
     #On vide le tampon de trame pour traiter la suivante
     del list_measures[:]
+
 
 
 
@@ -214,19 +196,52 @@ def treaterror(errEvent,errCode,errValue) :
     #Ici on va pousser l'ensemble des mesures de la trame dans le topic Kafka pour la Log
 
 
+
+#==============================================================================#
+# Trace de la trame dans un fichier texte (pratique pour faire du debug)       #
+#==============================================================================#
+def writeToFile(analysedDict) :
+
+    global nextTrace
+
+    config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
+    traceFile = config.get('PARAM','traceFile')
+    traceFreq = config.get('PARAM','traceFreq')
+
+    if traceFile and (time.monotonic() >= nextTrace) :
+        tracePath = config.get('PATH','tracePath')
+
+        #On trace les trames dans un fichier en cas de besoin, c'est pratique pour debugger la GUI sans faire tourner le listener !
+        if "AdresseCompteur" in analysedDict :
+            filename = config.get('PATH','tracePath') + "/" + analysedDict["AdresseCompteur"] + ".log"
+        else :
+            filename = config.get('PATH','tracePath') + "/000000000000.log"
+
+        #Ouverture du fichier de log des trame
+        f = open(filename,'a')
+        f.write(str(analysedDict) + "\n")
+        f.close()
+        if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Enregistrement de la trame courante dans le fichier " + filename)
+
+        #Calcul de l'heure de la prochaine trace
+        nextTrace = time.monotonic() + int(traceFreq)
+
 #==============================================================================#
 # PRODEDURE PRINCIPALE                                                         #
 #==============================================================================#
+traceFreq = config.get('PARAM','traceFreq')
+nextTrace = time.monotonic() + int(traceFreq)
+
 modeTIC = ""
 while modeTIC == "" :
     modeTIC = init()
     if modeTIC == "" :
         time.sleep(1)
 
-nbTrame = traceFreq
+
 
 #Lecture des trames pour TIC en mode historique
-if modeTIC == "HISTO" :
+if modeTIC == "Historique" :
     if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Mise en écoute en mode HISTORIQUE")
     with serial.Serial(port='/dev/ttyAMA0', baudrate=1200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
                        bytesize=serial.SEVENBITS, timeout=1) as ser:
@@ -261,7 +276,7 @@ if modeTIC == "HISTO" :
             line = ser.readline()
 
 #Lecture des trames pour TIC en mode standars
-elif modeTIC == "STD" :
+elif modeTIC == "Standard" :
     if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Mise en écoute en mode STANDARD")
     with serial.Serial(port='/dev/ttyAMA0', baudrate=9600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
                        bytesize=serial.SEVENBITS, timeout=5) as ser:

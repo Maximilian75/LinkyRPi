@@ -1,4 +1,241 @@
 #===============================================================================
+#=== Constitution des syllabus (dictionnaires de traduction)                 ===
+#===============================================================================
+def generateSyllabus() :
+    syllabus = {}
+    dataFormat = {}
+
+    # Correspondances entre les clés de la TIC HISTORIQUE et le dictionnaire traduit
+    syllabus.update({"ADCO":"AdresseCompteur"})
+    syllabus.update({"OPTARIF":"TarifSouscrit"})
+    syllabus.update({"ISOUSC":"IntensiteSouscrite"})
+    syllabus.update({"BASE":"Index00"})
+    syllabus.update({"HCHC":"Index01"})
+    syllabus.update({"HCHP":"Index02"})
+    syllabus.update({"EJPHN":"Index01"})
+    syllabus.update({"EJPHPM":"Index02"})
+    syllabus.update({"BBRHCJB":"Index01"})
+    syllabus.update({"BBRHCJW":"Index03"})
+    syllabus.update({"BBRHCJR":"Index05"})
+    syllabus.update({"BBRHPJB":"Index02"})
+    syllabus.update({"BBRHPJW":"Index04"})
+    syllabus.update({"BBRHPJR":"Index06"})
+    syllabus.update({"PEJP":"ProfilProchainJourPointe"})
+    syllabus.update({"PTEC":"CodeTarifEnCours"})
+    syllabus.update({"DEMAIN":"CouleurTempoDemain"})
+    syllabus.update({"IINST":"IntensiteInstantaneePhase1"})
+    syllabus.update({"IINST1":"IntensiteInstantaneePhase1"})
+    syllabus.update({"IINST2":"IntensiteInstantaneePhase2"})
+    syllabus.update({"IINST3":"IntensiteInstantaneePhase3"})
+    syllabus.update({"ADPS":"DepassementPuissance"})
+    syllabus.update({"IMAX":"IntensiteMax"})
+    syllabus.update({"IMAX1":"IntensiteMaxPhase1"})
+    syllabus.update({"IMAX2":"IntensiteMaxPhase2"})
+    syllabus.update({"IMAX3":"IntensiteMaxPhase3"})
+    syllabus.update({"PMAX":"PuissanceMaxAtteinte"})
+    syllabus.update({"PAPP":"PuissanceApparente"})
+    syllabus.update({"HHPHC":"HorairesHC"})
+    syllabus.update({"MOTDETAT":"MotEtat"})
+    syllabus.update({"PPOT":"PresenceDesPotentiels"})
+    syllabus.update({"ADIR1":"DepassementPuissancePhase1"})
+    syllabus.update({"ADIR2":"DepassementPuissancePhase2"})
+    syllabus.update({"ADIR3":"DepassementPuissancePhase3"})
+
+    # Correspondances entre les clés de la TIC STANDARD et le dictionnaire traduit
+    syllabus.update({"ADSC":"AdresseCompteur"})
+    syllabus.update({"VTIC":"VersionTIC"})
+    syllabus.update({"DATE":"DateHeureLinky"})
+    syllabus.update({"NGTF":"TarifSouscrit"})
+    syllabus.update({"LTARF":"PeriodeTarifaireEnCours"})
+    syllabus.update({"EAST":"Index00"})
+    syllabus.update({"EASF01":"Index01"})
+    syllabus.update({"EASF02":"Index02"})
+    syllabus.update({"EASF03":"Index03"})
+    syllabus.update({"EASF04":"Index04"})
+    syllabus.update({"EASF05":"Index05"})
+    syllabus.update({"EASF06":"Index06"})
+    syllabus.update({"EASF07":"Index07"})
+    syllabus.update({"EASF08":"Index08"})
+    syllabus.update({"EASF09":"Index09"})
+    syllabus.update({"EASF10":"Index10"})
+    syllabus.update({"EASD01":"EnergieActiveSoutireeDistributeurIndex1"})
+    syllabus.update({"EASD02":"EnergieActiveSoutireeDistributeurIndex2"})
+    syllabus.update({"EASD03":"EnergieActiveSoutireeDistributeurIndex3"})
+    syllabus.update({"EASD04":"EnergieActiveSoutireeDistributeurIndex4"})
+    syllabus.update({"EAIT":"EnergieActiveInjectéeTotale"})
+    syllabus.update({"ERQ1":"EnergieRéactiveQ1Totale"})
+    syllabus.update({"ERQ2":"EnergieRéactiveQ2Totale"})
+    syllabus.update({"ERQ3":"EnergieRéactiveQ3Totale"})
+    syllabus.update({"ERQ4":"EnergieRéactiveQ4Totale"})
+    syllabus.update({"IRMS1":"IntensiteInstantaneePhase1"})
+    syllabus.update({"IRMS2":"IntensiteInstantaneePhase2"})
+    syllabus.update({"IRMS3":"IntensiteInstantaneePhase3"})
+    syllabus.update({"URMS1":"TensionEfficacePhase1"})
+    syllabus.update({"URMS2":"TensionEfficacePhase2"})
+    syllabus.update({"URMS3":"TensionEfficacePhase3"})
+    syllabus.update({"PREF":"IntensiteSouscrite"})
+    syllabus.update({"PCOUP":"PuissanceCoupure"})
+    syllabus.update({"SINSTS":"PuissanceApparente"})
+    syllabus.update({"SINSTS1":"PuissanceApparentePhase1"})
+    syllabus.update({"SINSTS2":"PuissanceApparentePhase2"})
+    syllabus.update({"SINSTS3":"PuissanceApparentePhase3"})
+    syllabus.update({"SMAXSN":"PuissanceMaxAtteinte"})
+    syllabus.update({"SMAXSN1":"PuissanceMaxAtteintePhase1"})
+    syllabus.update({"SMAXSN2":"PuissanceMaxAtteintePhase2"})
+    syllabus.update({"SMAXSN3":"PuissanceMaxAtteintePhase3"})
+    syllabus.update({"SMAXSN-1":"PuissanceApparenteMaxN-1"})
+    syllabus.update({"SMAXSN1-1":"PuissanceApparenteMaxN-1Phase1"})
+    syllabus.update({"SMAXSN2-1":"PuissanceApparenteMaxN-1Phase2"})
+    syllabus.update({"SMAXSN3-1":"PuissanceApparenteMaxN-1Phase3"})
+    syllabus.update({"SINSTI":"PuissanceApparenteInstantanéeInjectée"})
+    syllabus.update({"SMAXIN":"PuissanceApparenteMaxInjectée"})
+    syllabus.update({"SMAXIN-1":"PuissanceApparenteMaxInjectéeN-1"})
+    syllabus.update({"CCASN":"PointNCourbeChargeActiveSoutiree"})
+    syllabus.update({"CCASN-1":"PointN-1CourbeChargeActiveSoutiree"})
+    syllabus.update({"CCAIN":"PointNCourbeChargeActiveInjectée"})
+    syllabus.update({"CCAIN-1":"PointN-1CourbeChargeActiveInjectée"})
+    syllabus.update({"UMOY1":"TensionMoyennePhase1"})
+    syllabus.update({"UMOY2":"TensionMoyennePhase2"})
+    syllabus.update({"UMOY3":"TensionMoyennePhase3"})
+    syllabus.update({"DPM1":"DebutPointeMobile1"})
+    syllabus.update({"FPM1":"FinPointeMobile1"})
+    syllabus.update({"DPM2":"DebutPointeMobile2"})
+    syllabus.update({"FPM2":"FinPointeMobile2"})
+    syllabus.update({"DPM3":"DebutPointeMobile3"})
+    syllabus.update({"FPM3":"FinPointeMobile3"})
+    syllabus.update({"MSG1":"MessageCourt"})
+    syllabus.update({"MSG2":"MessageUltraCourt"})
+    syllabus.update({"PRM":"PRM"})
+    syllabus.update({"NTARF":"CodeTarifEnCours"})
+    syllabus.update({"NJOURF":"NumeroJourCalendrierFournisseur"})
+    syllabus.update({"NJOURF+1":"NumeroProchainJourCalendrierFournisseur"})
+    syllabus.update({"PJOURF+1":"ProfilProchainJourCalendrierFournisseur"})
+    syllabus.update({"PPOINTE":"ProfilProchainJourPointe"})
+    syllabus.update({"TICMODE":"ModeTIC"})
+
+    #On crée un dictionnaire indiquand, pour chaque clé du dictionnaire traduit, si la donnée est numérique ou alpha
+    dataFormat.update({"AdresseCompteur":"char"})
+    dataFormat.update({"CacheBorneDistributeur":"char"})
+    dataFormat.update({"ContactSec":"char"})
+    dataFormat.update({"CouleurDemain":"char"})
+    dataFormat.update({"CouleurTempoDemain":"char"})
+    dataFormat.update({"CouleurTempoJour":"char"})
+    dataFormat.update({"DateHeureLinky":"char"})
+    dataFormat.update({"DebutPointeMobile1":"char"})
+    dataFormat.update({"DebutPointeMobile2":"char"})
+    dataFormat.update({"DebutPointeMobile3":"char"})
+    dataFormat.update({"DepassementPuissance":"int"})
+    dataFormat.update({"DepassementPuissancePhase1":"int"})
+    dataFormat.update({"DepassementPuissancePhase2":"int"})
+    dataFormat.update({"DepassementPuissancePhase3":"int"})
+    dataFormat.update({"DepassementPuissanceRef":"char"})
+    dataFormat.update({"EnergieActiveInjectéeTotale":"int"})
+    dataFormat.update({"EnergieRéactiveQ1Totale":"int"})
+    dataFormat.update({"EnergieRéactiveQ2Totale":"int"})
+    dataFormat.update({"EnergieRéactiveQ3Totale":"int"})
+    dataFormat.update({"EnergieRéactiveQ4Totale":"int"})
+    dataFormat.update({"FinPointeMobile1":"char"})
+    dataFormat.update({"FinPointeMobile2":"char"})
+    dataFormat.update({"FinPointeMobile3":"char"})
+    dataFormat.update({"Fonctionnement":"char"})
+    dataFormat.update({"HorairesHC":"char"})
+    dataFormat.update({"HorlogeDegradee":"char"})
+    dataFormat.update({"Index00":"int"})
+    dataFormat.update({"Index01":"int"})
+    dataFormat.update({"Index02":"int"})
+    dataFormat.update({"Index03":"int"})
+    dataFormat.update({"Index04":"int"})
+    dataFormat.update({"Index05":"int"})
+    dataFormat.update({"Index06":"int"})
+    dataFormat.update({"Index07":"int"})
+    dataFormat.update({"Index08":"int"})
+    dataFormat.update({"Index09":"int"})
+    dataFormat.update({"Index10":"int"})
+    dataFormat.update({"IndexBase":"int"})
+    dataFormat.update({"IndexEJPNormale":"int"})
+    dataFormat.update({"IndexEJPPointe":"int"})
+    dataFormat.update({"IndexHC":"int"})
+    dataFormat.update({"IndexHCJB":"int"})
+    dataFormat.update({"IndexHCJR":"int"})
+    dataFormat.update({"IndexHCJW":"int"})
+    dataFormat.update({"IndexHP":"int"})
+    dataFormat.update({"IndexHPJB":"int"})
+    dataFormat.update({"IndexHPJR":"int"})
+    dataFormat.update({"IndexHPJW":"int"})
+    dataFormat.update({"IndexTotal":"int"})
+    dataFormat.update({"IntensiteInstantanee":"int"})
+    dataFormat.update({"IntensiteInstantaneePhase1":"int"})
+    dataFormat.update({"IntensiteInstantaneePhase2":"int"})
+    dataFormat.update({"IntensiteInstantaneePhase3":"int"})
+    dataFormat.update({"IntensiteMax":"int"})
+    dataFormat.update({"IntensiteMaxPhase1":"int"})
+    dataFormat.update({"IntensiteMaxPhase2":"int"})
+    dataFormat.update({"IntensiteMaxPhase3":"int"})
+    dataFormat.update({"IntensiteSouscrite":"int"})
+    dataFormat.update({"MessageCourt":"char"})
+    dataFormat.update({"MessageUltraCourt":"char"})
+    dataFormat.update({"ModeTIC":"char"})
+    dataFormat.update({"MotEtat":"char"})
+    dataFormat.update({"NumeroJourCalendrierFournisseur":"char"})
+    dataFormat.update({"NumeroProchainJourCalendrierFournisseur":"char"})
+    dataFormat.update({"NumeroTarifEnCours":"char"})
+    dataFormat.update({"OrganeDeCoupure":"char"})
+    dataFormat.update({"PeriodeTarifaireEnCours":"char"})
+    dataFormat.update({"PointeMobile":"char"})
+    dataFormat.update({"PointN-1CourbeChargeActiveInjectée":"int"})
+    dataFormat.update({"PointN-1CourbeChargeActiveSoutiree":"int"})
+    dataFormat.update({"PointNCourbeChargeActiveInjectée":"int"})
+    dataFormat.update({"PointNCourbeChargeActiveSoutiree":"int"})
+    dataFormat.update({"PreavisPointesMobiles":"char"})
+    dataFormat.update({"PresenceDesPotentiels":"char"})
+    dataFormat.update({"PRM":"char"})
+    dataFormat.update({"ProfilProchainJourCalendrierFournisseur":"char"})
+    dataFormat.update({"ProfilProchainJourPointe":"char"})
+    dataFormat.update({"PuissanceApparente":"int"})
+    dataFormat.update({"PuissanceApparenteInstantanéeInjectée":"int"})
+    dataFormat.update({"PuissanceApparenteMaxInjectée":"int"})
+    dataFormat.update({"PuissanceApparenteMaxInjectéeN-1":"int"})
+    dataFormat.update({"PuissanceApparenteMaxN-1":"int"})
+    dataFormat.update({"PuissanceApparenteMaxN-1Phase1":"int"})
+    dataFormat.update({"PuissanceApparenteMaxN-1Phase2":"int"})
+    dataFormat.update({"PuissanceApparenteMaxN-1Phase3":"int"})
+    dataFormat.update({"PuissanceApparentePhase1":"int"})
+    dataFormat.update({"PuissanceApparentePhase2":"int"})
+    dataFormat.update({"PuissanceApparentePhase3":"int"})
+    dataFormat.update({"PuissanceCoupure":"int"})
+    dataFormat.update({"PuissanceMaxAtteinte":"int"})
+    dataFormat.update({"PuissanceMaxAtteintePhase1":"int"})
+    dataFormat.update({"PuissanceMaxAtteintePhase2":"int"})
+    dataFormat.update({"PuissanceMaxAtteintePhase3":"int"})
+    dataFormat.update({"RegistreModeTIC":"char"})
+    dataFormat.update({"Relais":"char"})
+    dataFormat.update({"SensEnergieActive":"char"})
+    dataFormat.update({"SortieCommEuridis":"char"})
+    dataFormat.update({"StatutCPL":"char"})
+    dataFormat.update({"SurtensionPhase":"char"})
+    dataFormat.update({"SynchroCPL":"char"})
+    dataFormat.update({"TarifEnCoursD":"char"})
+    dataFormat.update({"TarifEnCoursF":"char"})
+    dataFormat.update({"TarifSouscrit":"char"})
+    dataFormat.update({"TensionEfficacePhase1":"int"})
+    dataFormat.update({"TensionEfficacePhase2":"int"})
+    dataFormat.update({"TensionEfficacePhase3":"int"})
+    dataFormat.update({"TensionMoyennePhase1":"int"})
+    dataFormat.update({"TensionMoyennePhase2":"int"})
+    dataFormat.update({"TensionMoyennePhase3":"int"})
+    dataFormat.update({"VersionTIC":"char"})
+    dataFormat.update({"EnergieActiveSoutireeDistributeurIndex1":"int"})
+    dataFormat.update({"EnergieActiveSoutireeDistributeurIndex2":"int"})
+    dataFormat.update({"EnergieActiveSoutireeDistributeurIndex3":"int"})
+    dataFormat.update({"EnergieActiveSoutireeDistributeurIndex4":"int"})
+    dataFormat.update({"CodeTarifEnCours":"char"})
+
+
+    return syllabus, dataFormat
+
+
+
+#===============================================================================
 #=== Détermination du type de compteur sur base de la valeur ADCO/ADSC       ===
 #===============================================================================
 def detCptType(cptAddress):
@@ -221,15 +458,138 @@ def analyseRegistre(registreValue):
 
 
 
+#===============================================================================
+#=== Ventilation des index en fonction de l'option tarifaire                 ===
+#===============================================================================
+def ventilIndex(analysedDict) :
+
+    if analysedDict["TarifSouscrit"] == "Tarif de base" :
+        analysedDict.update({"IndexBase":analysedDict["Index00"]})
+        analysedDict.update({"IndexTotal":analysedDict["Index00"]})
+
+    elif analysedDict["TarifSouscrit"] == "Heures Creuses" :
+        analysedDict.update({"IndexHC":analysedDict["Index01"]})
+        analysedDict.update({"IndexHP":analysedDict["Index02"]})
+        if "Index00" in analysedDict :
+            analysedDict.update({"IndexTotal":analysedDict["Index00"]})
+        else :
+            analysedDict.update({"IndexTotal":analysedDict["Index01"] + analysedDict["Index02"]})
+
+    elif analysedDict["TarifSouscrit"] == "HC et Week-End" :
+        analysedDict.update({"IndexHC":analysedDict["Index01"]})
+        analysedDict.update({"IndexHP":analysedDict["Index02"]})
+        analysedDict.update({"IndexWE":analysedDict["Index03"]})
+        if "Index00" in analysedDict :
+            analysedDict.update({"IndexTotal":analysedDict["Index00"]})
+        else :
+            analysedDict.update({"IndexTotal":analysedDict["Index01"] + analysedDict["Index02"] + analysedDict["Index03"]})
+
+    elif analysedDict["TarifSouscrit"] == "EJP" :
+        analysedDict.update({"IndexEJPNormale":analysedDict["Index01"]})
+        analysedDict.update({"IndexEJPPointe":analysedDict["Index02"]})
+        if "Index00" in analysedDict :
+            analysedDict.update({"IndexTotal":analysedDict["Index00"]})
+        else :
+            analysedDict.update({"IndexTotal":analysedDict["Index01"] + analysedDict["Index02"]})
+
+    elif analysedDict["TarifSouscrit"] == "TEMPO" :
+        analysedDict.update({"IndexHCJB":analysedDict["Index01"]})
+        analysedDict.update({"IndexHPJB":analysedDict["Index02"]})
+        analysedDict.update({"IndexHCJW":analysedDict["Index03"]})
+        analysedDict.update({"IndexHPJW":analysedDict["Index04"]})
+        analysedDict.update({"IndexHCJR":analysedDict["Index05"]})
+        analysedDict.update({"IndexHPJR":analysedDict["Index06"]})
+        if "Index00" in analysedDict :
+            analysedDict.update({"IndexTotal":analysedDict["Index00"]})
+        else :
+            analysedDict.update({"IndexTotal":analysedDict["Index01"] + analysedDict["Index02"] + analysedDict["Index03"] + analysedDict["Index04"] + analysedDict["Index05"] + analysedDict["Index06"]})
+
+    return analysedDict
+
+
+
+#===============================================================================
+#=== Détermination de la periode en cours                                    ===
+#===============================================================================
+def periodeEnCours(analysedDict) :
+
+    if analysedDict["TarifSouscrit"] == "Heures Creuses" :
+        if analysedDict["CodeTarifEnCours"] in (["HC..", "01"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HC"})
+        elif analysedDict["CodeTarifEnCours"] in (["HP..", "02"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HP"})
+
+    if analysedDict["TarifSouscrit"] == "HC et Week-End" :
+        if analysedDict["CodeTarifEnCours"] == "01" :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HC"})
+        elif analysedDict["CodeTarifEnCours"] == "02":
+            analysedDict.update({"PeriodeTarifaireEnCours":"HP"})
+        elif analysedDict["CodeTarifEnCours"] == "03":
+            analysedDict.update({"PeriodeTarifaireEnCours":"WE"})
+
+    if analysedDict["TarifSouscrit"] == "EJP" :
+        if analysedDict["CodeTarifEnCours"] in (["HN..", "01"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HN"})
+        elif analysedDict["CodeTarifEnCours"] in (["PM..", "02"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"PM"})
+
+    if analysedDict["TarifSouscrit"] == "TEMPO" :
+        if analysedDict["CodeTarifEnCours"] in (["HCJB", "01"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HCJB"})
+        elif analysedDict["CodeTarifEnCours"] in (["HPJB", "02"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HPJB"})
+        elif analysedDict["CodeTarifEnCours"] in (["HCJW", "03"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HCJW"})
+        elif analysedDict["CodeTarifEnCours"] in (["HPJW", "04"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HPJW"})
+        elif analysedDict["CodeTarifEnCours"] in (["HCJR", "05"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HCJR"})
+        elif analysedDict["CodeTarifEnCours"] in (["HCJR", "06"]) :
+            analysedDict.update({"PeriodeTarifaireEnCours":"HCJR"})
+
+    return analysedDict
+
+
+#===============================================================================
+#=== Traduction des options tarifaires                                       ===
+#===============================================================================
+def detOptionTarif(opTarif) :
+    optionTarif = opTarif.strip()
+    if optionTarif == "BASE" :
+        nomTarif = "Tarif de base"
+    elif optionTarif == "HC.." :
+        nomTarif = "Heures Creuses"
+    elif optionTarif == "H PLEINE/CREUSE" :
+        nomTarif = "Heures Creuses"
+    elif optionTarif == "Heures Creuses et Week-end" :
+        nomTarif = "Heures Creuses et Week-end"
+    elif optionTarif[:3] == "EJP" :
+        nomTarif = "EJP"
+    elif optionTarif == "TEMPO" :
+        nomTarif = "Tempo"
+    else :
+        nomTarif = "".join(["Tarif inconnu : ", optionTarif])
+
+    return nomTarif
+
 
 #===============================================================================
 #=== Analyse du dictionnaire contenant la trame reçue                        ===
 #===============================================================================
 # Le but de cela est d'avoir un dictionnaire qui soit agnostique du mode de la TIC
 
-def analyseTrame(trameDict):
+def analyseTrame(syllabus, dataFormat, trameDict):
     consoTotale = 0
     analysedDict = {}
+
+    for key in trameDict :
+        if key in syllabus :
+            if dataFormat[syllabus[key]] == "char" :
+                analysedDict.update({syllabus[key]:trameDict[key]})
+            else :
+                analysedDict.update({syllabus[key]:int(trameDict[key])})
+#        else :
+#            print("Clé inconnue du syllabus : " + key)
 
     #Analyse du Registre (mode standard only)
     if "STGE" in trameDict :
@@ -251,238 +611,42 @@ def analyseTrame(trameDict):
         analysedDict.update({"CouleurTempoDemain":registreDict["CouleurTempoDemain"]})
         analysedDict.update({"PreavisPointesMobiles":registreDict["PreavisPointesMobiles"]})
         analysedDict.update({"PointeMobile":registreDict["PointeMobile"]})
-        analysedDict.update({"ModeTIC":registreDict["ModeTIC"]})
-    elif "TICMODE" in trameDict :
-        if trameDict["TICMODE"] == "STD" :
-            analysedDict.update({"ModeTIC":"Historique"})
-        else :
-            analysedDict.update({"ModeTIC":"Standard"})
+        analysedDict.update({"RegistreModeTIC":registreDict["ModeTIC"]})
 
-    #Message de service "état de la DB" provenant du listener
-    if "DBSTATE" in trameDict :
-        if trameDict["DBSTATE"] :
-            analysedDict.update({"etatDB":"En ligne"})
-        else :
-            analysedDict.update({"etatDB":"Hors ligne"})
-
-    #Adresse du compteur
-    if "ADCO" in trameDict :
-        analysedDict.update({"AdresseCompteur":trameDict["ADCO"]})
-        cptType, cptName = detCptType(trameDict["ADCO"])
-        analysedDict.update({"TypeCompteur":cptType})
-        analysedDict.update({"NomCompteur":cptName})
-    elif "ADSC" in trameDict :
-        analysedDict.update({"AdresseCompteur":trameDict["ADSC"]})
-        cptType, cptName = detCptType(trameDict["ADSC"])
-        analysedDict.update({"TypeCompteur":cptType})
-        analysedDict.update({"NomCompteur":cptName})
-    else :
-        cptType = ""
-        cptName = ""
-
-    #Avertissement de Dépassement de Puissance Souscrite
-    if "ADIR" in trameDict :
-        analysedDict.update({"DepassementPuissance":trameDict["ADIR"]})
-
-    #Avertissement de Dépassement d'intensité de réglage phase 1
-    if "ADIR1" in trameDict :
-        analysedDict.update({"DepassementPuissancePhase1":trameDict["ADIR1"]})
-
-    #Avertissement de Dépassement d'intensité de réglage phase 2
-    if "ADIR2" in trameDict :
-        analysedDict.update({"DepassementPuissancePhase2":trameDict["ADIR2"]})
-
-    #Avertissement de Dépassement d'intensité de réglage phase 3
-    if "ADIR3" in trameDict :
-        analysedDict.update({"DepassementPuissancePhase3":trameDict["ADIR3"]})
-
-    #Couleur du lendemain (abonnement TEMPO)
-    if "DEMAIN" in trameDict :
-        analysedDict.update({"CouleurDemain":trameDict["DEMAIN"]})
-    elif "STGE" in trameDict :
+        analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
         analysedDict.update({"CouleurDemain":registreDict["CouleurTempoDemain"]})
 
 
-    #Options tarifaires mode historique ("BASE" / "EJP." / "HC.." / "TEMP") et indexes associés
+    #Nom et type de compteur
+    if "ADCO" in trameDict :
+        cptType, cptName = detCptType(trameDict["ADCO"])
+        analysedDict.update({"TypeCompteur":cptType})
+        analysedDict.update({"NomCompteur":cptName})
+
+    if "ADSC" in trameDict :
+        cptType, cptName = detCptType(trameDict["ADSC"])
+        analysedDict.update({"TypeCompteur":cptType})
+        analysedDict.update({"NomCompteur":cptName})
+
+
+    #Options tarifaires
+    optionTarif = ""
     if "OPTARIF" in trameDict :
-        if trameDict["OPTARIF"] == "BASE" :
-            analysedDict.update({"TarifSouscrit":"Tarif de base"})
-            if "BASE" in trameDict :
-                analysedDict.update({"IndexBase":int(trameDict["BASE"])})
-                analysedDict.update({"IndexTotal":int(trameDict["BASE"])})
-        elif trameDict["OPTARIF"] == "HC.." :
-            analysedDict.update({"TarifSouscrit":"Heures Creuses"})
-            consoTotale = 0
-            if "HCHC" in trameDict :
-                analysedDict.update({"IndexHC":int(trameDict["HCHC"])})
-                consoTotale = consoTotale + int(trameDict["HCHC"])
-            if "HCHP" in trameDict :
-                analysedDict.update({"IndexHP":trameDict["HCHP"]})
-                consoTotale = consoTotale + int(trameDict["HCHP"])
-            analysedDict.update({"IndexTotal":consoTotale})
-        elif trameDict["OPTARIF"] == "EJP." :
-            analysedDict.update({"TarifSouscrit":"EJP"})
-            consoTotale = 0
-            if "EJPHN" in trameDict :
-                analysedDict.update({"IndexEJPNormale":trameDict["EJPHN"]})
-                consoTotale = consoTotale + int(trameDict["EJPHN"])
-            if "EJPHPM" in trameDict :
-                analysedDict.update({"IndexEJPPointe":int(trameDict["EJPHPM"])})
-                consoTotale = consoTotale + int(trameDict["EJPHPM"])
-            analysedDict.update({"IndexTotal":consoTotale})
-        elif trameDict["OPTARIF"] == "TEMPO" :
-            analysedDict.update({"TarifSouscrit":"Tempo"})
-            consoTotale = 0
-            if "BBRHCJB" in trameDict :
-                analysedDict.update({"IndexHCJB":int(trameDict["BBRHCJB"])})
-                consoTotale = consoTotale + int(trameDict["BBRHCJB"])
-            if "BBRHCJW" in trameDict :
-                analysedDict.update({"IndexHCJW":int(trameDict["BBRHCJW"])})
-                consoTotale = consoTotale + int(trameDict["BBRHCJW"])
-            if "BBRHCJR" in trameDict :
-                analysedDict.update({"IndexHCJR":int(trameDict["BBRHCJR"])})
-                consoTotale = consoTotale + int(trameDict["BBRHCJR"])
-            if "BBRHPJB" in trameDict :
-                analysedDict.update({"IndexHCPB":int(trameDict["BBRHPJB"])})
-                consoTotale = consoTotale + int(trameDict["BBRHPJB"])
-            if "BBRHPJW" in trameDict :
-                analysedDict.update({"IndexHPJW":int(trameDict["BBRHPJW"])})
-                consoTotale = consoTotale + int(trameDict["BBRHPJW"])
-            if "BBRHPJR" in trameDict :
-                analysedDict.update({"IndexHPJR":int(trameDict["BBRHCPR"])})
-                consoTotale = consoTotale + int(trameDict["BBRHPJR"])
-            analysedDict.update({"IndexTotal":consoTotale})
-
-    #Options tarifaires mode standard ("BASE" / "?" / "H PLEINE/CREUSE" / "?" / "PRODUCTEUR") et indexes associés
+        optionTarif = trameDict["OPTARIF"]
     elif "NGTF" in trameDict :
-        if trameDict["NGTF"].strip() == "BASE" :
-            analysedDict.update({"TarifSouscrit":"Tarif de base"})
-            analysedDict.update({"PeriodeTarifaireEnCours":"TH"})   #Toutes Heures (option BASE)
-            if  "EAST" in trameDict :
-                analysedDict.update({"IndexBase":int(trameDict["EAST"])})
-                analysedDict.update({"IndexTotal":int(trameDict["EAST"])})
+        optionTarif = trameDict["NGTF"]
+    nomTarif = detOptionTarif(optionTarif)
+    analysedDict.update({"TarifSouscrit":nomTarif})
 
-        elif trameDict["NGTF"].strip() == "H PLEINE/CREUSE" :
-            analysedDict.update({"TarifSouscrit":"Heures Creuses"})
-            consoTotale = 0
-            if "EASF01" in trameDict :
-                analysedDict.update({"IndexHC":int(trameDict["EASF01"])})
-                consoTotale = consoTotale + int(trameDict["EASF01"])
-            if "EASF02" in trameDict :
-                analysedDict.update({"IndexHP":int(trameDict["EASF02"])})
-                consoTotale = consoTotale + int(trameDict["EASF02"])
-            if  "EAST" in trameDict :
-                analysedDict.update({"IndexTotal":int(trameDict["EAST"])})
-            if "NTARF" in trameDict :
-                if trameDict["NTARF"] == "01" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HC"})
-                elif trameDict["NTARF"] == "02" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HP"})
-                else :
-                    analysedDict.update({"PeriodeTarifaireEnCours":trameDict["NTARF"]})
+    #Ventilation des index en fonction de l'option tarifaire
+    analysedDict = ventilIndex(analysedDict)
 
-        elif trameDict["NGTF"].strip() == "HC et Week-End" :
-            analysedDict.update({"TarifSouscrit":"Heures Creuses et Week-end"})
-            consoTotale = 0
-            if "EASF01" in trameDict :
-                analysedDict.update({"IndexHC":int(trameDict["EASF01"])})
-                consoTotale = consoTotale + int(trameDict["EASF01"])
-            if "EASF02" in trameDict :
-                analysedDict.update({"IndexHP":int(trameDict["EASF02"])})
-                consoTotale = consoTotale + int(trameDict["EASF02"])
-            if "EASF03" in trameDict :
-                analysedDict.update({"IndexWE":int(trameDict["EASF03"])})
-                consoTotale = consoTotale + int(trameDict["EASF03"])
-            if  "EAST" in trameDict :
-                analysedDict.update({"IndexTotal":int(trameDict["EAST"])})
-            if "NTARF" in trameDict :
-                if trameDict["NTARF"] == "01" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HC"})
-                elif trameDict["NTARF"] == "02" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HP"})
-                else :
-                    analysedDict.update({"PeriodeTarifaireEnCours":trameDict["NTARF"]})
-
-        elif trameDict["NGTF"].strip() == "EJP" :
-            analysedDict.update({"TarifSouscrit":"EJP"})
-            consoTotale = 0
-            if "EASF01" in trameDict :
-                analysedDict.update({"IndexEJPNormale":int(trameDict["EASF01"])})
-                consoTotale = consoTotale + int(trameDict["EASF01"])
-            if "EASF02" in trameDict :
-                analysedDict.update({"IndexEJPPointe":int(trameDict["EASF02"])})
-                consoTotale = consoTotale + int(trameDict["EASF02"])
-            if  "EAST" in trameDict :
-                analysedDict.update({"IndexTotal":int(trameDict["EAST"])})
-            if "NTARF" in trameDict :
-                if trameDict["NTARF"] == "01" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HN"})
-                elif trameDict["NTARF"] == "02" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"PM"})
-                else :
-                    analysedDict.update({"PeriodeTarifaireEnCours":trameDict["NTARF"]})
-
-        elif trameDict["NGTF"].strip() == "TEMPO" :
-            analysedDict.update({"TarifSouscrit":"Tempo"})
-            consoTotale = 0
-            if "EASF01" in trameDict :
-                analysedDict.update({"IndexHCJB":int(trameDict["EASF01"])})
-                consoTotale = consoTotale + int(trameDict["EASF01"])
-            if "EASF03" in trameDict :
-                analysedDict.update({"IndexHCJW":int(trameDict["EASF03"])})
-                consoTotale = consoTotale + int(trameDict["EASF03"])
-            if "EASF05" in trameDict :
-                analysedDict.update({"IndexHCJR":int(trameDict["EASF05"])})
-                consoTotale = consoTotale + int(trameDict["EASF05"])
-            if "EASF02" in trameDict :
-                analysedDict.update({"IndexHCPB":int(trameDict["EASF02"])})
-                consoTotale = consoTotale + int(trameDict["EASF02"])
-            if "EASF04" in trameDict :
-                analysedDict.update({"IndexHPJW":int(trameDict["EASF04"])})
-                consoTotale = consoTotale + int(trameDict["EASF04"])
-            if "EASF06" in trameDict :
-                analysedDict.update({"IndexHPJR":int(trameDict["EASF06"])})
-                consoTotale = consoTotale + int(trameDict["EASF06"])
-            analysedDict.update({"IndexTotal":int(trameDict["EAST"])})
-            if "NTARF" in trameDict :
-                if trameDict["NTARF"] == "01" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HCJB"})
-                elif trameDict["NTARF"] == "02" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HPJB"})
-                elif trameDict["NTARF"] == "03" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HCJW"})
-                elif trameDict["NTARF"] == "04" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HPJW"})
-                elif trameDict["NTARF"] == "05" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HCJR"})
-                elif trameDict["NTARF"] == "06" :
-                    analysedDict.update({"PeriodeTarifaireEnCours":"HCJR"})
-                else :
-                    analysedDict.update({"PeriodeTarifaireEnCours":trameDict["NTARF"]})
-
-        else :
-            analysedDict.update({"TarifSouscrit":trameDict["NGTF"].strip()})
-
-        if "EASF07" in trameDict :
-            analysedDict.update({"Index07":int(trameDict["EASF07"])})
-
-        if "EASF08" in trameDict :
-            analysedDict.update({"Index08":int(trameDict["EASF08"])})
-
-        if "EASF09" in trameDict :
-            analysedDict.update({"Index09":int(trameDict["EASF09"])})
-
-        if "EASF10" in trameDict :
-            analysedDict.update({"Index10":int(trameDict["EASF10"])})
-
-    if "PTARF" in trameDict :
-        analysedDict.update({"PTARF":trameDict["PTARF"]})
+    #Détermination de la periode tarifaire en cours
+    analysedDict = periodeEnCours(analysedDict)
 
 
     #Horaire Heures Pleines Heures Creuses
-    if "HHPHC" in trameDict :
-        analysedDict.update({"HorairesHC":trameDict["HHPHC"]})
-    elif "PJOURF+1" in trameDict :
+    if "PJOURF+1" in trameDict :
         listPJOUR = trameDict["PJOURF+1"].split()
         if listPJOUR[0] == "NONUTILE" :
             analysedDict.update({"HorairesHC":""})
@@ -510,241 +674,13 @@ def analyseTrame(trameDict):
             analysedDict.update({"HorairesHC":plageHoraire1 + plageHoraire2 + plageHoraire3 + plageHoraire4 + plageHoraire5})
 
 
-    #Intensité Instantanée
-    if "IINST" in trameDict :
-        analysedDict.update({"IntensiteInstantanee":int(trameDict["INST"])})
-    elif "IRMS1" in trameDict and cptType == "MONO" :
-        analysedDict.update({"IntensiteInstantanee":int(trameDict["IRMS1"])})
-
-    #Intensité Instantanée Phase 1
-    if "IINST1" in trameDict :
-        analysedDict.update({"IntensiteInstantaneePhase1":int(trameDict["INST1"])})
-    elif "IRMS1" in trameDict and cptType == "TRI" :
-        analysedDict.update({"IntensiteInstantaneePhase1":int(trameDict["IRMS1"])})
-
-    #Intensité Instantanée Phase 2
-    if "IINST2" in trameDict :
-        analysedDict.update({"IntensiteInstantaneePhase2":int(trameDict["INST2"])})
-    elif "IRMS2" in trameDict :
-        analysedDict.update({"IntensiteInstantaneePhase2":int(trameDict["IRMS2"])})
-
-    #Intensité Instantanée Phase 3
-    if "IINST3" in trameDict :
-        analysedDict.update({"IntensiteInstantaneePhase3":int(trameDict["INST3"])})
-    elif "IRMS3" in trameDict :
-        analysedDict.update({"IntensiteInstantaneePhase3":int(trameDict["IRMS3"])})
-
-    #Intensité maximale appelée
-    if "IMAX" in trameDict :
-        analysedDict.update({"IntensiteMax":int(trameDict["IMAX"])})
-    elif "SMAXSN" in trameDict and "URMS1" in trameDict :
-        analysedDict.update({"IntensiteMax":int(trameDict["SMAXSN"]) / int(trameDict["URMS1"])})
-
-    #Intensité maximale appelée Phase 1
-    if "IMAX1" in trameDict :
-        analysedDict.update({"IntensiteMaxPhase1":int(trameDict["IMAX1"])})
-    elif "SMAXSN1" in trameDict and "URMS1" in trameDict :
-        analysedDict.update({"IntensiteMaxPhase1":int(trameDict["SMAXSN1"]) / int(trameDict["URMS1"])})
-
-    #Intensité maximale appelée Phase 2
-    if "IMAX2" in trameDict :
-        analysedDict.update({"IntensiteMaxPhase2":int(trameDict["IMAX2"])})
-    elif "SMAXSN2" in trameDict and "URMS2" in trameDict :
-        analysedDict.update({"IntensiteMaxPhase2":int(trameDict["SMAXSN2"]) / int(trameDict["URMS2"])})
-
-    #Intensité maximale appelée Phase 3
-    if "IMAX3" in trameDict :
-        analysedDict.update({"IntensiteMaxPhase3":int(trameDict["IMAX3"])})
-    elif "SMAXSN3" in trameDict and "URMS3" in trameDict :
-        analysedDict.update({"IntensiteMaxPhase3":int(trameDict["SMAXSN3"]) / int(trameDict["URMS3"])})
-
-    #Mot d'état du compteur
-    if "MOTDETAT" in trameDict :
-        analysedDict.update({"MotEtat":trameDict["MOTDETAT"]})
-
     #Option tarifaire choisie
     if "ISOUSC" in trameDict :
         analysedDict.update({"IntensiteSouscrite":int(trameDict["ISOUSC"]) / 5})
-    elif "PREF" in trameDict :
-        analysedDict.update({"IntensiteSouscrite":int(trameDict["PREF"])})
-
-    #Période Tarifaire en cours
-    if "PTEC" in trameDict :
-        if trameDict["PTEC"] == "TH.." :
-            analysedDict.update({"PeriodeTarifaireEnCours":"TH"})   #Toutes Heures (option BASE)
-        elif trameDict["PTEC"] == "HC.." :
-            analysedDict.update({"PeriodeTarifaireEnCours":"HC"})   #Heures Creuses
-        elif trameDict["PTEC"] == "HP.." :
-            analysedDict.update({"PeriodeTarifaireEnCours":"HP"})   #Heures Pleines
-        elif trameDict["PTEC"] == "HN.." :
-            analysedDict.update({"PeriodeTarifaireEnCours":"HN"})   #Heures Normales (EJP)
-        elif trameDict["PTEC"] == "PM.." :
-            analysedDict.update({"PeriodeTarifaireEnCours":"PM"})   #Heures de Pointe Mobile (EJP)
-        elif trameDict["PTEC"] == "HCJB" :
-            analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-            analysedDict.update({"PeriodeTarifaireEnCours":trameDict["PTEC"]})
-        elif trameDict["PTEC"] == "HCJW" :
-            analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-            analysedDict.update({"PeriodeTarifaireEnCours":trameDict["PTEC"]})
-        elif trameDict["PTEC"] == "HCJR" :
-            analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-            analysedDict.update({"PeriodeTarifaireEnCours":trameDict["PTEC"]})
-        elif trameDict["PTEC"] == "HPJB" :
-            analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-            analysedDict.update({"PeriodeTarifaireEnCours":trameDict["PTEC"]})
-        elif trameDict["PTEC"] == "HPJW" :
-            analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-            analysedDict.update({"PeriodeTarifaireEnCours":trameDict["PTEC"]})
-        elif trameDict["PTEC"] == "HPJR" :
-            analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-            analysedDict.update({"PeriodeTarifaireEnCours":trameDict["PTEC"]})
-
-
-    if "NJOURF" in trameDict :
-        analysedDict.update({"NumeroJourCalendrierFournisseur":trameDict["NJOURF"]})
-
-    if "NJOURF+1" in trameDict :
-        analysedDict.update({"NumeroProchainJourCalendrierFournisseur":trameDict["NJOURF+1"]})
-
-    if "PJOURF+1" in trameDict :
-        analysedDict.update({"ProfilProchainJourCalendrierFournisseur":trameDict["PJOURF+1"]})
-
-    #Préavis Début EJP (30 min)
-    if "PEJP" in trameDict :
-        analysedDict.update({"ProfilProchainJourPointe":trameDict["PEJP"]})
-    elif "PPOINTE" in trameDict :
-        analysedDict.update({"ProfilProchainJourPointe":trameDict["PPOINTE"]})
-
-
-    #Présence des potentiels
-    if "PPOT" in trameDict :
-        analysedDict.update({"PresenceDesPotentiels":trameDict["PPOT"]})
-
-    #Puissance apparente
-    if "PAPP" in trameDict :
-        analysedDict.update({"PuissanceApparente":int(trameDict["PAPP"])})
-    elif "SINSTS" in trameDict :
-        analysedDict.update({"PuissanceApparente":int(trameDict["SINSTS"])})
-
-    if "SINSTS1" in trameDict :
-        analysedDict.update({"PuissanceApparentePhase1":int(trameDict["SINSTS1"])})
-
-    if "SINSTS2" in trameDict :
-        analysedDict.update({"PuissanceApparentePhase2":int(trameDict["SINSTS2"])})
-
-    if "SINSTS3" in trameDict :
-        analysedDict.update({"PuissanceApparentePhase3":int(trameDict["SINSTS3"])})
-
-    #Puissance maximale atteinte
-    if "PMAX" in trameDict :
-        analysedDict.update({"PuissanceMaxAtteinte":int(trameDict["PMAX"])})
-    elif "SMAXSN" in trameDict :
-        analysedDict.update({"PuissanceMaxAtteinte":int(trameDict["SMAXSN"])})
-
-    if "SMAXSN1" in trameDict :
-        analysedDict.update({"PuissanceMaxAtteintePhase1":int(trameDict["SMAXSN1"])})
-
-    if "SMAXSN2" in trameDict :
-        analysedDict.update({"PuissanceMaxAtteintePhase2":int(trameDict["SMAXSN2"])})
-
-    if "SMAXSN3" in trameDict :
-        analysedDict.update({"PuissanceMaxAtteintePhase3":int(trameDict["SMAXSN3"])})
 
     #Date et heure courante (Linky)
     if "DATE" in trameDict :
         analysedDict.update({"DateHeureLinky":trameDict["DATE"][0] + " - " + trameDict["DATE"][5:7] + "/" + trameDict["DATE"][3:5] + "/20" + trameDict["DATE"][1:3] + " - " + trameDict["DATE"][7:9] + ":" + trameDict["DATE"][9:11] + ":" + trameDict["DATE"][11:]})
-
-    #Puissance app max. soutirée n-1
-    if "SMAXSN-1" in trameDict :
-        analysedDict.update({"PuissanceApparenteMaxN-1":int(trameDict["SMAXSN-1"])})
-
-    if "SMAXSN1-1" in trameDict :
-        analysedDict.update({"PuissanceApparenteMaxN-1Phase1":int(trameDict["SMAXSN1-1"])})
-
-    if "SMAXSN2-1" in trameDict :
-        analysedDict.update({"PuissanceApparenteMaxN-1Phase2":int(trameDict["SMAXSN2-1"])})
-
-    if "SMAXSN3-1" in trameDict :
-        analysedDict.update({"PuissanceApparenteMaxN-1Phase3":int(trameDict["SMAXSN3-1"])})
-
-    #Puissance app. de coupure
-    if "PCOUP" in trameDict :
-        analysedDict.update({"PuissanceCoupure":int(trameDict["PCOUP"])})
-
-    #Message court
-    if "MSG1" in trameDict :
-        analysedDict.update({"MessageCourt":trameDict["MSG1"]})
-
-    #Message Ultra court
-    if "MSG2" in trameDict :
-        analysedDict.update({"MessageUltraCourt":trameDict["MSG2"]})
-
-    #Tensions efficaces
-    if "URMS1" in trameDict :
-        analysedDict.update({"TensionEfficacePhase1":int(trameDict["URMS1"])})
-
-    if "URMS2" in trameDict :
-        analysedDict.update({"TensionEfficacePhase2":int(trameDict["URMS2"])})
-
-    if "URMS3" in trameDict :
-        analysedDict.update({"TensionEfficacePhase3":int(trameDict["URMS3"])})
-
-    #Tensions moyennes
-    if "UMOY1" in trameDict :
-        analysedDict.update({"TensionMoyennePhase1":int(trameDict["UMOY1"])})
-
-    if "UMOY2" in trameDict :
-        analysedDict.update({"TensionMoyennePhase2":int(trameDict["UMOY2"])})
-
-    if "UMOY3" in trameDict :
-        analysedDict.update({"TensionMoyennePhase3":int(trameDict["UMOY3"])})
-
-    #Version de la TIC
-    if "VTIC" in trameDict :
-        analysedDict.update({"VersionTIC":trameDict["VTIC"]})
-
-    #Point n de la courbe de charge active soutirée
-    if "CCASN" in trameDict :
-        analysedDict.update({"PointNCourbeChargeActiveSoutiree":int(trameDict["CCASN"])})
-
-    #Point n-1 de la courbe de charge active soutirée
-    if "CCASN-1" in trameDict :
-        analysedDict.update({"PointN-1CourbeChargeActiveSoutiree":int(trameDict["CCASN-1"])})
-
-    #Debute et fins de Pointe mobile
-    if "DPM1" in trameDict :
-        analysedDict.update({"DebutPointeMobile1":trameDict["DPM1"]})
-
-    if "DPM2" in trameDict :
-        analysedDict.update({"DebutPointeMobile2":trameDict["DPM2"]})
-
-    if "DPM3" in trameDict :
-        analysedDict.update({"DebutPointeMobile3":trameDict["DPM3"]})
-
-    if "FPM1" in trameDict :
-        analysedDict.update({"FinPointeMobile1":trameDict["FPM1"]})
-
-    if "FPM2" in trameDict :
-        analysedDict.update({"FinPointeMobile2":trameDict["FPM2"]})
-
-    if "FPM3" in trameDict :
-        analysedDict.update({"FinPointeMobile3":trameDict["FPM3"]})
-
-    #Energie active soutirée Distributeur
-    if "EASD01" in trameDict :
-        analysedDict.update({"EnergieActiveSoutireeDistributeurIndex1":int(trameDict["EASD01"])})
-
-    if "EASD02" in trameDict :
-        analysedDict.update({"EnergieActiveSoutireeDistributeurIndex2":int(trameDict["EASD02"])})
-
-    if "EASD03" in trameDict :
-        analysedDict.update({"EnergieActiveSoutireeDistributeurIndex3":int(trameDict["EASD03"])})
-
-    if "EASD04" in trameDict :
-        analysedDict.update({"EnergieActiveSoutireeDistributeurIndex4":int(trameDict["EASD04"])})
-
-    if "PRM" in trameDict :
-        analysedDict.update({"PRM":trameDict["PRM"]})
 
     if "RELAIS" in trameDict :
         relaisValue = analyseRelais(trameDict["RELAIS"])

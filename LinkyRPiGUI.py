@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # __author__ = "Mickael Masci"
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import askyesno
 import tkinter.font as font
@@ -16,7 +16,6 @@ import posix_ipc
 import datetime
 import json
 from datetime import datetime
-
 
 #=======================================================================================#
 #=== Initialisation                                                                  ===#
@@ -45,16 +44,134 @@ result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('ut
 cmd = "xset s off"
 result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
 
-master = Tk()
+notebookBgColor    = config.get('GUICSS','notebookBgColor')
+notebookBgLight    = config.get('GUICSS','notebookBgLight')
+notebookBgMedium   = config.get('GUICSS','notebookBgMedium')
+notebookSelColor   = config.get('GUICSS','notebookSelColor')
+notebookUnselColor = config.get('GUICSS','notebookUnselColor')
+notebookFont       = config.get('GUICSS','notebookFont')
+graphBg            = config.get('GUICSS','graphBg')
+textFont           = config.get('GUICSS','textFont')
+textSizeBig        = config.get('GUICSS','textSizeBig')
+textSizeMedium     = config.get('GUICSS','textSizeMedium')
+textSizeSmall      = config.get('GUICSS','textSizeSmall')
+labelBg            = config.get('GUICSS','labelBg')
+labelColor         = config.get('GUICSS','labelColor')
+colorPhase1        = config.get('GUICSS','phase1')
+colorPhase2        = config.get('GUICSS','phase2')
+colorPhase3        = config.get('GUICSS','phase3')
+valueColorWar      = config.get('GUICSS','valueColorWar')
+titleColor         = config.get('GUICSS','titleColor')
 
-#===============================================================================
-#=== Bouton QUIT                                                             ===
-#===============================================================================
-def quit():
-    modalConfirm = askyesno(title='Confirmation',
-                    message='Are you sure that you want to SHUTDOWN ?')
-    if modalConfirm:
-        os.system('sudo shutdown -h now')
+
+
+master = tk.Tk()
+master.attributes('-alpha', 0.0)
+master.iconify()
+master.geometry("1024x600")
+master.attributes("-fullscreen", True)
+master.minsize(1024,600)
+master.maxsize(1024,600)
+master.configure(bg=notebookBgColor)
+master.config(cursor="none")    # On désactive le curseur parcequ'on a un écran tactile :)
+master.overrideredirect(1)      # On supprime le bord
+
+#On commence par créer le style de notre UI
+s = ttk.Style()
+scaleDBVal = tk.DoubleVar()
+scaleFileVal = tk.DoubleVar()
+
+s.theme_create( "MyStyle", parent="alt", settings={
+        "TNotebook": {"configure": {"tabmargins": [0, 0, 0, 0] },
+                                    "tabposition": "wn",
+                                    "background": notebookBgColor,
+                                    "bordercolor": notebookBgColor,
+                                    },
+        "TNotebook.Tab": {"configure": {"padding": [5, 10],
+                                        "tabposition": "wn",
+                                        "background": notebookUnselColor,
+                                        "foreground": notebookSelColor,
+                                        "font" : (notebookFont, textSizeSmall, 'bold')},
+                          "map":       {"background": [("selected", notebookSelColor)],
+                                        "foreground": [("selected", notebookBgColor)],
+                                        "expand": [("selected", [0, 0, 0, 0])] }
+                                        }})
+s.theme_use("MyStyle")
+
+
+#style = ttk.Style(master)
+s.configure('lefttab.TNotebook', tabposition='wn')
+s.configure("TNotebook", borderwidth=0, background=notebookBgColor)
+s.configure("TNotebook.Tab", borderwidth=0, background=notebookBgColor)
+s.configure('My.TSpinbox', arrowsize=25)
+
+#Puis on crée le notebook
+myNotebook = ttk.Notebook(master, style='lefttab.TNotebook')
+myNotebook.pack(padx=0, pady=0)
+
+# Frame d'information
+infoIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/info.png")
+infoFrame = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+myNotebook.add(infoFrame, image=infoIcon)
+
+# Frame des index et dépassements
+indexIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/index.png")
+indexFrame = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+myNotebook.add(indexFrame, image=indexIcon)
+
+#Frame PRODUCTEUR
+prodIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/prod.png")
+productFrame = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+myNotebook.add(productFrame, image=prodIcon)
+
+# Frame des tensions & puissances
+tensionIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/tension.png")
+tensionFrame = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+myNotebook.add(tensionFrame, image=tensionIcon)
+
+# Frame(s) du graphique des intensités soutirées
+intensiteIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/graph.png")
+intensiteFrame  = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+intensiteFrameT = tk.Frame(intensiteFrame, width=1024, height=100, bg=notebookBgColor)
+intensiteFrameB = tk.Frame(intensiteFrame, width=1024, height=500, bg=notebookBgColor)
+intensiteFrameL = tk.Frame(intensiteFrameB, width=824, height=500, bg=notebookBgColor)
+intensiteFrameR = tk.Frame(intensiteFrameB, width=200, height=500, bg=notebookBgColor)
+intensiteFrameT.pack(side="top", fill="both", expand=False)
+intensiteFrameB.pack(side="bottom", fill="both", expand=False)
+intensiteFrameL.pack(side="left", fill="both", expand=False)
+intensiteFrameR.pack(side="right", fill="both", expand=False)
+myNotebook.add(intensiteFrame, image=intensiteIcon)
+canvas= tk.Canvas(intensiteFrameL, width=824, height=600, bg=graphBg, bd=0, highlightthickness=0)
+canvas.pack(expand=tk.YES, fill=tk.BOTH)
+
+# Frame du registre
+registreIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/registre.png")
+registreFrame = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+myNotebook.add(registreFrame, image=registreIcon)
+
+# Frame des statuts
+statusIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/status.png")
+statusFrame  = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+myNotebook.add(statusFrame, image=statusIcon)
+
+# Frame du registre
+paramIcon  = tk.PhotoImage(file=config.get('PATH','iconPath') + "/param.png")
+paramFrame = tk.Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
+paramFrameT = tk.Frame(paramFrame, width=1024, height=500, bg=notebookBgColor)
+paramFrameB = tk.Frame(paramFrame, width=1024, height=100, bg=notebookBgColor)
+paramFrameT.pack(side="top", fill="both", expand=False)
+paramFrameB.pack(side="bottom", fill="both", expand=False)
+myNotebook.add(paramFrame, image=paramIcon)
+
+
+signalIcon      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi0.png")
+
+
+#On instancie le notebook
+myNotebook.pack()
+
+
+
 
 #===============================================================================
 #=== Bouton REBOOT                                                           ===
@@ -69,7 +186,7 @@ def reboot():
 #=== Bouton CMD                                                              ===
 #===============================================================================
 def cmd():
-    root = Tk()
+    root = tk.Tk()
     termf = Frame(root, height=1024, width=600)
 
     termf.pack(fill=BOTH, expand=YES)
@@ -80,22 +197,95 @@ def cmd():
 #=== Boutons SCALE                                                           ===
 #===============================================================================
 def changeXScale():
-    global xscale
-
-    if xscale == 20 :
-        xscale = 50
-    elif xscale == 50 :
-        xscale = 100
-    elif xscale == 100 :
-        xscale = 350
-    elif xscale == 350 :
-        xscale = 700
-    else :
-        xscale = 20
-    xscaleButton.config(text=xscale)
+    global xscale, v
+    xscale = v.get()
     return xscale
 
+#===============================================================================
+#=== Boutons Switch DB Active                                                ===
+#===============================================================================
+def switchDB():
+    flagDBActive    = config.get('POSTGRESQL','active')
 
+    if flagDBActive == "True" :
+        config.set('POSTGRESQL', 'active', 'False')
+        ButtonDBActive.config(image=OFFButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    else :
+        config.set('POSTGRESQL', 'active', 'True')
+        ButtonDBActive.config(image=ONButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+    flagDBActive    = config.get('POSTGRESQL','active')
+
+
+#===============================================================================
+#=== Scale DB                                                                ===
+#===============================================================================
+def timerUpDB():
+    refreshDB = int(config.get('POSTGRESQL','refreshDB'))
+    if refreshDB < 600 :
+        refreshDB = refreshDB + 1
+        config.set('POSTGRESQL', 'refreshDB', str(refreshDB))
+        timerDB.set(str(refreshDB) + " s")
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+
+def timerDownDB():
+    refreshDB = int(config.get('POSTGRESQL','refreshDB'))
+    if refreshDB > 1 :
+        refreshDB = refreshDB - 1
+        config.set('POSTGRESQL', 'refreshDB', str(refreshDB))
+        timerDB.set(str(refreshDB) + " s")
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+
+#===============================================================================
+#=== Boutons Switch FILE Active                                              ===
+#===============================================================================
+def switchFile():
+    flagFileActive    = config.get('PARAM','traceFile')
+
+    if flagFileActive == "True" :
+        config.set('PARAM', 'traceFile', 'False')
+        ButtonFileActive.config(image=OFFButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    else :
+        config.set('PARAM', 'traceFile', 'True')
+        ButtonFileActive.config(image=ONButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+    flagFileActive    = config.get('PARAM','traceFile')
+
+#===============================================================================
+#=== Scale File                                                              ===
+#===============================================================================
+def timerUpFile():
+    refreshFile = int(config.get('PARAM','traceFreq'))
+    if refreshFile < 600 :
+        refreshFile = refreshFile + 1
+        config.set('PARAM', 'traceFreq', str(refreshFile))
+        timerFile.set(str(refreshFile) + " s")
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+
+def timerDownFile():
+    refreshFile = int(config.get('PARAM','traceFreq'))
+    if refreshFile > 1 :
+        refreshFile = refreshFile - 1
+        config.set('PARAM', 'traceFreq', str(refreshFile))
+        timerFile.set(str(refreshFile) + " s")
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
 
 
 #=======================================================================================#
@@ -103,23 +293,31 @@ def changeXScale():
 #=======================================================================================#
 def initGUI(analysedDict) :
 
+    #print(analysedDict)
+
     #Definition des voyants et boutons
-    global voyantNoir, voyantBleu, voyantBlanc, voyantRouge, voyantHC, voyantHP, miniVoyantNoir, miniVoyantVert
-    global signalIcon, cmdIcon, rebootIcon, quitIcon, buttonBlue
-    voyantNoir      = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/NOIR.png")
-    voyantBleu      = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/BLEU.png")
-    voyantBlanc     = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/BLANC.png")
-    voyantRouge     = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/ROUGE.png")
-    voyantVert      = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/VERT.png")
-    miniVoyantNoir  = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/miniNOIR.png")
-    miniVoyantVert  = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/miniVERT.png")
-    voyantHC        = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/HC.png")
-    voyantHP        = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/HP.png")
-    signalIcon      = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi0.png")
-    cmdIcon         = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/cmd.png")
-    rebootIcon      = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/reboot.png")
-    quitIcon        = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/Quit.png")
-    buttonBlue      = PhotoImage(master=master, file=config.get('PATH','iconPath') + "/button_bleu.png")
+    global voyantNoir, voyantBleu, voyantBlanc, voyantRouge, voyantHC, voyantHP, voyantWE, miniVoyantNoir, miniVoyantVert
+    global signalIcon, cmdIcon, rebootIcon, ONButton, OFFButton, flecheD, flecheG, boutonFonce, boutonClair
+    voyantNoir      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/NOIR.png")
+    voyantBleu      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/BLEU.png")
+    voyantBlanc     = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/BLANC.png")
+    voyantRouge     = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/ROUGE.png")
+    voyantVert      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/VERT.png")
+    miniVoyantNoir  = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/miniNOIR.png")
+    miniVoyantVert  = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/miniVERT.png")
+    voyantHC        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/HC.png")
+    voyantHP        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/HP.png")
+    voyantWE        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/WE.png")
+    cmdIcon         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/cmd.png")
+    rebootIcon      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/reboot.png")
+    ONButton        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/ON.png")
+    OFFButton       = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/OFF.png")
+    flecheD         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/flecheDR.png")
+    flecheG         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/flecheGA.png")
+    boutonClair     = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/boutonClair.png")
+    boutonFonce     = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/boutonFonce.png")
+
+
 
     #On définit les caractéristiques de la GUI
     notebookBgColor  = config.get('GUICSS','notebookBgColor')
@@ -136,202 +334,137 @@ def initGUI(analysedDict) :
     colorPhase2      = config.get('GUICSS','phase2')
     colorPhase3      = config.get('GUICSS','phase3')
     valueColorWar    = config.get('GUICSS','valueColorWar')
-
+    titleColor       = config.get('GUICSS','titleColor')
 
     if ldebug>0 : print("Initialisation de la GUI...")
 
-    # On instancie la frame principale de la UI
-    master.attributes('-alpha', 0.0)
-    master.iconify()
-    master.title("Linky TIC analyser")
-    master.geometry("1024x600")
-    master.minsize(1024,600)
-    master.maxsize(1024,600)
-    master.configure(bg=notebookBgColor)
-    master.config(cursor="none")    # On désactive le curseur parcequ'on a un écran tactile :)
-    master.overrideredirect(1)      # On supprime le bord
-
-    #On commence par créer le style de notre UI
-    s = ttk.Style()
-    s.theme_create( "MyStyle", parent="alt", settings={
-            "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0] },
-                                        "background": notebookBgColor,
-                                        "bordercolor": "#FF0000",
-                                        "darkcolor": "#00FF00",
-                                        "foreground": "#0000FF",
-                                        "lightcolor": "FFFF00",
-                                        },
-            "TNotebook.Tab": {"configure": {"padding": [20, 10],
-                                            "background": notebookBgColor,
-                                            "foreground": config.get('GUICSS','notebookSelColor'),
-                                            "font" : (config.get('GUICSS','notebookFont'), textSizeSmall, 'bold')},
-                              "map":       {"background": [("selected", config.get('GUICSS','notebookSelColor'))],
-                                            "foreground": [("selected", notebookBgColor)],
-                                            "expand": [("selected", [1, 1, 1, 0])] }
-                                            }})
-    s.theme_use("MyStyle")
-
-
-
-    #Puis on crée le notebook
-    myNotebook = ttk.Notebook(master)
-    myNotebook.pack(padx=0, pady=0)
-
-    # Frame d'information
-    infoFrame = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-    myNotebook.add(infoFrame, text="Informations")
-
-    # Frame des index et dépassements
-    indexFrame = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-    myNotebook.add(indexFrame, text="Index")
 
     # Frame producteur (seulement en mode PRODUCTEUR)
     if "Fonctionnement" in analysedDict :
-        if analysedDict["Fonctionnement"] == "Producteur" :
-            productFrame = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-            myNotebook.add(productFrame, text="Production")
+        if analysedDict["Fonctionnement"] != "Producteur" :
+            productFrame.destroy()
+    else :
+        productFrame.destroy()
 
-    # Frame des tensions & puissances
-    tensionFrame = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-    myNotebook.add(tensionFrame, text="Tensions & Puissances")
-
-
-    # Frame(s) du graphique des intensités soutirées
-    global canvas
-    intensiteFrame  = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-    intensiteFrameL = Frame(intensiteFrame, width=824, height=600, bg=notebookBgColor)
-    intensiteFrameR = Frame(intensiteFrame, width=200, height=600, bg=notebookBgMedium)
-    intensiteFrameL.pack(side="left", fill="both", expand=False)
-    intensiteFrameR.pack(side="right", fill="both", expand=False)
-    myNotebook.add(intensiteFrame, text="Intensités")
-    canvas= Canvas(intensiteFrameL, width=824, height=600, bg=graphBg)
-    canvas.pack(expand=YES, fill=BOTH)
-
-    # Frame des statuts
-    statusFrame  = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-    statusFrameL = Frame(statusFrame, width=724, height=600, bg=notebookBgColor)
-    statusFrameR = Frame(statusFrame, width=300, height=600, bg=notebookBgLight)
-    statusFrameL.pack(side="left", fill="both", expand=False)
-    statusFrameR.pack(side="right", fill="both", expand=False)
-    myNotebook.add(statusFrame, text="Status")
 
     # Frame du REGISTRE (uniquement si la TIC est en mode STANDARD)
-    if analysedDict["ModeTIC"] == "Standard" :
-        registreFrame = Frame(myNotebook, width=1024, height=600, bg=notebookBgColor)
-        myNotebook.add(registreFrame, text="Registre")
+    if analysedDict["ModeTIC"] == "Historique" :
+        registreFrame.destroy()
 
-    #On instancie le notebook
-    myNotebook.select(infoFrame)
-    myNotebook.pack()
 
 
     #===============================================================================
     #=== Population de la frame INFORMATIONS                                     ===
     #===============================================================================
+    INFOTITLE = tk.StringVar()
+    INFOTITLE.set("Informations compteur & abonnement")
+    infoTitle = tk.Label(infoFrame, textvariable = INFOTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    infoTitle.grid(row=0, column=0, columnspan = 6, padx=15, ipadx=15, ipady=15)
+
     if "PRM" in analysedDict :
-        FieldPRM = StringVar()
+        FieldPRM = tk.StringVar()
         FieldPRM.set(analysedDict["PRM"])
-        labelPRM = Label(infoFrame, text="Point de livraison (PRM) :", font=(textFont,textSizeBig,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPRM.grid(row=0, column=0, sticky=E, padx=10, pady=(20,10))
-        valuePRM = Label(infoFrame, textvariable = FieldPRM, font=(textFont,textSizeBig), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePRM.grid(row=0, column=1, columnspan=3, sticky=W, padx=10, pady=(20,10))
+        LabelPRM = tk.Label(infoFrame, text="Point de livraison (PRM) :", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPRM.grid(row=1, column=0, sticky=tk.E, padx=10, pady=(20,10))
+        valuePRM = tk.Label(infoFrame, textvariable = FieldPRM, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePRM.grid(row=1, column=1, columnspan=3, sticky=tk.W, padx=10, pady=(20,10))
 
-    FieldAddresseCompteur = StringVar()
+    FieldAddresseCompteur = tk.StringVar()
     FieldAddresseCompteur.set(analysedDict["AdresseCompteur"])
-    labelAddresseCompteur = Label(infoFrame, text="Adresse du compteur :", font=(textFont,textSizeBig,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelAddresseCompteur.grid(row=1, column=0, sticky=E, padx=10, pady=(15,10))
-    valueAddresseCompteur = Label(infoFrame, textvariable = FieldAddresseCompteur, font=(textFont,textSizeBig), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueAddresseCompteur.grid(row=1, column=1, columnspan=3, sticky=W, padx=10, pady=(15,10))
+    LabelAddresseCompteur = tk.Label(infoFrame, text="Adresse du compteur :", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelAddresseCompteur.grid(row=2, column=0, sticky=tk.E, padx=10, pady=(15,10))
+    valueAddresseCompteur = tk.Label(infoFrame, textvariable = FieldAddresseCompteur, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueAddresseCompteur.grid(row=2, column=1, columnspan=3, sticky=tk.W, padx=10, pady=(15,10))
 
-    global DATE
-    if "DateHeureLinky" in analysedDict :
-        DATE = StringVar()
-        DATE.set(analysedDict["DateHeureLinky"])
-        valueDATE = Label(infoFrame, textvariable = DATE, font=(textFont,textSizeBig), relief=GROOVE, bg=labelBg, fg=valueColorWar)
-        valueDATE.grid(row=0, column=4, rowspan=2, columnspan = 2, padx=15, ipadx=15, ipady=15)
-
-    FieldNomCompteur = StringVar()
+    FieldNomCompteur = tk.StringVar()
     FieldNomCompteur.set(analysedDict["NomCompteur"])
-    labelNomCompteur = Label(infoFrame, text="Modèle de compteur :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelNomCompteur.grid(row=2, column=0, sticky=E, padx=10, pady=(30,10))
-    valueNomCompteur = Label(infoFrame, textvariable = FieldNomCompteur, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueNomCompteur.grid(row=2, column=1, columnspan=5, sticky=W, padx=10, pady=(30,10))
+    LabelNomCompteur = tk.Label(infoFrame, text="Modèle de compteur :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelNomCompteur.grid(row=3, column=0, sticky=tk.E, padx=10, pady=(30,10))
+    valueNomCompteur = tk.Label(infoFrame, textvariable = FieldNomCompteur, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueNomCompteur.grid(row=3, column=1, columnspan=5, sticky=tk.W, padx=10, pady=(30,10))
 
-    FieldIntensiteSouscrite = StringVar()
-    FieldPuissanceSouscrite = StringVar()
+    FieldIntensiteSouscrite = tk.StringVar()
+    FieldPuissanceSouscrite = tk.StringVar()
     if analysedDict["TypeCompteur"] == "MONO" :
         FieldIntensiteSouscrite.set(str(analysedDict["IntensiteSouscrite"]) + " kVA")
         FieldPuissanceSouscrite.set("(" + str(analysedDict["IntensiteSouscrite"] * 5) + " A)")
     else :
         FieldIntensiteSouscrite.set(str(analysedDict["IntensiteSouscrite"]) + " kVA")
         FieldPuissanceSouscrite.set("(" + str(analysedDict["IntensiteSouscrite"] * 5 / 3) + " A)")
-    labelIntensiteSouscrite = Label(infoFrame, text="Abonnement :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelIntensiteSouscrite.grid(row=3, column=0, sticky=E, padx=10, pady=(30,10))
-    valueIntensiteSouscrite = Label(infoFrame, textvariable = FieldIntensiteSouscrite, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueIntensiteSouscrite.grid(row=3, column=1, sticky=W, padx=(10,2), pady=(30,10))
-    valuePuissanceSouscrite = Label(infoFrame, textvariable = FieldPuissanceSouscrite, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    valuePuissanceSouscrite.grid(row=3, column=2, sticky=W, padx=1, pady=(30,10))
+    LabelIntensiteSouscrite = tk.Label(infoFrame, text="Abonnement :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelIntensiteSouscrite.grid(row=4, column=0, sticky=tk.E, padx=10, pady=(30,10))
+    valueIntensiteSouscrite = tk.Label(infoFrame, textvariable = FieldIntensiteSouscrite, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueIntensiteSouscrite.grid(row=4, column=1, sticky=tk.W, padx=(10,2), pady=(30,10))
+    valuePuissanceSouscrite = tk.Label(infoFrame, textvariable = FieldPuissanceSouscrite, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valuePuissanceSouscrite.grid(row=4, column=2, sticky=tk.W, padx=1, pady=(30,10))
 
     if "PuissanceCoupure" in analysedDict :
-        FieldPuissanceCoupure = StringVar()
+        FieldPuissanceCoupure = tk.StringVar()
         FieldPuissanceCoupure.set(str(analysedDict["PuissanceCoupure"]) + " kVA")
-        labelPuissanceCoupure = Label(infoFrame, text="Puissance de coupure :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPuissanceCoupure.grid(row=4, column=0, sticky=E, padx=10, pady=10)
-        valuePuissanceCoupure = Label(infoFrame, textvariable = FieldPuissanceCoupure, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceCoupure.grid(row=4, column=1, sticky=W, padx=10, pady=10)
+        LabelPuissanceCoupure = tk.Label(infoFrame, text="Puissance de coupure :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPuissanceCoupure.grid(row=5, column=0, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceCoupure = tk.Label(infoFrame, textvariable = FieldPuissanceCoupure, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceCoupure.grid(row=5, column=1, sticky=tk.W, padx=10, pady=10)
 
 
-    FieldTarifSouscrit = StringVar()
+    FieldTarifSouscrit = tk.StringVar()
     FieldTarifSouscrit.set(analysedDict["TarifSouscrit"])
-    labelTarifSouscrit = Label(infoFrame, text="Option tarifaire :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelTarifSouscrit.grid(row=5, column=0, sticky=E, padx=10, pady=(30,10))
-    valueTarifSouscrit = Label(infoFrame, textvariable = FieldTarifSouscrit, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueTarifSouscrit.grid(row=5, column=1, columnspan=3, sticky=W, padx=10, pady=(30,10))
+    LabelTarifSouscrit = tk.Label(infoFrame, text="Option tarifaire :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelTarifSouscrit.grid(row=6, column=0, sticky=tk.E, padx=10, pady=(30,10))
+    valueTarifSouscrit = tk.Label(infoFrame, textvariable = FieldTarifSouscrit, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueTarifSouscrit.grid(row=6, column=1, columnspan=3, sticky=tk.W, padx=10, pady=(30,10))
 
     global HPHCIcon
     global JOURIcon
     global DEMAINIcon
     if (analysedDict["TarifSouscrit"] == "Heures Creuses") or (analysedDict["TarifSouscrit"] == "Heures Creuses et Week-end") :
-        FieldHorairesHC = StringVar()
+        FieldHorairesHC = tk.StringVar()
         FieldHorairesHC.set("(" + analysedDict["HorairesHC"] + ")")
-        valueHorairesHC = Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHorairesHC.grid(row=5, column=3, columnspan=2, sticky=W, padx=10, pady=(30,10))
-        labelEnCours = Label(infoFrame, text="En cours :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelEnCours.grid(row=6, column=0, sticky=E, padx=10, pady=30)
-        HPHCIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        HPHCIcon.grid(row=6, column=1, padx=2, pady=2)
+        valueHorairesHC = tk.Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHorairesHC.grid(row=6, column=3, columnspan=2, sticky=tk.W, padx=10, pady=(30,10))
+        LabelEnCours = tk.Label(infoFrame, text="En cours :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelEnCours.grid(row=7, column=0, sticky=tk.E, padx=10, pady=30)
+        HPHCIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        HPHCIcon.grid(row=7, column=1, padx=2, pady=2)
 
     elif analysedDict["TarifSouscrit"] == "Tempo" :
-        FieldHorairesHC = StringVar()
+        FieldHorairesHC = tk.StringVar()
         FieldHorairesHC.set("(" + analysedDict["HorairesHC"] + ")")
-        valueHorairesHC = Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHorairesHC.grid(row=5, column=2, columnspan=2, sticky=W, padx=10, pady=(30,10))
-        labelEnCours = Label(infoFrame, text="En cours :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelEnCours.grid(row=6, column=0, sticky=E, padx=10, pady=10)
-        HPHCIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        HPHCIcon.grid(row=6, column=1, padx=2, pady=2)
-        JOURIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        JOURIcon.grid(row=6, column=2, sticky=W, padx=2, pady=2)
-        labelDEMAIN = Label(infoFrame, text="Demain :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelDEMAIN.grid(row=6, column=3, sticky=W, padx=10, pady=30)
-        DEMAINIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        DEMAINIcon.grid(row=6, column=4, sticky=W, padx=2, pady=2)
+        valueHorairesHC = tk.Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHorairesHC.grid(row=6, column=2, columnspan=2, sticky=tk.W, padx=10, pady=(30,10))
+        LabelEnCours = tk.Label(infoFrame, text="En cours :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelEnCours.grid(row=7, column=0, sticky=tk.E, padx=10, pady=10)
+        HPHCIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        HPHCIcon.grid(row=7, column=1, padx=2, pady=2)
+        JOURIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        JOURIcon.grid(row=7, column=2, sticky=tk.W, padx=2, pady=2)
+        LabelDEMAIN = tk.Label(infoFrame, text="Demain :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelDEMAIN.grid(row=7, column=3, sticky=tk.W, padx=10, pady=30)
+        DEMAINIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        DEMAINIcon.grid(row=7, column=4, sticky=tk.W, padx=2, pady=2)
 
     elif analysedDict["TarifSouscrit"] == "EJP" :
-        FieldHorairesHC = StringVar()
+        FieldHorairesHC = tk.StringVar()
         FieldHorairesHC.set("(" + analysedDict["HorairesHC"] + ")")
-        valueHorairesHC = Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHorairesHC.grid(row=5, column=3, columnspan=2, sticky=W, padx=10, pady=(30,10))
-        labelEnCours = Label(infoFrame, text="En cours :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelEnCours.grid(row=6, column=0, sticky=E, padx=10, pady=10)
-        HPHCIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        HPHCIcon.grid(row=6, column=1, padx=2, pady=2)
-        JOURIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        JOURIcon.grid(row=6, column=2, sticky=W, padx=2, pady=2)
-        labelDEMAIN = Label(infoFrame, text="Demain :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelDEMAIN.grid(row=6, column=3, sticky=W, padx=10, pady=30)
-        DEMAINIcon = Label(infoFrame, image=voyantNoir, borderwidth=0)
-        DEMAINIcon.grid(row=6, column=4, sticky=W, padx=2, pady=2)
+        valueHorairesHC = tk.Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHorairesHC.grid(row=6, column=3, columnspan=2, sticky=tk.W, padx=10, pady=(30,10))
+        LabelEnCours = tk.Label(infoFrame, text="En cours :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelEnCours.grid(row=4, column=0, sticky=tk.E, padx=10, pady=10)
+        HPHCIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        HPHCIcon.grid(row=7, column=1, padx=2, pady=2)
+        JOURIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        JOURIcon.grid(row=7, column=2, sticky=tk.W, padx=2, pady=2)
+        LabelDEMAIN = tk.Label(infoFrame, text="Demain :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelDEMAIN.grid(row=7, column=3, sticky=tk.W, padx=10, pady=30)
+        DEMAINIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
+        DEMAINIcon.grid(row=7, column=4, sticky=tk.W, padx=2, pady=2)
+
+    global DATE
+    if "DateHeureLinky" in analysedDict :
+        DATE = tk.StringVar()
+        DATE.set(analysedDict["DateHeureLinky"])
+        valueDATE = tk.Label(infoFrame, textvariable = DATE, font=(textFont,textSizeBig), bg=labelBg, fg=valueColorWar)
+        valueDATE.grid(row=8, column=0, columnspan = 6, padx=15, ipadx=15, ipady=15)
 
 
 
@@ -344,251 +477,264 @@ def initGUI(analysedDict) :
     global BBRHCJB, BBRHPJB, BBRHCJW, BBRHPJW, BBRHCJR, BBRHPJR
     global IndexTotal, IndexHPH, IndexHPB, IndexHCH, IndexHCB
 
+    INDEXTITLE = tk.StringVar()
+    INDEXTITLE.set("Index de consommation")
+    indexTitle = tk.Label(indexFrame, textvariable = INDEXTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    indexTitle.grid(row=0, column=0, columnspan = 6, padx=15, ipadx=15, ipady=15)
+
     if (analysedDict["TarifSouscrit"] == "Tarif de base") :
-        BASE = StringVar()
+        BASE = tk.StringVar()
         valueIndex = int(analysedDict["IndexBase"]) / 1000
         BASE.set("{:,}".format(valueIndex))
-        labelBASE = Label(indexFrame, text="Index option Base :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelBASE.grid(row=0, column=0, sticky=E, padx=10, pady=(30,10))
-        valueBASE = Label(indexFrame, textvariable = BASE, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBASE.grid(row=0, column=1, sticky=E, padx=10, pady=(30,10))
-        unitBASE = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitBASE.grid(row=0, column=2, sticky=E, padx=10, pady=(30,10))
+        LabelBASE = tk.Label(indexFrame, text="Index option Base :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelBASE.grid(row=1, column=0, sticky=tk.E, padx=10, pady=(30,10))
+        valueBASE = tk.Label(indexFrame, textvariable = BASE, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBASE.grid(row=1, column=1, sticky=tk.E, padx=10, pady=(30,10))
+        unitBASE = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitBASE.grid(row=1, column=2, sticky=tk.E, padx=10, pady=(30,10))
 
     elif (analysedDict["TarifSouscrit"] == "Heures Creuses") :
-        voyantIndexHP = Label(indexFrame, image=voyantHP, borderwidth=0)
-        voyantIndexHP.grid(row=0, column=1, columnspan=2, padx=2, pady=(15,5))
-        voyantIndexHC = Label(indexFrame, image=voyantHC, borderwidth=0)
-        voyantIndexHC.grid(row=0, column=3, columnspan=2, padx=2, pady=(15,5))
+        voyantIndexHP = tk.Label(indexFrame, image=voyantHP, borderwidth=0)
+        voyantIndexHP.grid(row=1, column=1, columnspan=2, padx=2, pady=(15,5))
+        voyantIndexHC = tk.Label(indexFrame, image=voyantHC, borderwidth=0)
+        voyantIndexHC.grid(row=1, column=3, columnspan=2, padx=2, pady=(15,5))
 
-        labelConsoHP = Label(indexFrame, text="Heures Pleines", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHP.grid(row=1, column=1, columnspan = 2, padx=10, pady=(20,10))
-        labelConsoHC = Label(indexFrame, text="Heures Creuses", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHC.grid(row=1, column=3, columnspan = 2, padx=10, pady=(20,10))
+        LabelConsoHP = tk.Label(indexFrame, text="Heures Pleines", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHP.grid(row=2, column=1, columnspan = 2, padx=10, pady=(20,10))
+        LabelConsoHC = tk.Label(indexFrame, text="Heures Creuses", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHC.grid(row=2, column=3, columnspan = 2, padx=10, pady=(20,10))
 
-        labelConsoHPH = Label(indexFrame, text="Saison Haute", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHPH.grid(row=2, column=1, padx=10, pady=(20,10))
-        labelConsoHPB = Label(indexFrame, text="Saison Basse", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHPB.grid(row=2, column=2, padx=10, pady=(20,10))
-        labelConsoHCH = Label(indexFrame, text="Saison Haute", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHCH.grid(row=2, column=3, padx=10, pady=(20,10))
-        labelConsoHCB = Label(indexFrame, text="Saison Basse", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHCB.grid(row=2, column=4, padx=10, pady=(20,10))
+        LabelConsoHPH = tk.Label(indexFrame, text="Saison Haute", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHPH.grid(row=3, column=1, padx=10, pady=(20,10))
+        LabelConsoHPB = tk.Label(indexFrame, text="Saison Basse", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHPB.grid(row=3, column=2, padx=10, pady=(20,10))
+        LabelConsoHCH = tk.Label(indexFrame, text="Saison Haute", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHCH.grid(row=3, column=3, padx=10, pady=(20,10))
+        LabelConsoHCB = tk.Label(indexFrame, text="Saison Basse", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHCB.grid(row=3, column=4, padx=10, pady=(20,10))
 
-        labelIndexS = Label(indexFrame, text="Index saisonnier :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndexS.grid(row=3, column=0, sticky=E, padx=10, pady=10)
+        LabelIndexS = tk.Label(indexFrame, text="Index saisons :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndexS.grid(row=4, column=0, sticky=tk.E, padx=10, pady=10)
 
-        IndexHPH = StringVar()
+        IndexHPH = tk.StringVar()
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex4"]) / 1000
         IndexHPH.set("{:,}".format(valueIndex))
-        valueHPH = Label(indexFrame, textvariable = IndexHPH, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHPH.grid(row=3, column=1, padx=10, pady=10)
+        valueHPH = tk.Label(indexFrame, textvariable = IndexHPH, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHPH.grid(row=4, column=1, padx=10, pady=10)
 
-        IndexHPB = StringVar()
+        IndexHPB = tk.StringVar()
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex2"]) / 1000
         IndexHPB.set("{:,}".format(valueIndex))
-        valueHPB = Label(indexFrame, textvariable = IndexHPB, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHPB.grid(row=3, column=2, padx=10, pady=10)
+        valueHPB = tk.Label(indexFrame, textvariable = IndexHPB, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHPB.grid(row=4, column=2, padx=10, pady=10)
 
-        IndexHCH = StringVar()
+        IndexHCH = tk.StringVar()
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex3"]) / 1000
         IndexHCH.set("{:,}".format(valueIndex))
-        valueHCH = Label(indexFrame, textvariable = IndexHCH, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHCH.grid(row=3, column=3, padx=10, pady=10)
+        valueHCH = tk.Label(indexFrame, textvariable = IndexHCH, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHCH.grid(row=4, column=3, padx=10, pady=10)
 
-        IndexHCB = StringVar()
+        IndexHCB = tk.StringVar()
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex1"]) / 1000
         IndexHCB.set("{:,}".format(valueIndex))
-        valueHCB = Label(indexFrame, textvariable = IndexHCB, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHCB.grid(row=3, column=4, padx=10, pady=10)
+        valueHCB = tk.Label(indexFrame, textvariable = IndexHCB, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHCB.grid(row=4, column=4, padx=10, pady=10)
 
-        unitIndexS = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndexS.grid(row=3, column=5, sticky=W, padx=10, pady=10)
+        unitIndexS = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndexS.grid(row=4, column=5, sticky=tk.W, padx=10, pady=10)
 
-        labelIndex = Label(indexFrame, text="Index HP/HC :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndex.grid(row=4, column=0, sticky=E, padx=10, pady=10)
+        LabelIndex = tk.Label(indexFrame, text="Index HP/HC :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndex.grid(row=5, column=0, sticky=tk.E, padx=10, pady=10)
 
-        HCHP = StringVar()
+        HCHP = tk.StringVar()
         valueIndex = int(analysedDict["IndexHP"]) / 1000
         HCHP.set("{:,}".format(valueIndex))
-        valueHCHP = Label(indexFrame, textvariable = HCHP, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHCHP.grid(row=4, column=1, columnspan = 2, padx=10, pady=10)
+        valueHCHP = tk.Label(indexFrame, textvariable = HCHP, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHCHP.grid(row=5, column=1, columnspan = 2, padx=10, pady=10)
 
-        HCHC = StringVar()
+        HCHC = tk.StringVar()
         valueIndex = int(analysedDict["IndexHP"]) / 1000
         HCHC.set("{:,}".format(valueIndex))
-        valueHCHC = Label(indexFrame, textvariable = HCHC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHCHC.grid(row=4, column=3, columnspan = 2, padx=10, pady=10)
+        valueHCHC = tk.Label(indexFrame, textvariable = HCHC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHCHC.grid(row=5, column=3, columnspan = 2, padx=10, pady=10)
 
-        unitIndex = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndex.grid(row=4, column=5, sticky=W, padx=10, pady=10)
+        unitIndex = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndex.grid(row=5, column=5, sticky=tk.W, padx=10, pady=10)
 
-        IndexTotal = StringVar()
+        IndexTotal = tk.StringVar()
         valueIndex = int(analysedDict["IndexTotal"]) / 1000
         IndexTotal.set("{:,}".format(valueIndex))
-        labelTOTAL = Label(indexFrame, text="Index total :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTOTAL.grid(row=5, column=0, sticky=E, padx=10, pady=(15,30))
-        valueTOTAL = Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTOTAL.grid(row=5, column=1, columnspan = 4, padx=10, pady=(15,30))
-        unitTOTAL = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTOTAL.grid(row=5, column=5, sticky=W, padx=10, pady=(15,30))
+        LabelTOTAL = tk.Label(indexFrame, text="Index total :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTOTAL.grid(row=6, column=0, sticky=tk.E, padx=10, pady=(15,30))
+        valueTOTAL = tk.Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTOTAL.grid(row=6, column=1, columnspan = 4, padx=10, pady=(15,30))
+        unitTOTAL = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTOTAL.grid(row=6, column=5, sticky=tk.W, padx=10, pady=(15,30))
 
 
     elif (analysedDict["TarifSouscrit"] == "Heures Creuses et Week-end") :
-        HCHC = StringVar()
+        voyantIndexHP = tk.Label(indexFrame, image=voyantHP, borderwidth=0)
+        voyantIndexHP.grid(row=1, column=1, columnspan=1, padx=2, pady=(15,5))
+        voyantIndexHC = tk.Label(indexFrame, image=voyantHC, borderwidth=0)
+        voyantIndexHC.grid(row=1, column=2, columnspan=1, padx=2, pady=(15,5))
+        voyantIndexWE = tk.Label(indexFrame, image=voyantWE, borderwidth=0)
+        voyantIndexWE.grid(row=1, column=3, columnspan=1, padx=2, pady=(15,5))
+
+        HCHC = tk.StringVar()
         valueIndex = int(analysedDict["IndexHC"]) / 1000
         HCHC.set("{:,}".format(valueIndex))
-        HCHP = StringVar()
+        HCHP = tk.StringVar()
         valueIndex = int(analysedDict["IndexHP"]) / 1000
         HCHP.set("{:,}".format(valueIndex))
-        HWE = StringVar()
+        HWE = tk.StringVar()
         valueIndex = int(analysedDict["IndexWE"]) / 1000
         HWE.set("{:,}".format(valueIndex))
-        labelConsoHP = Label(indexFrame, text="Heures Pleines", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHP.grid(row=0, column=1, padx=10, pady=(20,10))
-        labelConsoHC = Label(indexFrame, text="Heures Creuses", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHC.grid(row=0, column=2, padx=10, pady=(20,10))
-        labelConsoWE = Label(indexFrame, text="Heures Week-End", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoWE.grid(row=0, column=3, padx=10, pady=(20,10))
-        labelIndex = Label(indexFrame, text="Index HP/HC :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndex.grid(row=1, column=0, sticky=E, padx=10, pady=10)
-        valueHCHP = Label(indexFrame, textvariable = HCHP, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHCHP.grid(row=1, column=1, sticky=E, padx=10, pady=10)
-        valueHCHC = Label(indexFrame, textvariable = HCHC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHCHC.grid(row=1, column=2, sticky=E, padx=10, pady=10)
-        valueWEND = Label(indexFrame, textvariable = HWE, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueWEND.grid(row=1, column=3, sticky=E, padx=10, pady=10)
-        unitIndex = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndex.grid(row=1, column=4, sticky=E, padx=10, pady=10)
+        LabelConsoHP = tk.Label(indexFrame, text="Heures P", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHP.grid(row=2, column=1, padx=10, pady=(20,10))
+        LabelConsoHC = tk.Label(indexFrame, text="Heures C", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHC.grid(row=2, column=2, padx=10, pady=(20,10))
+        LabelConsoWE = tk.Label(indexFrame, text="Heures WE", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoWE.grid(row=2, column=3, padx=10, pady=(20,10))
+        LabelIndex = tk.Label(indexFrame, text="Index HP/HC/WE :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndex.grid(row=3, column=0, sticky=tk.E, padx=10, pady=10)
+        valueHCHP = tk.Label(indexFrame, textvariable = HCHP, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHCHP.grid(row=3, column=1, sticky=tk.E, padx=10, pady=10)
+        valueHCHC = tk.Label(indexFrame, textvariable = HCHC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHCHC.grid(row=3, column=2, sticky=tk.E, padx=10, pady=10)
+        valueWEND = tk.Label(indexFrame, textvariable = HWE, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueWEND.grid(row=3, column=3, sticky=tk.E, padx=10, pady=10)
+        unitIndex = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndex.grid(row=3, column=4, sticky=tk.E, padx=10, pady=10)
 
-        IndexTotal = StringVar()
+        IndexTotal = tk.StringVar()
         valueIndex = int(analysedDict["IndexTotal"]) / 1000
         IndexTotal.set("{:,}".format(valueIndex))
-        labelTOTAL = Label(indexFrame, text="Consommation totale :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTOTAL.grid(row=2, column=0, sticky=E, padx=10, pady=(15,30))
-        valueTOTAL = Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTOTAL.grid(row=2, column=1, columnspan = 3, padx=10, pady=(15,30))
-        unitTOTAL = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTOTAL.grid(row=2, column=4, sticky=E, padx=10, pady=(15,30))
+        LabelTOTAL = tk.Label(indexFrame, text="Index total :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTOTAL.grid(row=5, column=0, sticky=tk.E, padx=10, pady=(15,30))
+        valueTOTAL = tk.Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTOTAL.grid(row=5, column=1, columnspan = 3, padx=10, pady=(15,30))
+        unitTOTAL = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTOTAL.grid(row=5, column=4, sticky=tk.E, padx=10, pady=(15,30))
+
 
     elif (analysedDict["TarifSouscrit"] == "EJP") :
-        EJPHN = StringVar()
+        EJPHN = tk.StringVar()
         valueIndex = int(analysedDict["IndexEJPNormale"]) / 1000
         EJPHN.set("{:,}".format(valueIndex))
-        EJPHPM = StringVar()
+        EJPHPM = tk.StringVar()
         valueIndex = int(analysedDict["IndexEJPPointe"]) / 1000
         EJPHN.set("{:,}".format(valueIndex))
-        labelConsoEN = Label(indexFrame, text="Heures Normales", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoEN.grid(row=0, column=1, sticky=E, padx=30, pady=(20,10))
-        labelConsoEP = Label(indexFrame, text="Heures de Pointe Mobile", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoEP.grid(row=0, column=2, sticky=E, padx=30, pady=(20,10))
-        labelIndex = Label(indexFrame, text="Index EJP :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndex.grid(row=1, column=0, sticky=E, padx=30, pady=10)
-        valueEJPHN = Label(indexFrame, textvariable = EJPHN, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueEJPHN.grid(row=1, column=1, sticky=E, padx=30, pady=10)
-        valueEJPHPM = Label(indexFrame, textvariable = EJPHPM, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueEJPHPM.grid(row=1, column=2, sticky=E, padx=30, pady=10)
-        unitIndex = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndex.grid(row=1, column=3, sticky=E, padx=30, pady=10)
+        LabelConsoEN = tk.Label(indexFrame, text="Heures Normales", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoEN.grid(row=1, column=1, sticky=tk.E, padx=30, pady=(20,10))
+        LabelConsoEP = tk.Label(indexFrame, text="Heures de Pointe", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoEP.grid(row=1, column=2, sticky=tk.E, padx=30, pady=(20,10))
+        LabelIndex = tk.Label(indexFrame, text="Index EJP :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndex.grid(row=2, column=0, sticky=tk.E, padx=30, pady=10)
+        valueEJPHN = tk.Label(indexFrame, textvariable = EJPHN, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueEJPHN.grid(row=2, column=1, sticky=tk.E, padx=30, pady=10)
+        valueEJPHPM = tk.Label(indexFrame, textvariable = EJPHPM, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueEJPHPM.grid(row=2, column=2, sticky=tk.E, padx=30, pady=10)
+        unitIndex = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndex.grid(row=2, column=3, sticky=tk.E, padx=30, pady=10)
 
-        IndexTotal = StringVar()
+        IndexTotal = tk.StringVar()
         valueIndex = int(analysedDict["IndexTotal"]) / 1000
         IndexTotal.set("{:,}".format(valueIndex))
-        labelTOTAL = Label(indexFrame, text="Consommation totale :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTOTAL.grid(row=2, column=0, sticky=E, padx=30, pady=(15,30))
-        valueTOTAL = Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTOTAL.grid(row=2, column=1, columnspan = 2, padx=30, pady=(15,30))
-        unitTOTAL = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTOTAL.grid(row=2, column=4, sticky=E, padx=30, pady=(15,30))
+        LabelTOTAL = tk.Label(indexFrame, text="Index total :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTOTAL.grid(row=3, column=0, sticky=tk.E, padx=30, pady=(15,30))
+        valueTOTAL = tk.Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTOTAL.grid(row=3, column=1, columnspan = 2, padx=30, pady=(15,30))
+        unitTOTAL = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTOTAL.grid(row=3, column=4, sticky=tk.E, padx=30, pady=(15,30))
 
     elif (analysedDict["TarifSouscrit"] == "Tempo") :
-        BBRHCJB = StringVar()
+        BBRHCJB = tk.StringVar()
         valueIndex = int(analysedDict["IndexHCJB"]) / 1000
         BBRHCJB.set("{:,}".format(valueIndex))
-        BBRHPJB = StringVar()
+        BBRHPJB = tk.StringVar()
         valueIndex = int(analysedDict["IndexHPJB"]) / 1000
         BBRHPJB.set("{:,}".format(valueIndex))
-        BBRHCJW = StringVar()
+        BBRHCJW = tk.StringVar()
         valueIndex = int(analysedDict["IndexHCJW"]) / 1000
         BBRHCJW.set("{:,}".format(valueIndex))
-        BBRHPJW = StringVar()
+        BBRHPJW = tk.StringVar()
         valueIndex = int(analysedDict["IndexHPJW"]) / 1000
         BBRHPJW.set("{:,}".format(valueIndex))
-        BBRHCJR = StringVar()
+        BBRHCJR = tk.StringVar()
         valueIndex = int(analysedDict["IndexHCJR"]) / 1000
         BBRHCJR.set("{:,}".format(valueIndex))
-        BBRHPJR = StringVar()
+        BBRHPJR = tk.StringVar()
         valueIndex = int(analysedDict["IndexHPJR"]) / 1000
         BBRHPJR.set("{:,}".format(valueIndex))
 
-        labelConsoHP = Label(indexFrame, text="Heures Pleines", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHP.grid(row=0, column=1, sticky=E, padx=30, pady=(20,10))
-        labelConsoHC = Label(indexFrame, text="Heures Creuses", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelConsoHC.grid(row=0, column=2, sticky=E, padx=30, pady=(20,10))
-        labelIndexB = Label(indexFrame, text="Index Jours Bleus :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndexB.grid(row=1, column=0, sticky=E, padx=30, pady=10)
-        valueBBRHPJB = Label(indexFrame, textvariable = BBRHPJB, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBBRHPJB.grid(row=1, column=1, sticky=E, padx=30, pady=10)
-        valueBBRHCJB = Label(indexFrame, textvariable = BBRHCJB, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBBRHCJB.grid(row=1, column=2, sticky=E, padx=30, pady=10)
-        unitIndexB = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndexB.grid(row=1, column=3, sticky=E, padx=30, pady=10)
-        labelIndexW = Label(indexFrame, text="Index Jours Blancs :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndexW.grid(row=2, column=0, sticky=E, padx=30, pady=10)
-        valueBBRHPJW = Label(indexFrame, textvariable = BBRHPJW, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBBRHPJW.grid(row=2, column=1, sticky=E, padx=30, pady=10)
-        valueBBRHCJW = Label(indexFrame, textvariable = BBRHCJW, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBBRHCJW.grid(row=2, column=2, sticky=E, padx=30, pady=10)
-        unitIndexW = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndexW.grid(row=2, column=3, sticky=E, padx=30, pady=10)
-        labelIndexR = Label(indexFrame, text="Index Jours Rouges :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelIndexR.grid(row=3, column=0, sticky=E, padx=30, pady=10)
-        valueBBRHPJR = Label(indexFrame, textvariable = BBRHPJR, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBBRHPJR.grid(row=3, column=1, sticky=E, padx=30, pady=10)
-        valueBBRHCJR = Label(indexFrame, textvariable = BBRHCJR, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueBBRHCJR.grid(row=3, column=2, sticky=E, padx=30, pady=10)
-        unitIndexR = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitIndexR.grid(row=3, column=3, sticky=E, padx=30, pady=10)
+        LabelConsoHP = tk.Label(indexFrame, text="Heures Pleines", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHP.grid(row=1, column=1, sticky=tk.E, padx=30, pady=(20,10))
+        LabelConsoHC = tk.Label(indexFrame, text="Heures Creuses", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelConsoHC.grid(row=1, column=2, sticky=tk.E, padx=30, pady=(20,10))
+        LabelIndexB = tk.Label(indexFrame, text="Index Bleu :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndexB.grid(row=2, column=0, sticky=tk.E, padx=30, pady=10)
+        valueBBRHPJB = tk.Label(indexFrame, textvariable = BBRHPJB, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBBRHPJB.grid(row=2, column=1, sticky=tk.E, padx=30, pady=10)
+        valueBBRHCJB = tk.Label(indexFrame, textvariable = BBRHCJB, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBBRHCJB.grid(row=2, column=2, sticky=tk.E, padx=30, pady=10)
+        unitIndexB = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndexB.grid(row=2, column=3, sticky=tk.E, padx=30, pady=10)
+        LabelIndexW = tk.Label(indexFrame, text="Index Blanc :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndexW.grid(row=3, column=0, sticky=tk.E, padx=30, pady=10)
+        valueBBRHPJW = tk.Label(indexFrame, textvariable = BBRHPJW, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBBRHPJW.grid(row=3, column=1, sticky=tk.E, padx=30, pady=10)
+        valueBBRHCJW = tk.Label(indexFrame, textvariable = BBRHCJW, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBBRHCJW.grid(row=3, column=2, sticky=tk.E, padx=30, pady=10)
+        unitIndexW = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndexW.grid(row=3, column=3, sticky=tk.E, padx=30, pady=10)
+        LabelIndexR = tk.Label(indexFrame, text="Index Rouge :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelIndexR.grid(row=3, column=0, sticky=tk.E, padx=30, pady=10)
+        valueBBRHPJR = tk.Label(indexFrame, textvariable = BBRHPJR, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBBRHPJR.grid(row=4, column=1, sticky=tk.E, padx=30, pady=10)
+        valueBBRHCJR = tk.Label(indexFrame, textvariable = BBRHCJR, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueBBRHCJR.grid(row=4, column=2, sticky=tk.E, padx=30, pady=10)
+        unitIndexR = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitIndexR.grid(row=4, column=3, sticky=tk.E, padx=30, pady=10)
 
-        IndexTotal = StringVar()
+        IndexTotal = tk.StringVar()
         valueIndex = int(analysedDict["IndexTotal"]) / 1000
         IndexTotal.set("{:,}".format(valueIndex))
-        labelTOTAL = Label(indexFrame, text="Consommation totale :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTOTAL.grid(row=4, column=0, sticky=E, padx=30, pady=(15,30))
-        valueTOTAL = Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTOTAL.grid(row=4, column=1, columnspan = 2, padx=30, pady=(15,30))
-        unitTOTAL = Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTOTAL.grid(row=4, column=4, sticky=E, padx=30, pady=(15,30))
+        LabelTOTAL = tk.Label(indexFrame, text="Index total :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTOTAL.grid(row=5, column=0, sticky=tk.E, padx=30, pady=(15,30))
+        valueTOTAL = tk.Label(indexFrame, textvariable = IndexTotal, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTOTAL.grid(row=5, column=1, columnspan = 2, padx=30, pady=(15,30))
+        unitTOTAL = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTOTAL.grid(row=5, column=4, sticky=tk.E, padx=30, pady=(15,30))
 
     if analysedDict["ModeTIC"] == "Historique" :
         if analysedDict["TypeCompteur"] == "MONO" :
             global DepassementPuissance
-            DepassementPuissance = StringVar()
-            labelDepassementPuissance = Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelDepassementPuissance.grid(row=5, column=0, columnspan = 3, sticky=E, padx=30, pady=(45,10))
-            valueDepassementPuissance = Label(indexFrame, textvariable = DepassementPuissance, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valueDepassementPuissance.grid(row=5, column=3, sticky=W, padx=30, pady=(45,10))
+            DepassementPuissance = tk.StringVar()
+            LabelDepassementPuissance = tk.Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelDepassementPuissance.grid(row=6, column=0, columnspan = 3, sticky=tk.E, padx=30, pady=(45,10))
+            valueDepassementPuissance = tk.Label(indexFrame, textvariable = DepassementPuissance, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valueDepassementPuissance.grid(row=6, column=3, sticky=tk.W, padx=30, pady=(45,10))
         else :
             global DepassementPuissancePhase1
-            DepassementPuissancePhase1 = StringVar()
-            labelDepassementPuissanceP1 = Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite - Phase 1 :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelDepassementPuissanceP1.grid(row=5, column=0, columnspan = 3, sticky=E, padx=30, pady=(45,10))
-            valueDepassementPuissanceP1 = Label(indexFrame, textvariable = DepassementPuissanceP1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valueDepassementPuissanceP1.grid(row=5, column=3, sticky=W, padx=30, pady=(45,10))
+            DepassementPuissancePhase1 = tk.StringVar()
+            LabelDepassementPuissanceP1 = tk.Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite - Phase 1 :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelDepassementPuissanceP1.grid(row=6, column=0, columnspan = 3, sticky=tk.E, padx=30, pady=(45,10))
+            valueDepassementPuissanceP1 = tk.Label(indexFrame, textvariable = DepassementPuissanceP1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valueDepassementPuissanceP1.grid(row=6, column=3, sticky=tk.W, padx=30, pady=(45,10))
 
             global DepassementPuissancePhase2
-            DepassementPuissancePhase2 = StringVar()
-            labelDepassementPuissanceP2 = Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite - Phase 2 :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelDepassementPuissanceP2.grid(row=6, column=0, columnspan = 3, sticky=E, padx=30, pady=(15,10))
-            valueDepassementPuissanceP2 = Label(indexFrame, textvariable = DepassementPuissanceP2, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valueDepassementPuissanceP2.grid(row=6, column=3, sticky=W, padx=30, pady=(45,10))
+            DepassementPuissancePhase2 = tk.StringVar()
+            LabelDepassementPuissanceP2 = tk.Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite - Phase 2 :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelDepassementPuissanceP2.grid(row=7, column=0, columnspan = 3, sticky=tk.E, padx=30, pady=(15,10))
+            valueDepassementPuissanceP2 = tk.Label(indexFrame, textvariable = DepassementPuissanceP2, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valueDepassementPuissanceP2.grid(row=7, column=3, sticky=tk.W, padx=30, pady=(45,10))
 
             global DepassementPuissancePhase3
-            DepassementPuissancePhase3 = StringVar()
-            labelDepassementPuissanceP3 = Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite - Phase 3 :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelDepassementPuissanceP3.grid(row=7, column=0, columnspan = 3, sticky=E, padx=30, pady=(15,10))
-            valueDepassementPuissanceP3 = Label(indexFrame, textvariable = DepassementPuissanceP3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valueDepassementPuissanceP3.grid(row=7, column=3, sticky=W, padx=30, pady=(45,10))
+            DepassementPuissancePhase3 = tk.StringVar()
+            LabelDepassementPuissanceP3 = tk.Label(indexFrame, text="Avertissement de Dépassement de Puissance Souscrite - Phase 3 :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelDepassementPuissanceP3.grid(row=8, column=0, columnspan = 3, sticky=tk.E, padx=30, pady=(15,10))
+            valueDepassementPuissanceP3 = tk.Label(indexFrame, textvariable = DepassementPuissanceP3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valueDepassementPuissanceP3.grid(row=8, column=3, sticky=tk.W, padx=30, pady=(45,10))
 
 
 
@@ -600,146 +746,157 @@ def initGUI(analysedDict) :
     global PuissanceApparenteMaxN1, PuissanceApparenteMaxN1Phase1, PuissanceApparenteMaxN1Phase2, PuissanceApparenteMaxN1Phase3
     global TensionEfficacePhase1, TensionEfficacePhase2, TensionEfficacePhase3, TensionMoyennePhase1, TensionMoyennePhase2, TensionMoyennePhase3
 
-    PresenceDesPotentiels         = StringVar()
-    PuissanceApparente            = StringVar()
-    PuissanceApparentePhase1      = StringVar()
-    PuissanceApparentePhase2      = StringVar()
-    PuissanceApparentePhase3      = StringVar()
-    PuissanceMaxAtteinte          = StringVar()
-    PuissanceMaxAtteintePhase1    = StringVar()
-    PuissanceMaxAtteintePhase2    = StringVar()
-    PuissanceMaxAtteintePhase3    = StringVar()
-    PuissanceApparenteMaxN1       = StringVar()
-    PuissanceApparenteMaxN1Phase1 = StringVar()
-    PuissanceApparenteMaxN1Phase2 = StringVar()
-    PuissanceApparenteMaxN1Phase3 = StringVar()
-    TensionEfficacePhase1         = StringVar()
-    TensionEfficacePhase2         = StringVar()
-    TensionEfficacePhase3         = StringVar()
-    TensionMoyennePhase1          = StringVar()
-    TensionMoyennePhase2          = StringVar()
-    TensionMoyennePhase3          = StringVar()
+    PresenceDesPotentiels         = tk.StringVar()
+    PuissanceApparente            = tk.StringVar()
+    PuissanceApparentePhase1      = tk.StringVar()
+    PuissanceApparentePhase2      = tk.StringVar()
+    PuissanceApparentePhase3      = tk.StringVar()
+    PuissanceMaxAtteinte          = tk.StringVar()
+    PuissanceMaxAtteintePhase1    = tk.StringVar()
+    PuissanceMaxAtteintePhase2    = tk.StringVar()
+    PuissanceMaxAtteintePhase3    = tk.StringVar()
+    PuissanceApparenteMaxN1       = tk.StringVar()
+    PuissanceApparenteMaxN1Phase1 = tk.StringVar()
+    PuissanceApparenteMaxN1Phase2 = tk.StringVar()
+    PuissanceApparenteMaxN1Phase3 = tk.StringVar()
+    TensionEfficacePhase1         = tk.StringVar()
+    TensionEfficacePhase2         = tk.StringVar()
+    TensionEfficacePhase3         = tk.StringVar()
+    TensionMoyennePhase1          = tk.StringVar()
+    TensionMoyennePhase2          = tk.StringVar()
+    TensionMoyennePhase3          = tk.StringVar()
+
+    TENSIONTITLE = tk.StringVar()
+    TENSIONTITLE.set("Tensions & Puissances")
+    tensionTitle = tk.Label(tensionFrame, textvariable = TENSIONTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    tensionTitle.grid(row=0, column=0, columnspan = 6, padx=15, ipadx=15, ipady=15)
+
 
     if analysedDict["TypeCompteur"] == "MONO" :
         if "TensionEfficacePhase1" in analysedDict :
-            labelTensionEfficacePhase1 = Label(tensionFrame, text="Tension efficace :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelTensionEfficacePhase1.grid(row=0, column=0, sticky=E, padx=30, pady=(30,10))
-            valueTensionEfficacePhase1 = Label(tensionFrame, textvariable = TensionEfficacePhase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valueTensionEfficacePhase1.grid(row=0, column=1, sticky=E, padx=30, pady=(30,10))
-            unitTensionEfficacePhase1 = Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            unitTensionEfficacePhase1.grid(row=0, column=2, sticky=W, padx=30, pady=(30,10))
+            LabelTensionEfficacePhase1 = tk.Label(tensionFrame, text="Tension efficace :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelTensionEfficacePhase1.grid(row=1, column=0, sticky=tk.E, padx=30, pady=(30,10))
+            valueTensionEfficacePhase1 = tk.Label(tensionFrame, textvariable = TensionEfficacePhase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valueTensionEfficacePhase1.grid(row=1, column=1, sticky=tk.E, padx=30, pady=(30,10))
+            unitTensionEfficacePhase1 = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            unitTensionEfficacePhase1.grid(row=1, column=2, sticky=tk.W, padx=30, pady=(30,10))
 
         if "TensionMoyennePhase1" in analysedDict :
-            labelTensionMoyennePhase1 = Label(tensionFrame, text="Tension moyenne :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelTensionMoyennePhase1.grid(row=1, column=0, sticky=E, padx=30, pady=10)
-            valueTensionMoyennePhase1 = Label(tensionFrame, textvariable = TensionMoyennePhase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valueTensionMoyennePhase1.grid(row=1, column=1, sticky=E, padx=30, pady=10)
-            unitTensionMoyennePhase1 = Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            unitTensionMoyennePhase1.grid(row=1, column=2, sticky=W, padx=30, pady=10)
+            LabelTensionMoyennePhase1 = tk.Label(tensionFrame, text="Tension moyenne :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelTensionMoyennePhase1.grid(row=2, column=0, sticky=tk.E, padx=30, pady=10)
+            valueTensionMoyennePhase1 = tk.Label(tensionFrame, textvariable = TensionMoyennePhase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valueTensionMoyennePhase1.grid(row=2, column=1, sticky=tk.E, padx=30, pady=10)
+            unitTensionMoyennePhase1 = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            unitTensionMoyennePhase1.grid(row=2, column=2, sticky=tk.W, padx=30, pady=10)
 
         if "PuissanceApparente" in analysedDict :
-            labelPuissanceApparente = Label(tensionFrame, text="Puissance apprente :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelPuissanceApparente.grid(row=2, column=0, sticky=E, padx=30, pady=(55,10))
-            valuePuissanceApparente = Label(tensionFrame, textvariable = PuissanceApparente, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valuePuissanceApparente.grid(row=2, column=1, sticky=E, padx=30, pady=(55,10))
-            unitPuissanceApparente = Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            unitPuissanceApparente.grid(row=2, column=2, sticky=W, padx=30, pady=(55,10))
+            LabelPuissanceApparente = tk.Label(tensionFrame, text="Puissance apprente :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelPuissanceApparente.grid(row=3, column=0, sticky=tk.E, padx=30, pady=(55,10))
+            valuePuissanceApparente = tk.Label(tensionFrame, textvariable = PuissanceApparente, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valuePuissanceApparente.grid(row=3, column=1, sticky=tk.E, padx=30, pady=(55,10))
+            unitPuissanceApparente = tk.Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            unitPuissanceApparente.grid(row=3, column=2, sticky=tk.W, padx=30, pady=(55,10))
 
         if "PuissanceMaxAtteinte" in analysedDict :
-            labelPuissanceMaxAtteinte = Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelPuissanceMaxAtteinte.grid(row=3, column=0, sticky=E, padx=30, pady=10)
-            valuePuissanceMaxAtteinte = Label(tensionFrame, textvariable = PuissanceMaxAtteinte, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valuePuissanceMaxAtteinte.grid(row=3, column=1, sticky=E, padx=30, pady=10)
-            unitPuissanceMaxAtteinte= Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            unitPuissanceMaxAtteinte.grid(row=3, column=2, sticky=W, padx=30, pady=10)
+            LabelPuissanceMaxAtteinte = tk.Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelPuissanceMaxAtteinte.grid(row=4, column=0, sticky=tk.E, padx=30, pady=10)
+            valuePuissanceMaxAtteinte = tk.Label(tensionFrame, textvariable = PuissanceMaxAtteinte, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valuePuissanceMaxAtteinte.grid(row=4, column=1, sticky=tk.E, padx=30, pady=10)
+            unitPuissanceMaxAtteinte= tk.Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            unitPuissanceMaxAtteinte.grid(row=4, column=2, sticky=tk.W, padx=30, pady=10)
 
         if "PuissanceApparenteMaxN-1" in analysedDict :
-            labelPuissanceApparenteMaxN1 = Label(tensionFrame, text="(Hier :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelPuissanceApparenteMaxN1.grid(row=3, column=3, sticky=E, padx=30, pady=10)
-            valuePuissanceApparenteMaxN1 = Label(tensionFrame, textvariable = PuissanceApparenteMaxN1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valuePuissanceApparenteMaxN1.grid(row=3, column=4, sticky=E, padx=30, pady=10)
-            unitPuissanceApparenteMaxN1= Label(tensionFrame, text="VA)", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            unitPuissanceApparenteMaxN1.grid(row=3, column=5, sticky=W, padx=30, pady=10)
+            LabelPuissanceApparenteMaxN1 = tk.Label(tensionFrame, text="(Hier :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelPuissanceApparenteMaxN1.grid(row=4, column=3, sticky=tk.E, padx=30, pady=10)
+            valuePuissanceApparenteMaxN1 = tk.Label(tensionFrame, textvariable = PuissanceApparenteMaxN1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valuePuissanceApparenteMaxN1.grid(row=4, column=4, sticky=tk.E, padx=30, pady=10)
+            unitPuissanceApparenteMaxN1= tk.Label(tensionFrame, text="VA)", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            unitPuissanceApparenteMaxN1.grid(row=4, column=5, sticky=tk.W, padx=30, pady=10)
 
     else :
-        labelPhase1 = Label(tensionFrame, text="Phase 1", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=colorPhase1)
-        labelPhase1.grid(row=0, column=1, padx=10, pady=(20,10))
-        labelPhase2 = Label(tensionFrame, text="Phase 2", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=colorPhase2)
-        labelPhase2.grid(row=0, column=2, padx=10, pady=(20,10))
-        labelPhase3 = Label(tensionFrame, text="Phase 3", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=colorPhase3)
-        labelPhase3.grid(row=0, column=3, padx=10, pady=(20,10))
+        LabelPhase1 = tk.Label(tensionFrame, text="Phase 1", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=colorPhase1)
+        LabelPhase1.grid(row=1, column=1, padx=10, pady=(20,10))
+        LabelPhase2 = tk.Label(tensionFrame, text="Phase 2", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=colorPhase2)
+        LabelPhase2.grid(row=1, column=2, padx=10, pady=(20,10))
+        LabelPhase3 = tk.Label(tensionFrame, text="Phase 3", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=colorPhase3)
+        LabelPhase3.grid(row=1, column=3, padx=10, pady=(20,10))
 
-        labelTensionEfficace = Label(tensionFrame, text="Tension efficace :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTensionEfficace.grid(row=1, column=0, sticky=E, padx=10, pady=10)
-        valueTensionEfficacePhase1 = Label(tensionFrame, textvariable = TensionEfficacePhase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTensionEfficacePhase1.grid(row=1, column=1, sticky=E, padx=10, pady=10)
-        valueTensionEfficacePhase2 = Label(tensionFrame, textvariable = TensionEfficacePhase2, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTensionEfficacePhase2.grid(row=1, column=2, sticky=E, padx=10, pady=10)
-        valueTensionEfficacePhase3 = Label(tensionFrame, textvariable = TensionEfficacePhase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTensionEfficacePhase3.grid(row=1, column=3, sticky=E, padx=10, pady=10)
-        unitTensionEfficace = Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTensionEfficace.grid(row=1, column=4, sticky=E, padx=10, pady=10)
+        LabelTensionEfficace = tk.Label(tensionFrame, text="Tension efficace :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTensionEfficace.grid(row=2, column=0, sticky=tk.E, padx=10, pady=10)
+        valueTensionEfficacePhase1 = tk.Label(tensionFrame, textvariable = TensionEfficacePhase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTensionEfficacePhase1.grid(row=2, column=1, sticky=tk.E, padx=10, pady=10)
+        valueTensionEfficacePhase2 = tk.Label(tensionFrame, textvariable = TensionEfficacePhase2, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTensionEfficacePhase2.grid(row=2, column=2, sticky=tk.E, padx=10, pady=10)
+        valueTensionEfficacePhase3 = tk.Label(tensionFrame, textvariable = TensionEfficacePhase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTensionEfficacePhase3.grid(row=2, column=3, sticky=tk.E, padx=10, pady=10)
+        unitTensionEfficace = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTensionEfficace.grid(row=2, column=4, sticky=tk.E, padx=10, pady=10)
 
-        labelTensionMoyenne = Label(tensionFrame, text="Tension moyenne :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTensionMoyenne.grid(row=2, column=0, sticky=E, padx=10, pady=10)
-        valueTensionMoyennePhase1 = Label(tensionFrame, textvariable = TensionMoyennePhase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTensionMoyennePhase1.grid(row=2, column=1, sticky=E, padx=10, pady=10)
-        valueTensionMoyennePhase2 = Label(tensionFrame, textvariable = TensionMoyennePhase2, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTensionMoyennePhase2.grid(row=2, column=2, sticky=E, padx=10, pady=10)
-        valueTensionMoyennePhase3 = Label(tensionFrame, textvariable = TensionMoyennePhase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTensionMoyennePhase3.grid(row=2, column=3, sticky=E, padx=10, pady=10)
-        unitTensionMoyenne = Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTensionMoyenne.grid(row=2, column=4, sticky=E, padx=10, pady=10)
+        LabelTensionMoyenne = tk.Label(tensionFrame, text="Tension moyenne :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTensionMoyenne.grid(row=3, column=0, sticky=tk.E, padx=10, pady=10)
+        valueTensionMoyennePhase1 = tk.Label(tensionFrame, textvariable = TensionMoyennePhase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTensionMoyennePhase1.grid(row=3, column=1, sticky=tk.E, padx=10, pady=10)
+        valueTensionMoyennePhase2 = tk.Label(tensionFrame, textvariable = TensionMoyennePhase2, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTensionMoyennePhase2.grid(row=3, column=2, sticky=tk.E, padx=10, pady=10)
+        valueTensionMoyennePhase3 = tk.Label(tensionFrame, textvariable = TensionMoyennePhase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTensionMoyennePhase3.grid(row=3, column=3, sticky=tk.E, padx=10, pady=10)
+        unitTensionMoyenne = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTensionMoyenne.grid(row=3, column=4, sticky=tk.E, padx=10, pady=10)
 
-        labelPuissanceApparente = Label(tensionFrame, text="Puissance apprente :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPuissanceApparente.grid(row=3, column=0, sticky=E, padx=10, pady=(55,10))
-        valuePuissanceApparentePhase1 = Label(tensionFrame, textvariable = PuissanceApparentePhase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceApparentePhase1.grid(row=3, column=1, sticky=E, padx=10, pady=(55,10))
-        valuePuissanceApparentePhase2 = Label(tensionFrame, textvariable = PuissanceApparentePhase2, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceApparentePhase2.grid(row=3, column=2, sticky=E, padx=10, pady=(55,10))
-        valuePuissanceApparentePhase3 = Label(tensionFrame, textvariable = PuissanceApparentePhase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceApparentePhase3.grid(row=3, column=3, sticky=E, padx=10, pady=(55,10))
-        unitTensionMoyenne = Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitTensionMoyenne.grid(row=3, column=4, sticky=E, padx=10, pady=(55,10))
+        LabelPuissanceApparente = tk.Label(tensionFrame, text="Puissance apprente :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPuissanceApparente.grid(row=4, column=0, sticky=tk.E, padx=10, pady=(55,10))
+        valuePuissanceApparentePhase1 = tk.Label(tensionFrame, textvariable = PuissanceApparentePhase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceApparentePhase1.grid(row=4, column=1, sticky=tk.E, padx=10, pady=(55,10))
+        valuePuissanceApparentePhase2 = tk.Label(tensionFrame, textvariable = PuissanceApparentePhase2, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceApparentePhase2.grid(row=4, column=2, sticky=tk.E, padx=10, pady=(55,10))
+        valuePuissanceApparentePhase3 = tk.Label(tensionFrame, textvariable = PuissanceApparentePhase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceApparentePhase3.grid(row=4, column=3, sticky=tk.E, padx=10, pady=(55,10))
+        unitTensionMoyenne = tk.Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitTensionMoyenne.grid(row=4, column=4, sticky=tk.E, padx=10, pady=(55,10))
 
-        labelPuissanceMaxAtteinte = Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPuissanceMaxAtteinte.grid(row=4, column=0, sticky=E, padx=10, pady=10)
-        valuePuissanceMaxAtteintePhase1 = Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceMaxAtteintePhase1.grid(row=4, column=1, sticky=E, padx=10, pady=10)
-        valuePuissanceMaxAtteintePhase2 = Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceMaxAtteintePhase2.grid(row=4, column=2, sticky=E, padx=10, pady=10)
-        valuePuissanceMaxAtteintePhase3 = Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceMaxAtteintePhase3.grid(row=4, column=3, sticky=E, padx=10, pady=10)
-        unitPuissanceMaxAtteinte = Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitPuissanceMaxAtteinte.grid(row=4, column=4, sticky=E, padx=10, pady=10)
+        LabelPuissanceMaxAtteinte = tk.Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPuissanceMaxAtteinte.grid(row=5, column=0, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceMaxAtteintePhase1 = tk.Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceMaxAtteintePhase1.grid(row=5, column=1, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceMaxAtteintePhase2 = tk.Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceMaxAtteintePhase2.grid(row=5, column=2, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceMaxAtteintePhase3 = tk.Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceMaxAtteintePhase3.grid(row=5, column=3, sticky=tk.E, padx=10, pady=10)
+        unitPuissanceMaxAtteinte = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitPuissanceMaxAtteinte.grid(row=5, column=4, sticky=tk.E, padx=10, pady=10)
 
-        labelPuissanceApparenteMaxN1 = Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPuissanceApparenteMaxN1.grid(row=5, column=0, sticky=E, padx=10, pady=10)
-        valuePuissanceApparenteMaxN1Phase1 = Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase1, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceApparenteMaxN1Phase1.grid(row=5, column=1, sticky=E, padx=10, pady=10)
-        valuePuissanceApparenteMaxN1Phase2 = Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceApparenteMaxN1Phase2.grid(row=5, column=2, sticky=E, padx=10, pady=10)
-        valuePuissanceApparenteMaxN1Phase3 = Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase3, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePuissanceApparenteMaxN1Phase3.grid(row=5, column=3, sticky=E, padx=10, pady=10)
-        unitPuissanceApparenteMaxN1= Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        unitPuissanceApparenteMaxN1.grid(row=5, column=4, sticky=E, padx=10, pady=10)
+        LabelPuissanceApparenteMaxN1 = tk.Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPuissanceApparenteMaxN1.grid(row=6, column=0, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceApparenteMaxN1Phase1 = tk.Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceApparenteMaxN1Phase1.grid(row=6, column=1, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceApparenteMaxN1Phase2 = tk.Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceApparenteMaxN1Phase2.grid(row=6, column=2, sticky=tk.E, padx=10, pady=10)
+        valuePuissanceApparenteMaxN1Phase3 = tk.Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePuissanceApparenteMaxN1Phase3.grid(row=6, column=3, sticky=tk.E, padx=10, pady=10)
+        unitPuissanceApparenteMaxN1= tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitPuissanceApparenteMaxN1.grid(row=6, column=4, sticky=tk.E, padx=10, pady=10)
 
         if analysedDict["ModeTIC"] == "Historique" :
-            labelPresenceDesPotentiels = Label(tensionFrame, text="Présence des potentiels :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-            labelPresenceDesPotentiels.grid(row=6, column=0, sticky=E, padx=10, pady=(55,10))
-            valuePresenceDesPotentiels = Label(tensionFrame, textvariable = PresenceDesPotentiels, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-            valuePresenceDesPotentiels.grid(row=6, column=1, columnspan=3, sticky=W, padx=10, pady=(55,10))
+            LabelPresenceDesPotentiels = tk.Label(tensionFrame, text="Présence des potentiels :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            LabelPresenceDesPotentiels.grid(row=7, column=0, sticky=tk.E, padx=10, pady=(55,10))
+            valuePresenceDesPotentiels = tk.Label(tensionFrame, textvariable = PresenceDesPotentiels, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+            valuePresenceDesPotentiels.grid(row=7, column=1, columnspan=3, sticky=tk.W, padx=10, pady=(55,10))
 
 
 
     #===============================================================================
     #=== Population de la frame Intensités                                       ===
     #===============================================================================
-    global xscale, xscaleButton, IINST, IINST1, IINST2, IINST3
-    IINST  = StringVar()
-    IINST1 = StringVar()
-    IINST2 = StringVar()
-    IINST3 = StringVar()
+    global xscale, xscaleButton, IINST, IINST1, IINST2, IINST3, v
+    IINST  = tk.StringVar()
+    IINST1 = tk.StringVar()
+    IINST2 = tk.StringVar()
+    IINST3 = tk.StringVar()
+
+    COURBETITLE = tk.StringVar()
+    COURBETITLE.set("Courbes d'intensités")
+    courbeTitle = tk.Label(intensiteFrameT, textvariable = COURBETITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    courbeTitle.grid(row=0, column=0, padx=300, ipadx=15, ipady=15)
 
     if analysedDict["TypeCompteur"] == "MONO" :
         iMax = analysedDict["IntensiteSouscrite"] * 5
@@ -753,300 +910,459 @@ def initGUI(analysedDict) :
     canvas.create_line ((40,90),(780,90), width=1, dash=(8,4), fill = config.get('GUICSS','graphLandmark'))
     canvas.create_text ((20,90),text = str(iMax) + "A", fill = config.get('GUICSS','graphLabelColor'), font = (config.get('GUICSS','graphLabelFont'), config.get('GUICSS','graphValueSize')))
 
-    #Bouton pour modifier l'échelle X
-    buttonFont = font.Font(family=config.get('GUICSS','notebookFont'), size=textSizeBig, weight='bold')
-    xscaleLabel = Label(intensiteFrameR, text="Scale X", font=(textFont,textSizeSmall,"bold"), relief=FLAT, fg=notebookBgMedium, borderwidth=0, bg=notebookBgMedium)
-    xscaleLabel.grid(row=0, column=0, padx=5, pady=2, sticky=S)
+    # Radio button pour le changement d'échelle du graph
     xscale = 20
-    xscaleButton = Button(intensiteFrameR, text=xscale, command=changeXScale, image=buttonBlue, relief=FLAT, compound="center", font=buttonFont, borderwidth=0, bg=notebookBgMedium)
-    xscaleButton.grid(row=1, column=0)
+    v = tk.IntVar()
+    scaleValues = [("20", 20), ("50", 50), ("100", 100), ("350", 350), ("700", 700)]
 
+    tk.Label(intensiteFrameR,
+             text="Scale X",
+             font=(textFont,textSizeBig),
+             bg=labelBg,
+             fg=labelColor,
+             justify = tk.LEFT,
+             padx = 30,
+             pady = 20).pack()
 
-    if analysedDict["TypeCompteur"] == "MONO" :
-        IINST.set("Phase 1 : " + str(analysedDict["IntensiteInstantanee"]) + " A")
-        valueIINST = Label(intensiteFrameR, textvariable = IINST, font=(textFont,textSizeMedium), relief=GROOVE, bg=notebookBgLight, fg=colorPhase1)
-        valueIINST.grid(row=4, column=0, padx=2, pady=(80,10))
-    else :
-        IINST1.set("Phase 1 : " + str(analysedDict["IntensiteInstantaneePhase1"]) + " A")
-        valueIINST1 = Label(intensiteFrameR, textvariable = IINST1, font=(textFont,textSizeMedium), relief=GROOVE, bg=notebookBgLight, fg=colorPhase1)
-        valueIINST1.grid(row=4, column=0, padx=2, pady=(80,10))
+    for scale, val in scaleValues:
+        tk.Radiobutton(intensiteFrameR,
+                  text=scale,
+                  font=(textFont,textSizeMedium),
+                  fg=notebookBgColor,
+                  bg=notebookBgColor,
+                  borderwidth=0,
+                  image=boutonFonce,
+                  compound=tk.CENTER,
+                  selectimage=boutonClair,
+                  selectcolor=notebookBgColor,
+                  highlightbackground=notebookBgColor,
+                  indicatoron = 0,
+                  padx = 0,
+                  pady = 0,
+                  variable=v,
+                  command=changeXScale,
+                  value=val).pack(anchor=tk.W)
+    v.set("20")
+
+    tk.Label(intensiteFrameR, font=(textFont,textSizeMedium), bg=labelBg, fg=colorPhase1, padx=6, pady=5).pack(anchor=tk.W)
+    IINST1.set("Phase 1 : " + str(analysedDict["IntensiteInstantaneePhase1"]) + " A")
+    valueIINST1 = tk.Label(intensiteFrameR, textvariable = IINST1, font=(textFont,textSizeMedium), bg=labelBg, fg=colorPhase1, padx=6, pady=5).pack(anchor=tk.W)
+    if "IntensiteInstantaneePhase2" in analysedDict :
         IINST1.set("Phase 2 : " + str(analysedDict["IntensiteInstantaneePhase2"]) + " A")
-        valueIINST2 = Label(intensiteFrameR, textvariable = IINST2, font=(textFont,textSizeMedium), relief=GROOVE, bg=notebookBgLight, fg=colorPhase2)
-        valueIINST2.grid(row=5, column=0, padx=2, pady=10)
+        valueIINST2 = tk.Label(intensiteFrameR, textvariable = IINST2, font=(textFont,textSizeMedium), bg=labelBg, fg=colorPhase2, padx=6, pady=5).pack(anchor=tk.W)
+    if "IntensiteInstantaneePhase3" in analysedDict :
         IINST3.set("Phase 3 : " + str(analysedDict["IntensiteInstantaneePhase3"]) + " A")
-        valueIINST3 = Label(intensiteFrameR, textvariable = IINST3, font=(textFont,textSizeMedium), relief=GROOVE, bg=notebookBgLight, fg=colorPhase3)
-        valueIINST3.grid(row=6, column=0, padx=2, pady=10)
-
-
-
-    #===============================================================================
-    #=== Population de la frame STATUS                                           ===
-    #===============================================================================
-    global LISTEN, valueListener
-    LISTEN = StringVar()
-    labelListener = Label(statusFrameL, text="Etat du process Lintener :", font=(textFont,textSizeBig,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelListener.grid(row=0, column=0, sticky=E, padx=10, pady=10)
-    valueListener = Label(statusFrameL, textvariable = LISTEN, font=(textFont,textSizeBig), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueListener.grid(row=0, column=1, columnspan=10, sticky=W, padx=10, pady=10)
-
-    global DBSTATE, valueDB
-    DBSTATE = StringVar()
-    labelDB = Label(statusFrameL, text="Etat du process DB :", font=(textFont,textSizeBig,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelDB.grid(row=1, column=0, sticky=E, padx=10, pady=10)
-    valueDB = Label(statusFrameL, textvariable = DBSTATE, font=(textFont,textSizeBig), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueDB.grid(row=1, column=1, columnspan=10, sticky=W, padx=10, pady=10)
-
-    global LANIP, valueIP
-    LANIP = StringVar()
-    labelIP = Label(statusFrameL, text="Adresse IP (eth0):", font=(textFont,textSizeBig,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelIP.grid(row=2, column=0, sticky=E, padx=10, pady=10)
-    valueIP = Label(statusFrameL, textvariable = LANIP, font=(textFont,textSizeBig), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueIP.grid(row=2, column=1, columnspan=8, sticky=W, padx=10, pady=10)
-
-    global WLANIP, nomWiFi, forceSignal, signalLabel, valueI2
-    WLANIP     = StringVar()
-    nomWiFi    = StringVar()
-    forceSignal= StringVar()
-    labelI2 = Label(statusFrameL, text="(wlan0):", font=(textFont,textSizeBig,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelI2.grid(row=3, column=0, sticky=E, padx=10, pady=10)
-    valueI2 = Label(statusFrameL, textvariable = WLANIP, font=(textFont,textSizeBig), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueI2.grid(row=3, column=1, columnspan=8, sticky=W, padx=10, pady=10)
-    SSIDI2 = Label(statusFrameL, textvariable = nomWiFi, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    SSIDI2.grid(row=3, column=9, columnspan=2, sticky=W, padx=10, pady=10)
-    signalI2 = Label(statusFrameL, textvariable = forceSignal, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    signalI2.grid(row=3, column=11, sticky=W, padx=10, pady=10)
-    signalLabel = Label(statusFrameL, image=signalIcon, borderwidth=0)
-    signalLabel.grid(row=3, column=12, sticky=E, padx=10, pady=(5,10))
-
-    MTIC = StringVar()
-    MTIC.set(analysedDict["ModeTIC"])
-    labelMTIC = Label(statusFrameL, text="Mode de la TIC :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-    labelMTIC.grid(row=4, column=0, sticky=E, padx=10, pady=10)
-    valueMTIC = Label(statusFrameL, textvariable = MTIC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-    valueMTIC.grid(row=4, column=1, columnspan=8, sticky=W, padx=10, pady=10)
-
-    if analysedDict["ModeTIC"] == "Standard" :
-        VTIC = StringVar()
-        VTIC.set(analysedDict["VersionTIC"])
-        labelVTIC = Label(statusFrameL, text="Version :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelVTIC.grid(row=4, column=9, sticky=W, padx=10, pady=10)
-        valueVTIC = Label(statusFrameL, textvariable = VTIC, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueVTIC.grid(row=4, column=10, sticky=W, padx=10, pady=10)
-
-        DATELINKY = StringVar()
-        DATELINKY.set(analysedDict["DateHeureLinky"])
-        labelDATE = Label(statusFrameL, text="Horodatage Linky :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelDATE.grid(row=5, column=0, sticky=E, padx=10, pady=(10,30))
-        valueDATE = Label(statusFrameL, textvariable = DATELINKY, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueDATE.grid(row=5, column=1, columnspan=9, sticky=W, padx=10, pady=(10,30))
-
-        global MSG1, MSG2
-        MSG1 = StringVar()
-        MSG2 = StringVar()
-        if "MSG1" in analysedDict :
-            MSG1.set(analysedDict["MessageCourt"])
-        else :
-            MSG1.set("")
-        labelMSG1 = Label(statusFrameL, text="Message court :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelMSG1.grid(row=7, column=0, sticky=E, padx=10, pady=5)
-        valueMSG1 = Label(statusFrameL, textvariable = MSG1, font=(textFont,textSizeMedium, "italic"), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueMSG1.grid(row=7, column=1, columnspan=10, sticky=W, padx=10, pady=5)
-        if "MSG2" in analysedDict :
-            MSG2.set(analysedDict["MessageUltraCourt"])
-        else :
-            MSG2.set("")
-        labelMSG2 = Label(statusFrameL, text="Message ultra court :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelMSG2.grid(row=8, column=0, sticky=E, padx=10, pady=5)
-        valueMSG2 = Label(statusFrameL, textvariable = MSG2, font=(textFont,textSizeMedium, "italic"), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueMSG2.grid(row=8, column=1, columnspan=10, sticky=W, padx=10, pady=5)
-
-        global Relais1Icon, Relais2Icon, Relais3Icon, Relais4Icon, Relais5Icon, Relais6Icon, Relais7Icon, Relais8Icon
-        labelRelais = Label(statusFrameL, text="Relais :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelRelais.grid(row=9, column=0, sticky=E, padx=10, pady=(40,10))
-        Relais1Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais1Icon.grid(row=9, column=1, padx=2, pady=(40,1))
-        Relais2Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais2Icon.grid(row=9, column=2, padx=2, pady=(40,1))
-        Relais3Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais3Icon.grid(row=9, column=3, padx=2, pady=(40,1))
-        Relais4Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais4Icon.grid(row=9, column=4, padx=2, pady=(40,1))
-        Relais5Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais5Icon.grid(row=9, column=5, padx=2, pady=(40,1))
-        Relais6Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais6Icon.grid(row=9, column=6, padx=2, pady=(40,1))
-        Relais7Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais7Icon.grid(row=9, column=7, padx=2, pady=(40,1))
-        Relais8Icon = Label(statusFrameL, image=miniVoyantNoir, borderwidth=0)
-        Relais8Icon.grid(row=9, column=8, padx=2, pady=(40,1))
-        labelR1 = Label(statusFrameL, text="1", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR1.grid(row=10, column=1, padx=2, pady=0)
-        labelR2 = Label(statusFrameL, text="2", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR2.grid(row=10, column=2, padx=2, pady=0)
-        labelR3 = Label(statusFrameL, text="3", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR3.grid(row=10, column=3, padx=2, pady=0)
-        labelR4 = Label(statusFrameL, text="4", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR4.grid(row=10, column=4, padx=2, pady=0)
-        labelR5 = Label(statusFrameL, text="5", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR5.grid(row=10, column=5, padx=2, pady=0)
-        labelR6 = Label(statusFrameL, text="6", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR6.grid(row=10, column=6, padx=2, pady=0)
-        labelR7 = Label(statusFrameL, text="7", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR7.grid(row=10, column=7, padx=2, pady=0)
-        labelR8 = Label(statusFrameL, text="8", font=(textFont), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelR8.grid(row=10, column=8, padx=2, pady=0)
-
-
-    else :
-        MotEtat = StringVar()
-        MotEtat.set(analysedDict["MotEtat"])
-        labelMotEtat = Label(statusFrameL, text="Mot d'état du compteur :", font=(textFont,textSizeMedium,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelMotEtat.grid(row=4, column=2, sticky=E, padx=10, pady=10)
-        valueMotEtat = Label(statusFrameL, textvariable = MotEtat, font=(textFont,textSizeMedium), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueMotEtat.grid(row=4, column=3, sticky=W, padx=10, pady=10)
-
-
-    cmdButton = Button(statusFrameR, text="Cmd", command=cmd, image=cmdIcon, bg=labelBg)
-    cmdButton.grid(row=0, column=0, pady=(5,80))
-
-    rebootButton = Button(statusFrameR, text="Reboot", command=reboot, image=rebootIcon)
-    rebootButton.grid(row=5, column=0, pady=(5,15))
-
-    exitButton = Button(statusFrameR, text="Exit", command=quit, image=quitIcon)
-    exitButton.grid(row=7, column=0)
+        valueIINST3 = tk.Label(intensiteFrameR, textvariable = IINST3, font=(textFont,textSizeMedium), bg=labelBg, fg=colorPhase3, padx=6, pady=5).pack(anchor=tk.W)
 
 
     #===============================================================================
     #=== Population de la frame REGISTRE                                         ===
     #===============================================================================
+    REGISTRETITLE = tk.StringVar()
+    REGISTRETITLE.set("Etat du registre du compteur")
+    registreTitle = tk.Label(registreFrame, textvariable = REGISTRETITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    registreTitle.grid(row=0, column=0, columnspan = 12, padx=15, ipadx=15, ipady=15)
 
     # Population de la frame INFORMATION en mode TIC STANDARD
     if analysedDict["ModeTIC"] == "Standard" :
         global CONTACT
-        CONTACT = StringVar()
-        labelContactSec = Label(registreFrame, text="Contact sec : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelContactSec.grid(row=0, column=0, sticky=E, padx=10, pady=2)
-        valueContactSec = Label(registreFrame, textvariable = CONTACT, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueContactSec.grid(row=0, column=1, sticky=W, padx=10, pady=2)
+        CONTACT = tk.StringVar()
+        LabelContactSec = tk.Label(registreFrame, text="Contact sec : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelContactSec.grid(row=1, column=0, sticky=tk.E, padx=10, pady=(20,2))
+        valueContactSec = tk.Label(registreFrame, textvariable = CONTACT, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueContactSec.grid(row=1, column=1, sticky=tk.W, padx=10, pady=(20,2))
 
         global COUPURE
-        COUPURE = StringVar()
-        labelOrganeDeCoupure = Label(registreFrame, text="Organe de coupure : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelOrganeDeCoupure.grid(row=1, column=0, sticky=E, padx=10, pady=2)
-        valueOrganeDeCoupure = Label(registreFrame, textvariable = COUPURE, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueOrganeDeCoupure.grid(row=1, column=1, sticky=W, padx=10, pady=2)
+        COUPURE = tk.StringVar()
+        LabelOrganeDeCoupure = tk.Label(registreFrame, text="Organe de coupure : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelOrganeDeCoupure.grid(row=2, column=0, sticky=tk.E, padx=10, pady=2)
+        valueOrganeDeCoupure = tk.Label(registreFrame, textvariable = COUPURE, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueOrganeDeCoupure.grid(row=2, column=1, sticky=tk.W, padx=10, pady=2)
 
         global CACHE
-        CACHE = StringVar()
-        labelCacheBorneDistributeur = Label(registreFrame, text="État du cache-bornes distributeur : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelCacheBorneDistributeur.grid(row=2, column=0, sticky=E, padx=10, pady=2)
-        valueCacheBorneDistributeur = Label(registreFrame, textvariable = CACHE, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueCacheBorneDistributeur.grid(row=2, column=1, sticky=W, padx=10, pady=2)
+        CACHE = tk.StringVar()
+        LabelCacheBorneDistributeur = tk.Label(registreFrame, text="État du cache-bornes distributeur : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelCacheBorneDistributeur.grid(row=3, column=0, sticky=tk.E, padx=10, pady=2)
+        valueCacheBorneDistributeur = tk.Label(registreFrame, textvariable = CACHE, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueCacheBorneDistributeur.grid(row=3, column=1, sticky=tk.W, padx=10, pady=2)
 
         global SURTENSION
-        SURTENSION = StringVar()
-        labelSurtensionPhase = Label(registreFrame, text="Surtension sur une des phases : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelSurtensionPhase.grid(row=3, column=0, sticky=E, padx=10, pady=2)
-        valueSurtensionPhase = Label(registreFrame, textvariable = SURTENSION, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueSurtensionPhase.grid(row=3, column=1, sticky=W, padx=10, pady=2)
+        SURTENSION = tk.StringVar()
+        LabelSurtensionPhase = tk.Label(registreFrame, text="Surtension sur une des phases : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelSurtensionPhase.grid(row=4, column=0, sticky=tk.E, padx=10, pady=2)
+        valueSurtensionPhase = tk.Label(registreFrame, textvariable = SURTENSION, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueSurtensionPhase.grid(row=4, column=1, sticky=tk.W, padx=10, pady=2)
 
         global DEPASSEMENT
-        DEPASSEMENT = StringVar()
-        labelDepassementPuissanceRef = Label(registreFrame, text="Dépassement de la puissance de référence : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelDepassementPuissanceRef.grid(row=4, column=0, sticky=E, padx=10, pady=2)
-        valueDepassementPuissanceRef = Label(registreFrame, textvariable = DEPASSEMENT, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueDepassementPuissanceRef.grid(row=4, column=1, sticky=W, padx=10, pady=2)
+        DEPASSEMENT = tk.StringVar()
+        LabelDepassementPuissanceRef = tk.Label(registreFrame, text="Dépassement de la puissance de référence : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelDepassementPuissanceRef.grid(row=5, column=0, sticky=tk.E, padx=10, pady=2)
+        valueDepassementPuissanceRef = tk.Label(registreFrame, textvariable = DEPASSEMENT, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueDepassementPuissanceRef.grid(row=5, column=1, sticky=tk.W, padx=10, pady=2)
 
         global FONCTIONNEMENT
-        FONCTIONNEMENT = StringVar()
-        labelFonctionnement = Label(registreFrame, text="Fonctionnement producteur/consommateur : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelFonctionnement.grid(row=5, column=0, sticky=E, padx=10, pady=2)
-        valueFonctionnement = Label(registreFrame, textvariable = FONCTIONNEMENT, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueFonctionnement.grid(row=5, column=1, sticky=W, padx=10, pady=2)
+        FONCTIONNEMENT = tk.StringVar()
+        LabelFonctionnement = tk.Label(registreFrame, text="Fonctionnement producteur/consommateur : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelFonctionnement.grid(row=6, column=0, sticky=tk.E, padx=10, pady=2)
+        valueFonctionnement = tk.Label(registreFrame, textvariable = FONCTIONNEMENT, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueFonctionnement.grid(row=6, column=1, sticky=tk.W, padx=10, pady=2)
 
         global SENSNRJ
-        SENSNRJ = StringVar()
-        labelSensEnergieActive = Label(registreFrame, text="Sens de l’énergie active : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelSensEnergieActive.grid(row=6, column=0, sticky=E, padx=10, pady=2)
-        valueSensEnergieActive = Label(registreFrame, textvariable = SENSNRJ, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueSensEnergieActive.grid(row=6, column=1, sticky=W, padx=10, pady=2)
+        SENSNRJ = tk.StringVar()
+        LabelSensEnergieActive = tk.Label(registreFrame, text="Sens de l’énergie active : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelSensEnergieActive.grid(row=7, column=0, sticky=tk.E, padx=10, pady=2)
+        valueSensEnergieActive = tk.Label(registreFrame, textvariable = SENSNRJ, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueSensEnergieActive.grid(row=7, column=1, sticky=tk.W, padx=10, pady=2)
 
         global TARIFF
-        TARIFF = StringVar()
-        labelTarifEnCoursF = Label(registreFrame, text="Tarif en cours sur le contrat fourniture : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTarifEnCoursF.grid(row=7, column=0, sticky=E, padx=10, pady=2)
-        valueTarifEnCoursF = Label(registreFrame, textvariable = TARIFF, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTarifEnCoursF.grid(row=7, column=1, sticky=W, padx=10, pady=2)
+        TARIFF = tk.StringVar()
+        LabelTarifEnCoursF = tk.Label(registreFrame, text="Tarif en cours sur le contrat fourniture : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTarifEnCoursF.grid(row=8, column=0, sticky=tk.E, padx=10, pady=2)
+        valueTarifEnCoursF = tk.Label(registreFrame, textvariable = TARIFF, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTarifEnCoursF.grid(row=8, column=1, sticky=tk.W, padx=10, pady=2)
 
         global TARIFD
-        TARIFD = StringVar()
-        labelTarifEnCoursD = Label(registreFrame, text="Tarif en cours sur le contrat distributeur : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelTarifEnCoursD.grid(row=8, column=0, sticky=E, padx=10, pady=2)
-        valueTarifEnCoursD = Label(registreFrame, textvariable = TARIFD, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueTarifEnCoursD.grid(row=8, column=1, sticky=W, padx=10, pady=2)
+        TARIFD = tk.StringVar()
+        LabelTarifEnCoursD = tk.Label(registreFrame, text="Tarif en cours sur le contrat distributeur : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelTarifEnCoursD.grid(row=9, column=0, sticky=tk.E, padx=10, pady=2)
+        valueTarifEnCoursD = tk.Label(registreFrame, textvariable = TARIFD, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueTarifEnCoursD.grid(row=9, column=1, sticky=tk.W, padx=10, pady=2)
 
         global HORLOGE
-        HORLOGE = StringVar()
-        labelHorlogeDegradee = Label(registreFrame, text="Mode dégradée de l’horloge : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelHorlogeDegradee.grid(row=9, column=0, sticky=E, padx=10, pady=2)
-        valueHorlogeDegradee = Label(registreFrame, textvariable = HORLOGE, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueHorlogeDegradee.grid(row=9, column=1, sticky=W, padx=10, pady=2)
+        HORLOGE = tk.StringVar()
+        LabelHorlogeDegradee = tk.Label(registreFrame, text="Mode dégradée de l’horloge : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelHorlogeDegradee.grid(row=10, column=0, sticky=tk.E, padx=10, pady=2)
+        valueHorlogeDegradee = tk.Label(registreFrame, textvariable = HORLOGE, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueHorlogeDegradee.grid(row=10, column=1, sticky=tk.W, padx=10, pady=2)
 
         global ETATTIC
-        ETATTIC = StringVar()
-        labelModeTIC = Label(registreFrame, text="État de la sortie télé-information : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelModeTIC.grid(row=10, column=0, sticky=E, padx=10, pady=2)
-        valueModeTIC = Label(registreFrame, textvariable = ETATTIC, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueModeTIC.grid(row=10, column=1, sticky=W, padx=10, pady=2)
+        ETATTIC = tk.StringVar()
+        LabelModeTIC = tk.Label(registreFrame, text="État de la sortie télé-information : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelModeTIC.grid(row=11, column=0, sticky=tk.E, padx=10, pady=2)
+        valueModeTIC = tk.Label(registreFrame, textvariable = ETATTIC, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueModeTIC.grid(row=11, column=1, sticky=tk.W, padx=10, pady=2)
 
         global EURIDIS
-        EURIDIS = StringVar()
-        labelSortieCommEuridis = Label(registreFrame, text="État de la sortie communication Euridis : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelSortieCommEuridis.grid(row=11, column=0, sticky=E, padx=10, pady=2)
-        valueSortieCommEuridis = Label(registreFrame, textvariable = EURIDIS, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueSortieCommEuridis.grid(row=11, column=1, sticky=W, padx=10, pady=2)
+        EURIDIS = tk.StringVar()
+        LabelSortieCommEuridis = tk.Label(registreFrame, text="État de la sortie communication Euridis : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelSortieCommEuridis.grid(row=12, column=0, sticky=tk.E, padx=10, pady=2)
+        valueSortieCommEuridis = tk.Label(registreFrame, textvariable = EURIDIS, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueSortieCommEuridis.grid(row=12, column=1, sticky=tk.W, padx=10, pady=2)
 
         global STATCPL
-        STATCPL = StringVar()
-        labelStatutCPL = Label(registreFrame, text="Statut du CPL : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelStatutCPL.grid(row=12, column=0, sticky=E, padx=10, pady=2)
-        valueStatutCPL = Label(registreFrame, textvariable = STATCPL, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueStatutCPL.grid(row=12, column=1, sticky=W, padx=10, pady=2)
+        STATCPL = tk.StringVar()
+        LabelStatutCPL = tk.Label(registreFrame, text="Statut du CPL : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelStatutCPL.grid(row=13, column=0, sticky=tk.E, padx=10, pady=2)
+        valueStatutCPL = tk.Label(registreFrame, textvariable = STATCPL, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueStatutCPL.grid(row=13, column=1, sticky=tk.W, padx=10, pady=2)
 
         global SYNCCPL
-        SYNCCPL = StringVar()
-        labelSynchroCPL = Label(registreFrame, text="Synchronisation CPL : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelSynchroCPL.grid(row=13, column=0, sticky=E, padx=10, pady=2)
-        valueSynchroCPL = Label(registreFrame, textvariable = SYNCCPL, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueSynchroCPL.grid(row=13, column=1, sticky=W, padx=10, pady=2)
+        SYNCCPL = tk.StringVar()
+        LabelSynchroCPL = tk.Label(registreFrame, text="Synchronisation CPL : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelSynchroCPL.grid(row=14, column=0, sticky=tk.E, padx=10, pady=2)
+        valueSynchroCPL = tk.Label(registreFrame, textvariable = SYNCCPL, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueSynchroCPL.grid(row=14, column=1, sticky=tk.W, padx=10, pady=2)
 
         global TEMPOJOUR
-        TEMPOJOUR = StringVar()
-        labelCouleurTempoJour = Label(registreFrame, text="Couleur du jour pour le contrat historique tempo : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelCouleurTempoJour.grid(row=14, column=0, sticky=E, padx=10, pady=2)
-        valueCouleurTempoJour = Label(registreFrame, textvariable = TEMPOJOUR, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueCouleurTempoJour.grid(row=14, column=1, sticky=W, padx=10, pady=2)
+        TEMPOJOUR = tk.StringVar()
+        LabelCouleurTempoJour = tk.Label(registreFrame, text="Couleur du jour pour le contrat historique tempo : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelCouleurTempoJour.grid(row=15, column=0, sticky=tk.E, padx=10, pady=2)
+        valueCouleurTempoJour = tk.Label(registreFrame, textvariable = TEMPOJOUR, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueCouleurTempoJour.grid(row=15, column=1, sticky=tk.W, padx=10, pady=2)
 
         global TEMPODEMAIN
-        TEMPODEMAIN = StringVar()
-        labelCouleurTempoDemain = Label(registreFrame, text="Couleur du lendemain pour le contrat historique tempo : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelCouleurTempoDemain.grid(row=15, column=0, sticky=E, padx=10, pady=2)
-        valueCouleurTempoDemain = Label(registreFrame, textvariable = TEMPODEMAIN, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valueCouleurTempoDemain.grid(row=15, column=1, sticky=W, padx=10, pady=2)
+        TEMPODEMAIN = tk.StringVar()
+        LabelCouleurTempoDemain = tk.Label(registreFrame, text="Couleur du lendemain pour le contrat historique tempo : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelCouleurTempoDemain.grid(row=16, column=0, sticky=tk.E, padx=10, pady=2)
+        valueCouleurTempoDemain = tk.Label(registreFrame, textvariable = TEMPODEMAIN, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueCouleurTempoDemain.grid(row=16, column=1, sticky=tk.W, padx=10, pady=2)
 
         global PREAVISPOINTE
-        PREAVISPOINTE = StringVar()
-        labelPreavisPointesMobiles = Label(registreFrame, text="Préavis pointes mobiles : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPreavisPointesMobiles.grid(row=16, column=0, sticky=E, padx=10, pady=2)
-        valuePreavisPointesMobiles = Label(registreFrame, textvariable = PREAVISPOINTE, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePreavisPointesMobiles.grid(row=16, column=1, sticky=W, padx=10, pady=2)
+        PREAVISPOINTE = tk.StringVar()
+        LabelPreavisPointesMobiles = tk.Label(registreFrame, text="Préavis pointes mobiles : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPreavisPointesMobiles.grid(row=17, column=0, sticky=tk.E, padx=10, pady=2)
+        valuePreavisPointesMobiles = tk.Label(registreFrame, textvariable = PREAVISPOINTE, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePreavisPointesMobiles.grid(row=17, column=1, sticky=tk.W, padx=10, pady=2)
 
         global POINTEMOBILE
-        POINTEMOBILE = StringVar()
-        labelPointeMobile = Label(registreFrame, text="Pointe mobile (PM) : ", font=(textFont,textSizeSmall,"bold"), relief=FLAT, bg=labelBg, fg=labelColor)
-        labelPointeMobile.grid(row=17, column=0, sticky=E, padx=10, pady=2)
-        valuePointeMobile = Label(registreFrame, textvariable = POINTEMOBILE, font=(textFont,textSizeSmall), relief=FLAT, bg=labelBg, fg=labelColor)
-        valuePointeMobile.grid(row=17, column=1, sticky=W, padx=10, pady=2)
+        POINTEMOBILE = tk.StringVar()
+        LabelPointeMobile = tk.Label(registreFrame, text="Pointe mobile (PM) : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPointeMobile.grid(row=18, column=0, sticky=tk.E, padx=10, pady=2)
+        valuePointeMobile = tk.Label(registreFrame, textvariable = POINTEMOBILE, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valuePointeMobile.grid(row=18, column=1, sticky=tk.W, padx=10, pady=2)
+
+
+    #===============================================================================
+    #=== Population de la frame STATUS                                           ===
+    #===============================================================================
+    MTIC = tk.StringVar()
+    MTIC.set(analysedDict["ModeTIC"])
+    LabelMTIC = tk.Label(statusFrame, text="Mode de la TIC :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelMTIC.grid(row=5, column=0, sticky=tk.E, padx=10, pady=10)
+    valueMTIC = tk.Label(statusFrame, textvariable = MTIC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueMTIC.grid(row=5, column=1, columnspan=8, sticky=tk.W, padx=10, pady=10)
+
+    if analysedDict["ModeTIC"] == "Standard" :
+        VTIC = tk.StringVar()
+        VTIC.set(analysedDict["VersionTIC"])
+        LabelVTIC = tk.Label(statusFrame, text="Version :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelVTIC.grid(row=5, column=9, sticky=tk.W, padx=10, pady=10)
+        valueVTIC = tk.Label(statusFrame, textvariable = VTIC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueVTIC.grid(row=5, column=10, sticky=tk.W, padx=10, pady=10)
+
+        DATELINKY = tk.StringVar()
+        DATELINKY.set(analysedDict["DateHeureLinky"])
+        LabelDATE = tk.Label(statusFrame, text="Horodatage Linky :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelDATE.grid(row=7, column=0, sticky=tk.E, padx=10, pady=(10,30))
+        valueDATE = tk.Label(statusFrame, textvariable = DATE, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueDATE.grid(row=7, column=1, columnspan=9, sticky=tk.W, padx=10, pady=(10,30))
+
+        global MSG1, MSG2
+        MSG1 = tk.StringVar()
+        MSG2 = tk.StringVar()
+        if "MSG1" in analysedDict :
+            MSG1.set(analysedDict["MessageCourt"])
+        else :
+            MSG1.set("")
+        LabelMSG1 = tk.Label(statusFrame, text="Message court :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelMSG1.grid(row=8, column=0, sticky=tk.E, padx=10, pady=5)
+        valueMSG1 = tk.Label(statusFrame, textvariable = MSG1, font=(textFont,textSizeMedium, "italic"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueMSG1.grid(row=8, column=1, columnspan=10, sticky=tk.W, padx=10, pady=5)
+        if "MSG2" in analysedDict :
+            MSG2.set(analysedDict["MessageUltraCourt"])
+        else :
+            MSG2.set("")
+        LabelMSG2 = tk.Label(statusFrame, text="Message ultra court :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelMSG2.grid(row=9, column=0, sticky=tk.E, padx=10, pady=5)
+        valueMSG2 = tk.Label(statusFrame, textvariable = MSG2, font=(textFont,textSizeMedium, "italic"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueMSG2.grid(row=9, column=1, columnspan=10, sticky=tk.W, padx=10, pady=5)
+
+        global Relais1Icon, Relais2Icon, Relais3Icon, Relais4Icon, Relais5Icon, Relais6Icon, Relais7Icon, Relais8Icon
+        LabelRelais = tk.Label(statusFrame, text="Relais :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelRelais.grid(row=10, column=0, sticky=tk.E, padx=10, pady=(30,10))
+        Relais1Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais1Icon.grid(row=10, column=1, padx=2, pady=(30,1))
+        Relais2Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais2Icon.grid(row=10, column=2, padx=2, pady=(30,1))
+        Relais3Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais3Icon.grid(row=10, column=3, padx=2, pady=(30,1))
+        Relais4Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais4Icon.grid(row=10, column=4, padx=2, pady=(30,1))
+        Relais5Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais5Icon.grid(row=10, column=5, padx=2, pady=(30,1))
+        Relais6Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais6Icon.grid(row=10, column=6, padx=2, pady=(30,1))
+        Relais7Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais7Icon.grid(row=10, column=7, padx=2, pady=(30,1))
+        Relais8Icon = tk.Label(statusFrame, image=miniVoyantNoir, borderwidth=0)
+        Relais8Icon.grid(row=10, column=8, padx=2, pady=(30,1))
+        LabelR1 = tk.Label(statusFrame, text="1", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR1.grid(row=11, column=1, padx=2, pady=0)
+        LabelR2 = tk.Label(statusFrame, text="2", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR2.grid(row=11, column=2, padx=2, pady=0)
+        LabelR3 = tk.Label(statusFrame, text="3", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR3.grid(row=11, column=3, padx=2, pady=0)
+        LabelR4 = tk.Label(statusFrame, text="4", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR4.grid(row=11, column=4, padx=2, pady=0)
+        LabelR5 = tk.Label(statusFrame, text="5", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR5.grid(row=11, column=5, padx=2, pady=0)
+        LabelR6 = tk.Label(statusFrame, text="6", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR6.grid(row=11, column=6, padx=2, pady=0)
+        LabelR7 = tk.Label(statusFrame, text="7", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR7.grid(row=11, column=7, padx=2, pady=0)
+        LabelR8 = tk.Label(statusFrame, text="8", font=(textFont), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelR8.grid(row=11, column=8, padx=2, pady=0)
+
+
+    else :
+        MotEtat = tk.StringVar()
+        MotEtat.set(analysedDict["MotEtat"])
+        LabelMotEtat = tk.Label(statusFrame, text="Mot d'état du compteur :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelMotEtat.grid(row=5, column=2, sticky=tk.E, padx=10, pady=10)
+        valueMotEtat = tk.Label(statusFrame, textvariable = MotEtat, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueMotEtat.grid(row=5, column=3, sticky=tk.W, padx=10, pady=10)
+
+
+
+
+    #===============================================================================
+    #=== Population de la frame PARAMETRES                                       ===
+    #===============================================================================
+    global ButtonDBActive, ValueDebug, scaleDBVal, scaleFileVal, timerDB, timerFile
+    flagDBActive    = config.get('POSTGRESQL','active')
+    refreshDB       = config.get('POSTGRESQL','refreshDB')
+    debugLevel      = config.get('PARAM','debugLevel')
+    refreshPlage    = config.get('PARAM','refreshPlage')
+    refreshStats    = config.get('PARAM','refreshStats')
+    refreshIndex    = config.get('PARAM','refreshIndex')
+    flagFileActive  = config.get('PARAM','traceFile')
+    refreshFile     = config.get('PARAM','traceFreq')
+    LinkyRPiVersion = config.get('PARAM','version')
+
+    PARAMTITLE = tk.StringVar()
+    PARAMTITLE.set("Paramètres de l'application")
+    paramTitle = tk.Label(paramFrameT, textvariable = PARAMTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    paramTitle.grid(row=0, column=0, columnspan = 12, padx=300, ipadx=15, ipady=15)
+
+    LabelDBActive = tk.Label(paramFrameT, text="Enregistrement en DB : ", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelDBActive.grid(row=1, column=0, sticky=tk.E, padx=10, pady=(50,15))
+    if flagDBActive == "True" :
+        ButtonDBActive = tk.Button(paramFrameT, image=ONButton, bg=labelBg, borderwidth=0, command=switchDB, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    else :
+        ButtonDBActive = tk.Button(paramFrameT, image=OFFButton, bg=labelBg, borderwidth=0, command=switchDB, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonDBActive.grid(row=1, column=1, sticky=tk.W, padx=10, pady=(50,15))
+
+    ButtonDBMoins = tk.Button(paramFrameT, image=flecheG, bg=labelBg, borderwidth=0, command=timerDownDB, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonDBMoins.grid(row=1, column=2, sticky=tk.W, padx=10, pady=(50,15))
+    timerDB = tk.StringVar()
+    timerDB.set(str(refreshDB) + " s")
+    DBRefreshValue = tk.Label(paramFrameT, textvariable=timerDB, font=(textFont,textSizeMedium), relief=tk.RIDGE, bg=labelBg, fg=labelColor)
+    DBRefreshValue.grid(row=1, column=3, sticky=tk.W, padx=10, pady=(50,15), ipadx=3, ipady=3)
+    ButtonDBPlus = tk.Button(paramFrameT, image=flecheD, bg=labelBg, borderwidth=0, command=timerUpDB, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonDBPlus.grid(row=1, column=4, sticky=tk.W, padx=10, pady=(50,15))
+
+
+    LabelFileActive = tk.Label(paramFrameT, text="Enregistrement en Fichier : ", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelFileActive.grid(row=2, column=0, sticky=tk.E, padx=10, pady=15)
+    if flagFileActive == "True" :
+        ButtonFileActive = tk.Button(paramFrameT, image=ONButton, bg=labelBg, borderwidth=0, command=switchFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    else :
+        ButtonFileActive = tk.Button(paramFrameT, image=OFFButton, bg=labelBg, borderwidth=0, command=switchFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonFileActive.grid(row=2, column=1, sticky=tk.W, padx=10, pady=15)
+
+    ButtonFileMoins = tk.Button(paramFrameT, image=flecheG, bg=labelBg, borderwidth=0, command=timerDownFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonFileMoins.grid(row=2, column=2, sticky=tk.W, padx=10, pady=15)
+    timerFile = tk.StringVar()
+    timerFile.set(str(refreshFile) + " s")
+    FileRefreshValue = tk.Label(paramFrameT, textvariable=timerFile, font=(textFont,textSizeMedium), relief=tk.RIDGE, bg=labelBg, fg=labelColor)
+    FileRefreshValue.grid(row=2, column=3, sticky=tk.W, padx=10, pady=15, ipadx=3, ipady=3)
+    ButtonFilePlus = tk.Button(paramFrameT, image=flecheD, bg=labelBg, borderwidth=0, command=timerUpFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonFilePlus.grid(row=2, column=4, sticky=tk.W, padx=10, pady=15)
+
+
+
+
+    # Boutons du bas de l'écran
+    cmdButton = tk.Button(paramFrameB, text="Cmd", command=cmd, image=cmdIcon, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    cmdButton.grid(row=0, column=0, padx=(120,80))
+
+    rebootButton = tk.Button(paramFrameB, text="Reboot", command=reboot, image=rebootIcon, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    rebootButton.grid(row=0, column=1, padx=20)
+
+
+
+#===============================================================================
+#=== Refresh de la frame STATUS                                              ===
+#===============================================================================
+def initStatus() :
+    STATUSTITLE = tk.StringVar()
+    STATUSTITLE.set("Statut de l'application et du compteur")
+    statusTitle = tk.Label(statusFrame, textvariable = STATUSTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
+    statusTitle.grid(row=0, column=0, columnspan = 12, padx=15, ipadx=15, ipady=15)
+
+    global LISTEN, valueListener
+    LISTEN = tk.StringVar()
+    LabelListener = tk.Label(statusFrame, text="Etat du process Lintener :", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelListener.grid(row=1, column=0, sticky=tk.E, padx=10, pady=10)
+    valueListener = tk.Label(statusFrame, textvariable = LISTEN, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueListener.grid(row=1, column=1, columnspan=10, sticky=tk.W, padx=10, pady=10)
+
+    global DBSTATE, valueDB
+    DBSTATE = tk.StringVar()
+    LabelDB = tk.Label(statusFrame, text="Etat du process DB :", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelDB.grid(row=2, column=0, sticky=tk.E, padx=10, pady=10)
+    valueDB = tk.Label(statusFrame, textvariable = DBSTATE, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueDB.grid(row=2, column=1, columnspan=10, sticky=tk.W, padx=10, pady=10)
+
+    global LANIP, valueIP
+    LANIP = tk.StringVar()
+    LabelIP = tk.Label(statusFrame, text="Adresse IP (eth0):", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelIP.grid(row=3, column=0, sticky=tk.E, padx=10, pady=10)
+    valueIP = tk.Label(statusFrame, textvariable = LANIP, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueIP.grid(row=3, column=1, columnspan=8, sticky=tk.W, padx=10, pady=10)
+
+    global WLANIP, nomWiFi, forceSignal, signalLabel, valueI2
+    WLANIP     = tk.StringVar()
+    nomWiFi    = tk.StringVar()
+    forceSignal= tk.StringVar()
+    LabelI2 = tk.Label(statusFrame, text="(wlan0):", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelI2.grid(row=4, column=0, sticky=tk.E, padx=10, pady=10)
+    valueI2 = tk.Label(statusFrame, textvariable = WLANIP, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueI2.grid(row=4, column=1, columnspan=8, sticky=tk.W, padx=10, pady=10)
+    SSIDI2 = tk.Label(statusFrame, textvariable = nomWiFi, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    SSIDI2.grid(row=4, column=9, columnspan=2, sticky=tk.W, padx=10, pady=10)
+    signalI2 = tk.Label(statusFrame, textvariable = forceSignal, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    signalI2.grid(row=4, column=11, sticky=tk.W, padx=10, pady=10)
+    signalLabel = tk.Label(statusFrame, image=signalIcon, borderwidth=0)
+    signalLabel.grid(row=4, column=12, sticky=tk.E, padx=10, pady=(5,10))
+
+
+    cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
+    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+    if (result != '') and (result != 'wlan0: error fetching interface information: Device not found') :
+        valueIP.config(fg="green")
+    LANIP.set(result.rstrip("\n"))
+
+    #Etat de la connexion WiFi
+    cmd = "ifconfig wlan0|grep 'inet '|cut -d' ' -f 10"
+    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+    if result != '' :
+        valueI2.config(fg="green")
+        WLANIP.set(result.rstrip("\n"))
+        cmd2 = "iwconfig wlan0|grep Quality|cut -d '=' -f 2|cut -d ' ' -f 1"
+        result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+        forceSignal.set(result2.rstrip("\n"))
+        forceValue = int(result2.split("/")[0]) / int(result2.split("/")[1]) * 100
+        cmd2 = "iwconfig wlan0|grep ESSID|cut -d ':' -f 2"
+        result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+        nomWiFi.set(result2.rstrip("\n"))
+    else :
+        forceValue = 0
+
+    if forceValue >= 75 :
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi4.png")
+    elif forceValue >= 50 :
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi3.png")
+    elif forceValue >= 25 :
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi2.png")
+    elif forceValue > 0 :
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi1.png")
+    else :
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi0.png")
+
+    signalLabel.configure(image=img2)
+    signalLabel.image=img2
+
+    #Etat du process listener
+    cmd = "ps aux|grep 'LinkyRPiListen.py'|grep -v grep|awk '{print $2}'"
+    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+    if result == '' :
+        valueListener.config(fg="red")
+        LISTEN.set("Not runnung")
+    else :
+        valueListener.config(fg="green")
+        LISTEN.set("Running, PID = " + result.rstrip("\n"))
+
+    #Etat de la DB
+    cmd = "ps aux|grep 'LinkyRPiDB.py'|grep -v grep|awk '{print $2}'"
+    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["DBSTATE"] :
+    if result == '' :
+        valueDB.config(fg="red")
+        DBSTATE.set("Not runnung")
+    else :
+        valueDB.config(fg="green")
+        DBSTATE.set("Running, PID = " + result.rstrip("\n"))
+
+
+
+    master.update_idletasks()
+    master.update()
+
+
+
+
+
+
 
 
 #===============================================================================
@@ -1054,7 +1370,7 @@ def initGUI(analysedDict) :
 #===============================================================================
 def refreshStatus():
 
-    global analysedDict
+    global analysedDict, DATE
 
     #Etat de la connexion LAN
     cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
@@ -1080,15 +1396,15 @@ def refreshStatus():
         forceValue = 0
 
     if forceValue >= 75 :
-        img2=PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi4.png")
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi4.png")
     elif forceValue >= 50 :
-        img2=PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi3.png")
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi3.png")
     elif forceValue >= 25 :
-        img2=PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi2.png")
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi2.png")
     elif forceValue > 0 :
-        img2=PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi1.png")
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi1.png")
     else :
-        img2=PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi0.png")
+        img2=tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/wifi0.png")
 
     signalLabel.configure(image=img2)
     signalLabel.image=img2
@@ -1172,6 +1488,10 @@ def refreshPlages():
         elif analysedDict["PeriodeTarifaireEnCours"] == 'HP' :
             HPHCIcon.configure(image=voyantHP)
             HPHCIcon.image=voyantHP
+
+        elif analysedDict["PeriodeTarifaireEnCours"] == 'WE' :
+            HPHCIcon.configure(image=voyantWE)
+            HPHCIcon.image=voyantWE
 
         elif analysedDict["PeriodeTarifaireEnCours"] == 'PM' :
             HPHCIcon.configure(image=voyantRouge)
@@ -1483,6 +1803,7 @@ def refreshRelais(analysedDict) :
 
 
 
+
 #=======================================================================================#
 #=== Procédure principale                                                            ===#
 #=======================================================================================#
@@ -1490,7 +1811,6 @@ def refreshRelais(analysedDict) :
 initUI = False
 trameReceived = False
 
-global canvas
 global iMax
 liste = []
 listeP1 = []
@@ -1506,6 +1826,8 @@ colorPhase2     = config.get('GUICSS','phase2')
 colorPhase3     = config.get('GUICSS','phase3')
 
 oldTime = datetime.now()
+
+initStatus()
 
 #On part en boucle infinie
 while True:
@@ -1529,36 +1851,25 @@ while True:
             refreshStatus()
             refreshIndex()
             refreshPlages()
+            myNotebook.select(infoFrame)
             initUI = True
 
         refreshTension(analysedDict)
         refreshRelais(analysedDict)
 
+
         # Mise à jour de l'heure affichée
         if "DateHeureLinky" in analysedDict :
             DATE.set(analysedDict["DateHeureLinky"])
 
-        # Trace de la courbe d'intensité pour compteur monophasé
-        if "IntensiteInstantanee" in analysedDict :
+        # Calcul de l'intensité max
+        if analysedDict["TypeCompteur"] == "MONO" :
             iMax = analysedDict["IntensiteSouscrite"] * 5
-            IINST.set("Phase 1 : " + str(analysedDict["IntensiteInstantanee"]) + " A")
-            coords, newListe = intensite(analysedDict["IntensiteInstantanee"], liste, xscale, iMax)
-
-            liste = []
-            liste = newListe
-            # On efface la courbe
-            if len(liste) > 2 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                canvas.delete(courbeP)
-
-            #Et on la recrée
-            if len(liste) > 1 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                courbeP = canvas.create_line(fill=colorPhase1, *coords)
-
-        # Trace de la courbe d'intensité pour compteur triphasé (phase 1)
-        if "IntensiteInstantaneePhase1" in analysedDict :
+        else :
             iMax = analysedDict["IntensiteInstantaneePhase1"] * 5 / 3
+
+        # Trace de la courbe d'intensité pour compteur monophasé ou triphasé phase 1
+        if "IntensiteInstantaneePhase1" in analysedDict :
             IINST1.set("Phase 1 : " + str(analysedDict["IntensiteInstantaneePhase1"]) + " A")
             coords, newListe = intensite(analysedDict["IntensiteInstantaneePhase1"], liste, xscale, iMax)
 
@@ -1576,7 +1887,6 @@ while True:
 
         # Trace de la courbe d'intensité pour compteur triphasé (phase 2)
         if "IntensiteInstantaneePhase2" in analysedDict :
-            iMax = analysedDict["IntensiteInstantaneePhase2"] * 5 / 3
             IINST2.set("Phase 2 : " + str(analysedDict["IntensiteInstantaneePhase2"]) + " A")
             coords, newListe = intensite(analysedDict["IntensiteInstantaneePhase2"], liste, xscale, iMax)
 
@@ -1594,7 +1904,6 @@ while True:
 
         # Trace de la courbe d'intensité pour compteur triphasé (phase 3)
         if "IntensiteInstantaneePhase3" in analysedDict :
-            iMax = analysedDict["IntensiteInstantaneePhase3"] * 5 / 3
             IINST3.set("Phase 3 : " + str(analysedDict["IntensiteInstantaneePhase3"]) + " A")
             coords, newListe = intensite(analysedDict["IntensiteInstantaneePhase3"], liste, xscale, iMax)
 

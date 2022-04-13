@@ -7,19 +7,29 @@ import json
 from datetime import datetime
 
 try :
-    #mq = posix_ipc.MessageQueue("/LinkyRPiQueueGUI", posix_ipc.O_CREAT)
-    mq = posix_ipc.MessageQueue("/LinkyRPiQueueDB", posix_ipc.O_CREAT)
+    mq1 = posix_ipc.MessageQueue("/LinkyRPiQueueGUI", posix_ipc.O_CREAT)
+    mq2 = posix_ipc.MessageQueue("/LinkyRPiQueueDB", posix_ipc.O_CREAT)
 except :
     print("Error queue")
 
 
 while True:
     try :
-        msg = mq.receive(timeout = 0)
+        msg = mq1.receive(timeout = 0)
         trameLue = True
     except :
         trameLue = False
 
     if trameLue :
         trameDict = dict(json.loads(msg[0]))
-        print(" ----> " + datetime.now().strftime("%H:%M:%S.%f"))
+        print(" -UI-> " + datetime.now().strftime("%H:%M:%S.%f"))
+
+    try :
+        msg = mq2.receive(timeout = 0)
+        trameLue = True
+    except :
+        trameLue = False
+
+    if trameLue :
+        trameDict = dict(json.loads(msg[0]))
+        print(" -DB-> " + datetime.now().strftime("%H:%M:%S.%f"))

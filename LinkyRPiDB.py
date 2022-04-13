@@ -11,11 +11,13 @@ from datetime import datetime
 import uuid
 import schedule
 import time
+import linkyRPiTranslate
 
 compteurInit = False
 abonnementInit = False
 abonnementUUID = ""
 
+syllabus, dataFormat = linkyRPiTranslate.generateSyllabus()
 
 #Definition de la classe bcolors pour afficher des traces en couleur à l'écran
 class bcolors:
@@ -55,7 +57,7 @@ def initAbonnement(analysedDict) :
         if data != [] :
             abonnementUUID = data[0][0]
             query = "update public.abonnement set status = 'CLOS', dateclos = '" + str(datetime.now()) + "' where abonnementid = '" + abonnementUUID + "'"
-            print(query)
+            #print(query)
             cursor.execute(query)
 
         #Puis on crée le nouvel'abonnement
@@ -72,14 +74,13 @@ def initAbonnement(analysedDict) :
         else :
             query = query + ", '"
         query = query + str(datetime.now()) + "', 'OPEN')"
-        print(query)
+        #print(query)
         cursor.execute(query)
 
     else :
         if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] L'abonnement existe déjà")
         abonnementUUID = data[0][0]
     connection.commit()
-
 
 
 
@@ -92,6 +93,8 @@ DBpassword = config.get('POSTGRESQL','password')
 DBhost = config.get('POSTGRESQL','host')
 DBport = config.get('POSTGRESQL','port')
 DBdbname = config.get('POSTGRESQL','dbname')
+refreshDB = config.get('POSTGRESQL','refreshDB')
+
 
 ldebug = int(config.get('PARAM','debugLevel'))
 
@@ -133,7 +136,7 @@ except (Exception, Error) as error:
     quit()
 
 
-
+nextTrace = time.monotonic()
 
 #On part en boucle infinie
 while True:
@@ -203,28 +206,27 @@ while True:
         #On boucle sur le dictionnaire pour constituer la query d'Insert
         for key in analysedDict :
 
-            #On by-pass les données liées au compteur ou à l'abonnement, gérées par ailleurs
-            if key not in (['AdresseCompteur', 'PRM', 'TypeCompteur', 'NomCompteur', 'CouleurDemain', 'VersionTIC', 'TarifSouscrit', 'HorairesHC', 'IntensiteSouscrite', 'PuissanceCoupure', 'Relais']) :
+            #On by-pass les données liées au compteur, à l'abonnement ou aux index, gérées par ailleurs
+            if key not in (['AdresseCompteur', 'PRM', 'TypeCompteur', 'NomCompteur', 'CouleurDemain', 'VersionTIC', 'TarifSouscrit',
+                            'HorairesHC', 'IntensiteSouscrite', 'PuissanceCoupure', 'Relais', 'Index00', 'Index01', 'Index02', 'Index03',
+                            'Index04', 'Index05', 'Index06', 'CodeTarifEnCours', 'RegistreModeTIC']) :
 
                 queryInsert = "".join([queryInsert , key.replace("-", ""), ", "])
 
+                #Cas de l'horodatage Linky qu'il faut remettre en forme
+                if key == "DateHeureLinky":
+                    queryValues = "".join([queryValues, "'", analysedDict[key][4:14], " ", analysedDict[key][17:], "', "])
+                    #print(analysedDict["DateHeureLinky"])
+
                 #Si la donnée est de type string, il faut mettre des '' de part et d'autre dans la query
-                if key in (['ContactSec', 'OrganeDeCoupure', 'CacheBorneDistributeur', 'SurtensionPhase', 'DepassementPuissanceRef',
-                            'Fonctionnement', 'SensEnergieActive', 'TarifEnCoursF', 'TarifEnCoursD', 'HorlogeDegradee', 'SortieCommEuridis',
-                            'StatutCPL', 'SynchroCPL', 'CouleurTempoJour', 'CouleurTempoDemain', 'PreavisPointesMobiles', 'PointeMobile',
-                            'ModeTIC', 'PeriodeTarifaireEnCours', 'MotEtat', 'NumeroJourCalendrierFournisseur', 'NumeroProchainJourCalendrierFournisseur',
-                            'ProfilProchainJourCalendrierFournisseur', 'ProfilProchainJourPointe', 'PresenceDesPotentiels', 'MessageCourt',
-                            'MessageUltraCourt', 'DebutPointeMobile1', 'FinPointeMobile1', 'DebutPointeMobile2', 'FinPointeMobile2', 'DebutPointeMobile3',
-                            'FinPointeMobile3']) :
+                elif dataFormat[key] == "char" :
                     queryValues = "".join([queryValues, "'", str(analysedDict[key]).replace("'", " ") , "', "])
 
-                #Cas de l'horodatage Linky qu'il faut remettre en forme
-                elif key == "DateHeureLinky":
-                    queryValues = "".join([queryValues, "'", analysedDict[key][4:14], " ", analysedDict[key][17:], "', "])
-                    print(analysedDict["DateHeureLinky"])
                 #Sinon, pour les mesures numériques, pas besoin des ''
                 else :
                     queryValues = "".join([queryValues , str(analysedDict[key]).replace("'", " ") , ", "])
+
+
 
         if "EnergieActiveSoutireeDistributeurIndex1" in analysedDict :
             if (analysedDict["TarifSouscrit"] == "Heures Creuses") :
@@ -260,24 +262,28 @@ while True:
 
         if 'Relais' in analysedDict :
             queryInsert = "".join([queryInsert , "relais1, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][0])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][0]))) , ", "])
             queryInsert = "".join([queryInsert , "relais2, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][1])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][1]))) , ", "])
             queryInsert = "".join([queryInsert , "relais3, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][2])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][2]))) , ", "])
             queryInsert = "".join([queryInsert , "relais4, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][3])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][3]))) , ", "])
             queryInsert = "".join([queryInsert , "relais5, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][4])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][4]))) , ", "])
             queryInsert = "".join([queryInsert , "relais6, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][5])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][5]))) , ", "])
             queryInsert = "".join([queryInsert , "relais7, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][6])) , ", "])
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][6]))) , ", "])
             queryInsert = "".join([queryInsert , "relais8, "])
-            queryValues = "".join([queryValues , str(bool(analysedDict["Relais"][7])) , ", "])
-
+            queryValues = "".join([queryValues , str(not(bool(analysedDict["Relais"][7]))) , ", "])
 
         query = "".join([queryInsert[:-2], ")" , queryValues[:-2], ")"])
         #print(query)
-        cursor.execute(query)
-        connection.commit()
+
+        if (time.monotonic() >= nextTrace) :
+            cursor.execute(query)
+            connection.commit()
+            config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
+            refreshDB = config.get('POSTGRESQL','refreshDB')
+            nextTrace = time.monotonic() + int(refreshDB)
