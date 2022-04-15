@@ -135,7 +135,7 @@ Les données instantanées (tensions, intensités et puissances) sont rafraichie
 ## Le fichier de configuration « linkyRPi.conf »
 Ce fichier contient toute la configuration de l’application. Il est divisé en différentes sections :
 ### Paramètres généraux de l'application
-```
+```json
 [PARAM]
 debugLevel: 0  --> Permet d'activer des traces pour debugger le code
 refreshPlage: 2000  --> Temps en mili-secondes entre deux refresh de la frame "Info"
