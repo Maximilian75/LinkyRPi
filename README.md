@@ -206,12 +206,12 @@ Par défaut les informations de connexion sont les suivantes :
 
 ## Configuration du Raspberry Pi
 La première étape consiste à configurer le Raspberry-Pi :
-```shell
+```
 sudo raspi-config
 ```
---> Autoriser le serveur SSH
---> Interdire le SSH Serial
---> Display --> VNC resolution --> mettre en 1024*600
+1- Autoriser le serveur SSH
+2- Interdire le SSH Serial
+3- Display --> VNC resolution --> mettre en 1024*600
 
 ## Installation des paquets nécessaires à l’application
 Avant tout, il faut ajouter un nouveau dépot :
