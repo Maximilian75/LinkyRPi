@@ -134,16 +134,8 @@ Une fois l’interface graphique initialisée et les procédures schedulées dé
 Les données instantanées (tensions, intensités et puissances) sont rafraichies à chaque réception de trames, soit en quasi-temps-réel.
 ## Le fichier de configuration « linkyRPi.conf »
 Ce fichier contient toute la configuration de l’application. Il est divisé en différentes sections :
-
-[POSTGRESQL]
-active: True  --> 'True' pour activer le process d'écriture en DB, 'False' sinon
-user: xxxxx  --> Le user d'accès à la DB Postgresql
-password: xxxxxxx  --> Le mot de passe d'accès à la DB
-host: xxx.xxx.xxx.xxx  --> L'adresse IP du serveur où se trouve physiquement la DB Postgresql
-port: 5432  --> Le port d'écoute de la DB
-dbname: linkydb  --> Le nom de la DB
-refreshDB: 60  --> Durée en seconde entre deux enregistrements en DB
-
+### Paramètres généraux de l'application
+```
 [PARAM]
 debugLevel: 0  --> Permet d'activer des traces pour debugger le code
 refreshPlage: 2000  --> Temps en mili-secondes entre deux refresh de la frame "Info"
@@ -152,8 +144,9 @@ refreshIndex: 2000  --> Temps en mili-secondes entre deux refresh de la frame "C
 traceFile: True  --> 'True' pour activer l'enregistrement de trames dans un fichier text. Pratique pour ensuite tester la GUI sans être raccordé au compteur
 traceFreq: 300  --> Durée en secondes entre deux enregistrements dans le fichier texte
 version: 2.10  --> Version de LinkyRPi
-
-
+```
+### Paramètres liés à la communication IPC
+```
 [POSIX]
 queueGUI: /LinkyRPiQueueGUI  --> Nom de la message queue pour communication Listener --> GUI
 depthGUI: 8  --> Nombre de messages max dans la queue de communication de la GUI
@@ -161,8 +154,22 @@ queueDB: /LinkyRPiQueueDB  --> Nom de la message queue pour communication Listen
 depthDB: 200  --> Nombre de messages max dans la queue de communication de la DB
 
 [PATH]  --> Ce groupe indique les path vers les différents sous-composants de l'appli (logs, icones,...)
-
+```
+### Paramètres liés au style de la GUI
+```
 [GUICSS]  --> Ce groupe définit les couleurs, polices d'écriture, etc... de la GUI
+```
+### Paramètres liés à la base de données Postgresql
+```
+[POSTGRESQL]
+active: True  --> 'True' pour activer le process d'écriture en DB, 'False' sinon
+user: xxxxx  --> Le user d'accès à la DB Postgresql
+password: xxxxxxx  --> Le mot de passe d'accès à la DB
+host: xxx.xxx.xxx.xxx  --> L'adresse IP du serveur où se trouve physiquement la DB Postgresql
+port: 5432  --> Le port d'écoute de la DB
+dbname: linkydb  --> Le nom de la DB
+refreshDB: 60  --> Durée en seconde entre deux enregistrements en DB
+```
 
 
 # Procédure d’installation de l’application « stand alone »
