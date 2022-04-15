@@ -451,3 +451,8 @@ Il est donc désormais possible d’y accéder :
 - Soit par SQL dans un terminal Postgres
 - Soit par SQL via PgAdmin
 - Soit par un outil de BI tel que [Tableau](https://www.tableau.com/fr-fr) ou [Qlik](https://www.qlik.com/fr-fr/) par exemple.
+
+# Note concernant la copie et l'utilisation de LinkyRPi
+LinkyRPi est un logiciel libre ; vous pouvez le redistribuer ou le modifier suivant les termes de la GNU General Public License telle que publiée par la Free Software Foundation ; soit la version 3 de la licence, soit (à votre gré) toute version ultérieure.
+LinkyRPi est distribué dans l'espoir qu'il sera utile, mais SANS AUCUNE GARANTIE ; sans même la garantie tacite de QUALITÉ MARCHANDE ou d'ADÉQUATION à UN BUT PARTICULIER. Consultez la GNU General Public License pour plus de détails.
+Vous devez avoir reçu une copie de la GNU General Public License en même temps que LinkyRPi ; si ce n'est pas le cas, consultez <http://www.gnu.org/licenses>.
