@@ -199,8 +199,9 @@ Par défaut les informations de connexion sont les suivantes :
 
 ## Configuration du Raspberry Pi
 La première étape consiste à configurer le Raspberry-Pi :
-
+```
 sudo raspi-config
+```
 --> Autoriser le serveur SSH
 --> Interdire le SSH Serial
 --> Display --> VNC resolution --> mettre en 1024*600
@@ -214,15 +215,43 @@ A la fin du fichier, ajouter le dépot suivant :
 ```
 deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian stretch main contrib non-free rpi
 ```
-Ensuite il faut installer les paquets nécessaires à l’exécution de l’application.
+Puis faite un update d'apt-get
+```
+sudo apt-get update
+```
+Enfin, on installe tous les paquets nécessaire à LinkyRPi, à savoir
+- Python3 et pip :
+```
+sudo apt install python3
+sudo apt install python3-pip
+```
+- Les paquest permettant de gérer le port série :
+```
+sudo apt install python3-serial
+pip3 install RPi.GPIO
+pip3 install pyserial
+```
+- Les paquets permettant de comuniquer avec la DB Postgresql
+```
+sudo apt-get install libpq-dev
+pip3 install psycopg2
+pip3 install psycopg2-binary
+sudo apt-get install python3-psycopg2
+```
+- Les paquest liés à l'interface graphique
+```
+sudo apt-get install python3-tk
+sudo apt-get install xterm
+sudo apt-get install libopenjp2-7
+```
+- Le paquet permettant l'utilisation des message-queues POSIX pour la communication IPC
+```
+pip3 install posix_ipc
+```
 
 
 
 
-
-- Installer Python3 :
-
-sudo apt-get install python3
 
 ## Déploiement de l’application sur le Raspberry Pi
 Les différents scripts et objets graphiques doivent ensuite être transférés sur la carte SD du Raspberry-Pi. Pour cela il faut se connecter au Raspberry-Pi avec FileZilla. Les user/password à utiliser sont les mêmes que dans Putty.
