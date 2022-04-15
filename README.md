@@ -135,8 +135,34 @@ Les données instantanées (tensions, intensités et puissances) sont rafraichie
 ## Le fichier de configuration « linkyRPi.conf »
 Ce fichier contient toute la configuration de l’application. Il est divisé en différentes sections :
 
-[PARAM] : contient les paramètres généraux de l’application
+[POSTGRESQL]
+active: True  --> 'True' pour activer le process d'écriture en DB, 'False' sinon
+user: xxxxx  --> Le user d'accès à la DB Postgresql
+password: xxxxxxx  --> Le mot de passe d'accès à la DB
+host: xxx.xxx.xxx.xxx  --> L'adresse IP du serveur où se trouve physiquement la DB Postgresql
+port: 5432  --> Le port d'écoute de la DB
+dbname: linkydb  --> Le nom de la DB
+refreshDB: 60  --> Durée en seconde entre deux enregistrements en DB
 
+[PARAM]
+debugLevel: 0  --> Permet d'activer des traces pour debugger le code
+refreshPlage: 2000  --> Temps en mili-secondes entre deux refresh de la frame "Info"
+refreshStats: 2000  --> Temps en mili-secondes entre deux refresh des frames "Status" et "Registre"
+refreshIndex: 2000  --> Temps en mili-secondes entre deux refresh de la frame "Courbe"
+traceFile: True  --> 'True' pour activer l'enregistrement de trames dans un fichier text. Pratique pour ensuite tester la GUI sans être raccordé au compteur
+traceFreq: 300  --> Durée en secondes entre deux enregistrements dans le fichier texte
+version: 2.10  --> Version de LinkyRPi
+
+
+[POSIX]
+queueGUI: /LinkyRPiQueueGUI  --> Nom de la message queue pour communication Listener --> GUI
+depthGUI: 8  --> Nombre de messages max dans la queue de communication de la GUI
+queueDB: /LinkyRPiQueueDB  --> Nom de la message queue pour communication Listener --> DB
+depthDB: 200  --> Nombre de messages max dans la queue de communication de la DB
+
+[PATH]  --> Ce groupe indique les path vers les différents sous-composants de l'appli (logs, icones,...)
+
+[GUICSS]  --> Ce groupe définit les couleurs, polices d'écriture, etc... de la GUI
 
 
 # Procédure d’installation de l’application « stand alone »
@@ -175,9 +201,24 @@ Par défaut les informations de connexion sont les suivantes :
 La première étape consiste à configurer le Raspberry-Pi :
 
 sudo raspi-config
+--> Autoriser le serveur SSH
+--> Interdire le SSH Serial
+--> Display --> VNC resolution --> mettre en 1024*600
 
 ## Installation des paquets nécessaires à l’application
+Avant tout, il faut ajouter un nouveau dépot :
+```
+sudo nano /etc/apt/sources.list
+```
+A la fin du fichier, ajouter le dépot suivant :
+```
+deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian stretch main contrib non-free rpi
+```
 Ensuite il faut installer les paquets nécessaires à l’exécution de l’application.
+
+
+
+
 
 - Installer Python3 :
 
