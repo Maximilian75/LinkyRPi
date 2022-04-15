@@ -249,9 +249,64 @@ sudo apt-get install libopenjp2-7
 pip3 install posix_ipc
 ```
 
+## Gestion de la mise à l'heure du Raspberry-Pi
+```
+sudo timedatectl set-timezone Europe/Paris
+sudo timedatectl set-ntp true
+```
+Vérification :
+```
+timedatectl status
+```
 
-
-
+## Gestion du WiFi
+Création/modification du fichier wpa_supplicant.conf
+```
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+Celui-ci doit contenir les lignes suivantes. Les ajouter si ce n'est pas le cas :
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=FR
+```
+Ainsi que la liste des WiFi disponibles sous la forme
+```
+network={
+        ssid="Mon wifi 1"
+        psk="mot de pass de mon wifi 1"
+}
+network={
+        ssid="Mon wifi 2"
+        psk="mot de pass de mon wifi 2"
+}
+```
+## Configuration de l'écran tactile et installation des paques nécessaires à son utilisation
+```
+sudo nano /boot/config.txt
+```
+Ajouter les lignes suivantes :
+```
+max_usb_current=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt 1024 600 60 6 0 0 0
+hdmi_drive=1
+```
+Puis installer les paquets suivants :
+```
+sudo apt-get -y install nodm matchbox-window-manager
+sudo apt-get install x11-xserver-utils
+sudo apt-get install xinit
+```
+Enfin il faut paramétrer le démarrage automatique du serveur X
+```
+sudo nano /lib/systemd/system/nodm.service
+```
+Modifier la ligne "After" ainsi :
+```
+After=plymouth-quit.service systemd-user-sessions.service runlevel2.target, runlevel4.target, multi-user.target
+```
 
 ## Déploiement de l’application sur le Raspberry Pi
 Les différents scripts et objets graphiques doivent ensuite être transférés sur la carte SD du Raspberry-Pi. Pour cela il faut se connecter au Raspberry-Pi avec FileZilla. Les user/password à utiliser sont les mêmes que dans Putty.
@@ -273,6 +328,57 @@ Les différents scripts et objets graphiques doivent ensuite être transférés 
 ## Création des services pour démarrage automatique de l’application
 L’objectif ici étant de démarrer automatiquement tous les modules de l’application afin qu’aucune manipulation (saisie de ligne de commande) ne soit nécessaire. C’est le principe d’une application embarquée. Tout fonctionne sans avoir besoin d’un clavier connecté à l’appareil. C’est aussi là tout l’intérêt d’avoir un écran tactile.
 
+### Démarrage automatique du listener :
+```
+sudo nano /lib/systemd/system/LinkyRPiListen.service
+```
+Copier les lignes suivantes dans le fichier :
+```
+[Unit]
+Description=LinkyRPi Listen
+After=multi-user.target LinkyRPiGUI.service
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiListen.py > /home/pi/LinkyRPi/LinkyRPiListen.log 2>&1
+WorkingDirectory=/home/pi/LinkyRPi
+User=pi
+[Install]
+WantedBy=multi-user.target
+```
+Puis modifier les droits d'accès au fichier et recharger le deamon systemctl :
+```
+sudo chmod 644 /lib/systemd/system/LinkyRPiListen.service
+sudo systemctl daemon-reload
+sudo systemctl enable LinkyRPiListen.service
+```
+
+### Démarrage automatique de la GUI :
+```
+sudo nano /lib/systemd/system/LinkyRPiGUI.service
+```
+Copier les lignes suivantes dans le fichier :
+```
+[Unit]
+Description=LinkyRPi GUI
+After=syslog.target network.target multi-user.target nodm.service systemd-user-sessions.service runlevel5.target graphical.target
+[Service]
+Type=idle
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiGUI.py > /home/pi/LinkyRPi/LinkyRPiGUI.log 2>&1
+WorkingDirectory=/home/pi/LinkyRPi
+User=pi
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target default.target
+```
+Puis modifier les droits d'accès au fichier et recharger le deamon systemctl :
+```
+sudo chmod 644 /lib/systemd/system/LinkyRPiGUI.service
+sudo systemctl daemon-reload
+sudo systemctl enable LinkyRPiGUI.service
+```
+
 
 # Fonctionnement avec base de données
 Ce chapitre détaille comment bénéficier d’une sauvegarde à long terme des données lues sur la TIC du compteur.
@@ -290,37 +396,41 @@ Afin de gérer facilement la base de données Postgresql, il est possible d’in
 
 <https://www.pgadmin.org/download/>
 
-## Création de l’utilisateur technique qui sera utilisé par le process de stockage
-
-## Création des tables nécessaires à l’application
-### Modèle de données
-
-### Scripts de création des tables
-Les scripts de création des tables et des autorisations relatives sont fournis dans le fichier LinkyRPi.sql
-
-Il suffit de les exécuter dans l’ordre afin de créer la base de données.
-
-## Le fichier de configuration « linkyRPi.conf »
-Afin que le process de stockage puisse se connecter à la base de données, il faut lui indiquer le User et le mot de passe nécessaires. Pour cela il suffit d’ajouter les lignes suivantes dans le fichier de configuration :
-
-[DB]
-
-AdresseIP : <l’adresse IP de la machine hébergeant Postgresql>
-
-User: <user technique créé précédemment>
-
-Password : <le mot de passe du user technique>
-
-Il faut ensuite modifier le flag d’activation, dans le même fichier, sous la rubrique [PARAM] :
-
-ActivateDB: True
+## Création de la DB (user, tables, etc...)
+Tous les scripts permettant de créer la DB sont disponibles dans le fichier /sql/CreateDB.sql
 
 ## Création du service pour démarrage automatique du process de stockage
 Une fois la base de données installée et le fichier de configuration mis à jour, il suffit de transférer le script de stockage « LinkyRPiDB.py » sur le Raspberry-Pi dans le répertoire « /usr/pi/Linky » et de paramétrer son démarrage automatique de la manière suivante :
 
-Il faudra ensuite redémarrer le Raspberry-Pi afin de s’assurer que tout fonctionne bien et que le listener envoie bien les trames vers le module de stockage.
+```
+sudo nano /lib/systemd/system/LinkyRPiDB.service
+```
+Copier les lignes suivantes dans le fichier :
+```
+[Unit]
+Description=LinkyRPi DB
+After=syslog.target network.target multi-user.target nodm.service systemd-user-sessions.service runlevel5.target graphical.target
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiDB.py > /home/pi/LinkyRPi/LinkyRPiDB.log 2>&1
+WorkingDirectory=/home/pi/LinkyRPi
+User=pi
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target default.target
+```
+Puis modifier les droits d'accès au fichier et recharger le deamon systemctl :
+```
+sudo chmod 644 /lib/systemd/system/LinkyRPiDB.service
+sudo systemctl daemon-reload
+sudo systemctl enable LinkyRPiDB.service
+```
 
+Il faudra ensuite redémarrer le Raspberry-Pi afin de s’assurer que tout fonctionne bien et que le listener envoie bien les trames vers le module de stockage.
+```
 sudo reboot
+```
 
 ## Exploitation des données sauvegardées dans la base de données
 Une fois l’application démarrée avec le process de stockage, la base de données va commencer à se remplir au fur et à mesure des trames transmises par la TIC.
@@ -330,6 +440,3 @@ Il est donc désormais possible d’y accéder :
 - Soit par SQL dans un terminal Postgres
 - Soit par SQL via PgAdmin
 - Soit par un outil de BI tel que [Tableau](https://www.tableau.com/fr-fr) ou [Qlik](https://www.qlik.com/fr-fr/) par exemple.
-
-Page | 13 
-
