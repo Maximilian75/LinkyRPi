@@ -329,10 +329,11 @@ Les différents scripts et objets graphiques doivent ensuite être transférés 
 ||- LinkyRPiListen.py|Script du listener|
 ||- LinkyRPiGUI.py|Script de l’interface graphique|
 ||- LinkyRPiDB.py|Script d’écriture dans la base de données|
-||- linky.py|Script de décodage des trames|
-||- linky.conf|Fichier de configuration de l’application|
+||- linkyRPiTranslate.py|Script de décodage des trames|
+||- LinkyRPi.conf|Fichier de configuration de l’application|
 |/usr/pi/LinkyRPi/icons|Ce répertoire contient les objets graphiques de l’interface (boutons, voyants, etc…)|
 |/usr/pi/LinkyRPi/logs|Ce répertoire contient les logs d’exécution des différents process|
+|/usr/pi/LinkyRPi/tools|Ce répertoire contient des petits outils pour tester et mettre au point l'application|
 
 
 ## Création des services pour démarrage automatique de l’application
