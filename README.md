@@ -210,8 +210,11 @@ La première étape consiste à configurer le Raspberry-Pi :
 sudo raspi-config
 ```
 1- Autoriser le serveur SSH
+
 2- Interdire le SSH Serial
+
 3- Display --> VNC resolution --> mettre en 1024*600
+
 
 ## Installation des paquets nécessaires à l’application
 Avant tout, il faut ajouter un nouveau dépot :
