@@ -35,6 +35,9 @@ config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
 
 ldebug = int(config.get('PARAM','debugLevel'))
 
+if ldebug>0 : print("=============================================================================")
+if ldebug>0 : print("Démarrage du process GUI : " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+
 # On se connecte à la queue POSIX via laquelle le backend envoie les trames décodées
 queueName = config.get('POSIX','queueGUI')
 queueDepth = int(config.get('POSIX','depthGUI'))
@@ -195,9 +198,9 @@ def reboot():
 #===============================================================================
 def cmd():
     root = tk.Tk()
-    termf = Frame(root, height=1024, width=600)
+    termf = tk.Frame(root, height=1024, width=600)
 
-    termf.pack(fill=BOTH, expand=YES)
+    termf.pack(fill=tk.BOTH, expand=tk.YES)
     wid = termf.winfo_id()
     os.system('xterm -into %d -geometry 1024x600 -sb &' % wid)
 
@@ -301,7 +304,7 @@ def timerDownFile():
 #=======================================================================================#
 def initGUI(analysedDict) :
 
-    #print(analysedDict)
+    if ldebug>0 : print("Initialisation de la GUI...")
 
     #Definition des voyants et boutons
     global voyantNoir, voyantBleu, voyantBlanc, voyantRouge, voyantHC, voyantHP, voyantWE, miniVoyantNoir, miniVoyantVert
@@ -316,12 +319,6 @@ def initGUI(analysedDict) :
     voyantHC        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/HC.png")
     voyantHP        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/HP.png")
     voyantWE        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/WE.png")
-    cmdIcon         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/cmd.png")
-    rebootIcon      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/reboot.png")
-    ONButton        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/ON.png")
-    OFFButton       = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/OFF.png")
-    flecheD         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/flecheDR.png")
-    flecheG         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/flecheGA.png")
     boutonClair     = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/boutonClair.png")
     boutonFonce     = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/boutonFonce.png")
 
@@ -343,9 +340,6 @@ def initGUI(analysedDict) :
     colorPhase3      = config.get('GUICSS','phase3')
     valueColorWar    = config.get('GUICSS','valueColorWar')
     titleColor       = config.get('GUICSS','titleColor')
-
-    if ldebug>0 : print("Initialisation de la GUI...")
-
 
     # Frame producteur (seulement en mode PRODUCTEUR)
     if "Fonctionnement" in analysedDict :
@@ -435,7 +429,7 @@ def initGUI(analysedDict) :
         HPHCIcon = tk.Label(infoFrame, image=voyantNoir, borderwidth=0)
         HPHCIcon.grid(row=7, column=1, padx=2, pady=2)
 
-    elif analysedDict["TarifSouscrit"] == "Tempo" :
+    elif analysedDict["TarifSouscrit"] == "TEMPO" :
         FieldHorairesHC = tk.StringVar()
         FieldHorairesHC.set("(" + analysedDict["HorairesHC"] + ")")
         valueHorairesHC = tk.Label(infoFrame, textvariable = FieldHorairesHC, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
@@ -655,7 +649,7 @@ def initGUI(analysedDict) :
         unitTOTAL = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         unitTOTAL.grid(row=3, column=4, sticky=tk.E, padx=30, pady=(15,30))
 
-    elif (analysedDict["TarifSouscrit"] == "Tempo") :
+    elif (analysedDict["TarifSouscrit"] == "TEMPO") :
         BBRHCJB = tk.StringVar()
         valueIndex = int(analysedDict["IndexHCJB"]) / 1000
         BBRHCJB.set("{:,}".format(valueIndex))
@@ -696,7 +690,7 @@ def initGUI(analysedDict) :
         unitIndexW = tk.Label(indexFrame, text="kWh", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         unitIndexW.grid(row=3, column=3, sticky=tk.E, padx=30, pady=10)
         LabelIndexR = tk.Label(indexFrame, text="Index Rouge :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-        LabelIndexR.grid(row=3, column=0, sticky=tk.E, padx=30, pady=10)
+        LabelIndexR.grid(row=4, column=0, sticky=tk.E, padx=30, pady=10)
         valueBBRHPJR = tk.Label(indexFrame, textvariable = BBRHPJR, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         valueBBRHPJR.grid(row=4, column=1, sticky=tk.E, padx=30, pady=10)
         valueBBRHCJR = tk.Label(indexFrame, textvariable = BBRHCJR, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
@@ -873,7 +867,7 @@ def initGUI(analysedDict) :
         unitPuissanceMaxAtteinte = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         unitPuissanceMaxAtteinte.grid(row=5, column=4, sticky=tk.E, padx=10, pady=10)
 
-        LabelPuissanceApparenteMaxN1 = tk.Label(tensionFrame, text="Puissance maximale atteinte :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelPuissanceApparenteMaxN1 = tk.Label(tensionFrame, text="Puissance maximale hier :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         LabelPuissanceApparenteMaxN1.grid(row=6, column=0, sticky=tk.E, padx=10, pady=10)
         valuePuissanceApparenteMaxN1Phase1 = tk.Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase1, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         valuePuissanceApparenteMaxN1Phase1.grid(row=6, column=1, sticky=tk.E, padx=10, pady=10)
@@ -1073,17 +1067,17 @@ def initGUI(analysedDict) :
 
         global TEMPOJOUR
         TEMPOJOUR = tk.StringVar()
-        LabelCouleurTempoJour = tk.Label(registreFrame, text="Couleur du jour pour le contrat historique tempo : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-        LabelCouleurTempoJour.grid(row=15, column=0, sticky=tk.E, padx=10, pady=2)
-        valueCouleurTempoJour = tk.Label(registreFrame, textvariable = TEMPOJOUR, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-        valueCouleurTempoJour.grid(row=15, column=1, sticky=tk.W, padx=10, pady=2)
+        LabelCouleurTEMPOJour = tk.Label(registreFrame, text="Couleur du jour pour le contrat historique TEMPO : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelCouleurTEMPOJour.grid(row=15, column=0, sticky=tk.E, padx=10, pady=2)
+        valueCouleurTEMPOJour = tk.Label(registreFrame, textvariable = TEMPOJOUR, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueCouleurTEMPOJour.grid(row=15, column=1, sticky=tk.W, padx=10, pady=2)
 
         global TEMPODEMAIN
         TEMPODEMAIN = tk.StringVar()
-        LabelCouleurTempoDemain = tk.Label(registreFrame, text="Couleur du lendemain pour le contrat historique tempo : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-        LabelCouleurTempoDemain.grid(row=16, column=0, sticky=tk.E, padx=10, pady=2)
-        valueCouleurTempoDemain = tk.Label(registreFrame, textvariable = TEMPODEMAIN, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-        valueCouleurTempoDemain.grid(row=16, column=1, sticky=tk.W, padx=10, pady=2)
+        LabelCouleurTEMPODemain = tk.Label(registreFrame, text="Couleur du lendemain pour le contrat historique TEMPO : ", font=(textFont,textSizeSmall,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        LabelCouleurTEMPODemain.grid(row=16, column=0, sticky=tk.E, padx=10, pady=2)
+        valueCouleurTEMPODemain = tk.Label(registreFrame, textvariable = TEMPODEMAIN, font=(textFont,textSizeSmall), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        valueCouleurTEMPODemain.grid(row=16, column=1, sticky=tk.W, padx=10, pady=2)
 
         global PREAVISPOINTE
         PREAVISPOINTE = tk.StringVar()
@@ -1193,10 +1187,20 @@ def initGUI(analysedDict) :
 
 
 
-    #===============================================================================
-    #=== Population de la frame PARAMETRES                                       ===
-    #===============================================================================
+#===============================================================================
+#=== Init de la frame PARAMETRES                                             ===
+#===============================================================================
+def initParam() :
     global ButtonDBActive, ValueDebug, scaleDBVal, scaleFileVal, timerDB, timerFile
+    global cmdIcon, rebootIcon, ONButton, OFFButton, flecheD, flecheG
+
+    cmdIcon         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/cmd.png")
+    rebootIcon      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/reboot.png")
+    ONButton        = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/ON.png")
+    OFFButton       = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/OFF.png")
+    flecheD         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/flecheDR.png")
+    flecheG         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/flecheGA.png")
+
     flagDBActive    = config.get('POSTGRESQL','active')
     refreshDB       = config.get('POSTGRESQL','refreshDB')
     debugLevel      = config.get('PARAM','debugLevel')
@@ -1247,9 +1251,6 @@ def initGUI(analysedDict) :
     ButtonFilePlus = tk.Button(paramFrameT, image=flecheD, bg=labelBg, borderwidth=0, command=timerUpFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
     ButtonFilePlus.grid(row=2, column=4, sticky=tk.W, padx=10, pady=15)
 
-
-
-
     # Boutons du bas de l'écran
     cmdButton = tk.Button(paramFrameB, text="Cmd", command=cmd, image=cmdIcon, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
     cmdButton.grid(row=0, column=0, padx=(120,80))
@@ -1260,7 +1261,7 @@ def initGUI(analysedDict) :
 
 
 #===============================================================================
-#=== Refresh de la frame STATUS                                              ===
+#=== Init de la frame STATUS                                                 ===
 #===============================================================================
 def initStatus() :
     STATUSTITLE = tk.StringVar()
@@ -1466,10 +1467,10 @@ def refreshStatus():
         STATCPL.set(analysedDict["StatutCPL"])
     if "SynchroCPL" in analysedDict :
         SYNCCPL.set(analysedDict["SynchroCPL"])
-    if "CouleurTempoJour" in analysedDict :
-        TEMPOJOUR.set(analysedDict["CouleurTempoJour"])
-    if "CouleurTempoDemain" in analysedDict :
-        TEMPODEMAIN.set(analysedDict["CouleurTempoDemain"])
+    if "CouleurTEMPOJour" in analysedDict :
+        TEMPOJOUR.set(analysedDict["CouleurTEMPOJour"])
+    if "CouleurTEMPODemain" in analysedDict :
+        TEMPODEMAIN.set(analysedDict["CouleurTEMPODemain"])
     if "PreavisPointesMobiles" in analysedDict :
         PREAVISPOINTE.set(analysedDict["PreavisPointesMobiles"])
     if "PointeMobile" in analysedDict :
@@ -1546,7 +1547,7 @@ def refreshPlages():
             JOURIcon.image=voyantRouge
 
     #DEMAIN
-    if analysedDict["TarifSouscrit"] in ["Tempo","EJP"] :
+    if analysedDict["TarifSouscrit"] in ["TEMPO","EJP"] :
         if "CouleurDemain" in analysedDict :
             if analysedDict["CouleurDemain"] == "Bleu" :
                 DEMAINIcon.configure(image=voyantBleu)
@@ -1581,19 +1582,23 @@ def refreshIndex():
 
     if "EnergieActiveSoutireeDistributeurIndex1" in analysedDict :
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex1"]) / 1000
-        IndexHCB.set("{:,}".format(valueIndex))
+        if (analysedDict["TarifSouscrit"] == "Heures Creuses") :
+            IndexHCB.set("{:,}".format(valueIndex))
 
     if "EnergieActiveSoutireeDistributeurIndex2" in analysedDict :
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex2"]) / 1000
-        IndexHPB.set("{:,}".format(valueIndex))
+        if (analysedDict["TarifSouscrit"] == "Heures Creuses") :
+            IndexHPB.set("{:,}".format(valueIndex))
 
     if "EnergieActiveSoutireeDistributeurIndex3" in analysedDict :
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex3"]) / 1000
-        IndexHCH.set("{:,}".format(valueIndex))
+        if (analysedDict["TarifSouscrit"] == "Heures Creuses") :
+            IndexHCH.set("{:,}".format(valueIndex))
 
     if "EnergieActiveSoutireeDistributeurIndex4" in analysedDict :
         valueIndex = int(analysedDict["EnergieActiveSoutireeDistributeurIndex4"]) / 1000
-        IndexHPH.set("{:,}".format(valueIndex))
+        if (analysedDict["TarifSouscrit"] == "Heures Creuses") :
+            IndexHPH.set("{:,}".format(valueIndex))
 
 
     if "IndexHC" in analysedDict :
@@ -1836,6 +1841,9 @@ colorPhase3     = config.get('GUICSS','phase3')
 oldTime = datetime.now()
 
 initStatus()
+initParam()
+
+if ldebug>0 : print("Mise en écoute")
 
 #On part en boucle infinie
 while True:
@@ -1855,6 +1863,11 @@ while True:
 
         #On initialise la UI (seulement à réception de la 1ere trame)
         if not initUI :
+            if ldebug>1 : print("Première trame reçue")
+            if ldebug>2 : print("------------------------------------>")
+            if ldebug>2 : print(analysedDict)
+            if ldebug>2 : print("<------------------------------------")
+
             initGUI(analysedDict)
             refreshStatus()
             refreshIndex()

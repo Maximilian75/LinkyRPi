@@ -26,12 +26,15 @@ global connectDB
 global firstTrame
 
 
+print("=============================================================================")
+print("Démarrage du process listenner : " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+
 syllabus, dataFormat = linkyRPiTranslate.generateSyllabus()
 
 # On ouvre le fichier de param et on recup les param
 config = configparser.RawConfigParser()
 config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
-ldebug = int(config.get('PARAM','debugLevel'))
+ldebug = int(config.get('PARAM','debuglevel'))
 
 traceFile = config.get('PARAM','traceFile')
 traceFreq = int(config.get('PARAM','traceFreq'))
@@ -53,10 +56,6 @@ class bcolors:
     FAIL = '\033[91m' #RED
     RESET = '\033[0m' #RESET COLOR
 
-
-
-
-if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Démarrage du process listenner")
 
 #Ouverture de la pile FIFO pour communication avec la UI
 queueName = config.get('POSIX','queueGUI')
@@ -90,6 +89,7 @@ else :
 #==============================================================================#
 def init():
 
+    if ldebug>1 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Détection du mode de fonctionnement de la TIC...")
 
     #Détection du mode TIC en fonction du BAUDRATE détecté
     baud_dict = [1200, 9600]
@@ -132,12 +132,14 @@ def init():
         if rateValue == 1200 :
             modeTIC = "Historique"
             if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] TIC en mode HISTORIQUE")
+            if ldebug>2 : print(line_str)
         else :
             modeTIC = "Standard"
             if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] TIC en mode STANDARD")
-
+            if ldebug>2 : print(line_str)
     else :
         if ldebug>0 : print("[" + bcolors.FAIL + "KO" + bcolors.RESET + "] Unable to detect the baud rate")
+        if ldebug>1 : print(line_str)
     ser.close()
 
     return modeTIC
@@ -148,12 +150,12 @@ def init():
 def treatmesure(mesureCode,mesureValue,mesureValue2) :
     #Les codes ci-dessous contiennent 2 valeurs : un horodatage + la valeur en question.
     #Du coup on bypass l'horodatage pour ne garder que la valeur
-    if mesureCode in ["SMAXSN","SMAXSN1","SMAXSN2","SMAXSN3","SMAXSN-1","SMAXSN1-1","SMAXSN3-1","SMAXIN","SMAXIN-1","CCASN","CCASN-1","CCAIN","CCAIN-1","UMOY1","UMOY2","UMOY3","DPM1","FPM1","DPM2","FPM2","DPM3","FPM3"] :
+    if mesureCode in ["SMAXSN","SMAXSN1","SMAXSN2","SMAXSN3","SMAXSN-1","SMAXSN1-1","SMAXSN2-1","SMAXSN3-1","SMAXIN","SMAXIN-1","CCASN","CCASN-1","CCAIN","CCAIN-1","UMOY1","UMOY2","UMOY3","DPM1","FPM1","DPM2","FPM2","DPM3","FPM3"] :
         mesure = (mesureCode, mesureValue2.strip("\n"))
-        if ldebug>2 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue2.strip("\n"))
+        if ldebug>3 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue2.strip("\n"))
     else :
         mesure = (mesureCode, mesureValue)
-        if ldebug>2 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue)
+        if ldebug>3 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue)
 
     list_measures.append(mesure)
     return list_measures
@@ -170,6 +172,7 @@ def treattrame(list_measures):
     list_measures.append(mesure)
     if ldebug>2 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "] TICMODE : " + modeTIC)
     if ldebug>1 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Fin de trame détectée")
+    if ldebug>1 : print("--------------------------------------------------------------------------------")
 
     #On traduit la trame reçue en un dictionnaire agnostique du type de fonctionnement de la TIC
     analysedDict = {}
@@ -234,8 +237,7 @@ def writeToFile(analysedDict) :
 #==============================================================================#
 # PRODEDURE PRINCIPALE                                                         #
 #==============================================================================#
-traceFreq = config.get('PARAM','traceFreq')
-nextTrace = time.monotonic() + int(traceFreq)
+nextTrace = time.monotonic()
 
 modeTIC = ""
 while modeTIC == "" :
@@ -260,6 +262,7 @@ if modeTIC == "Historique" :
 
         # lecture de la première ligne de la première trame
         line = ser.readline()
+        if ldebug>1 : print("================================================================================")
         if ldebug>0 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "] Debut de trame détecté à " + datetime.now().strftime("%H:%M:%S.%f"))
         while True:
             line_str = line.decode("utf-8")
@@ -295,6 +298,7 @@ elif modeTIC == "Standard" :
 
         # lecture de la première ligne de la première trame
         line = ser.readline()
+        if ldebug>1 : print("================================================================================")
         if ldebug>0 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "] Debut de trame détecté à " + datetime.now().strftime("%H:%M:%S.%f"))
         while True:
             line_str = line.decode("utf-8")

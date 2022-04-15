@@ -30,7 +30,7 @@ def generateSyllabus() :
     syllabus.update({"BBRHPJR":"Index06"})
     syllabus.update({"PEJP":"ProfilProchainJourPointe"})
     syllabus.update({"PTEC":"CodeTarifEnCours"})
-    syllabus.update({"DEMAIN":"CouleurTempoDemain"})
+    syllabus.update({"DEMAIN":"CouleurTEMPODemain"})
     syllabus.update({"IINST":"IntensiteInstantaneePhase1"})
     syllabus.update({"IINST1":"IntensiteInstantaneePhase1"})
     syllabus.update({"IINST2":"IntensiteInstantaneePhase2"})
@@ -54,7 +54,7 @@ def generateSyllabus() :
     syllabus.update({"VTIC":"VersionTIC"})
     syllabus.update({"DATE":"DateHeureLinky"})
     syllabus.update({"NGTF":"TarifSouscrit"})
-    syllabus.update({"LTARF":"PeriodeTarifaireEnCours"})
+    #syllabus.update({"LTARF":"PeriodeTarifaireEnCours"})
     syllabus.update({"EAST":"Index00"})
     syllabus.update({"EASF01":"Index01"})
     syllabus.update({"EASF02":"Index02"})
@@ -126,8 +126,8 @@ def generateSyllabus() :
     dataFormat.update({"CacheBorneDistributeur":"char"})
     dataFormat.update({"ContactSec":"char"})
     dataFormat.update({"CouleurDemain":"char"})
-    dataFormat.update({"CouleurTempoDemain":"char"})
-    dataFormat.update({"CouleurTempoJour":"char"})
+    dataFormat.update({"CouleurTEMPODemain":"char"})
+    dataFormat.update({"CouleurTEMPOJour":"char"})
     dataFormat.update({"DateHeureLinky":"char"})
     dataFormat.update({"DebutPointeMobile1":"char"})
     dataFormat.update({"DebutPointeMobile2":"char"})
@@ -419,26 +419,26 @@ def analyseRegistre(registreValue):
         registre.update({"SynchroCPL":"Synchronisé"})
 
     if int(s[24:26], 2) == 0 :
-        registre.update({"CouleurTempoJour":"Pas d'annonce"})
+        registre.update({"CouleurTEMPOJour":"Pas d'annonce"})
     elif int(s[24:26], 2) == 1 :
-        registre.update({"CouleurTempoJour":"Bleu"})
+        registre.update({"CouleurTEMPOJour":"Bleu"})
     elif int(s[24:26], 2) == 2 :
-        registre.update({"CouleurTempoJour":"Blanc"})
+        registre.update({"CouleurTEMPOJour":"Blanc"})
     elif int(s[24:26], 2) == 3 :
-        registre.update({"CouleurTempoJour":"Rouge"})
+        registre.update({"CouleurTEMPOJour":"Rouge"})
     else :
-        registre.update({"CouleurTempoJour":"Statut inconnu : " + s[24:26]})
+        registre.update({"CouleurTEMPOJour":"Statut inconnu : " + s[24:26]})
 
     if int(s[26:28], 2) == 0 :
-        registre.update({"CouleurTempoDemain":"Pas d'annonce"})
+        registre.update({"CouleurTEMPODemain":"Pas d'annonce"})
     elif int(s[26:28], 2) == 1 :
-        registre.update({"CouleurTempoDemain":"Bleu"})
+        registre.update({"CouleurTEMPODemain":"Bleu"})
     elif int(s[26:28], 2) == 2 :
-        registre.update({"CouleurTempoDemain":"Blanc"})
+        registre.update({"CouleurTEMPODemain":"Blanc"})
     elif int(s[26:28], 2) == 3 :
-        registre.update({"CouleurTempoDemain":"Rouge"})
+        registre.update({"CouleurTEMPODemain":"Rouge"})
     else :
-        registre.update({"CouleurTempoDemain":"Statut inconnu : " + s[26:28]})
+        registre.update({"CouleurTEMPODemain":"Statut inconnu : " + s[26:28]})
 
     if int(s[28:30], 2) == 0 :
         registre.update({"PreavisPointesMobiles":"Pas de préavis en cours"})
@@ -574,7 +574,7 @@ def detOptionTarif(opTarif) :
     elif optionTarif[:3] == "EJP" :
         nomTarif = "EJP"
     elif optionTarif == "TEMPO" :
-        nomTarif = "Tempo"
+        nomTarif = "TEMPO"
     else :
         nomTarif = "".join(["Tarif inconnu : ", optionTarif])
 
@@ -615,14 +615,14 @@ def analyseTrame(syllabus, dataFormat, trameDict):
         analysedDict.update({"SortieCommEuridis":registreDict["SortieCommEuridis"]})
         analysedDict.update({"StatutCPL":registreDict["StatutCPL"]})
         analysedDict.update({"SynchroCPL":registreDict["SynchroCPL"]})
-        analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-        analysedDict.update({"CouleurTempoDemain":registreDict["CouleurTempoDemain"]})
+        analysedDict.update({"CouleurTEMPOJour":registreDict["CouleurTEMPOJour"]})
+        analysedDict.update({"CouleurTEMPODemain":registreDict["CouleurTEMPODemain"]})
         analysedDict.update({"PreavisPointesMobiles":registreDict["PreavisPointesMobiles"]})
         analysedDict.update({"PointeMobile":registreDict["PointeMobile"]})
         analysedDict.update({"RegistreModeTIC":registreDict["ModeTIC"]})
 
-        analysedDict.update({"CouleurTempoJour":registreDict["CouleurTempoJour"]})
-        analysedDict.update({"CouleurDemain":registreDict["CouleurTempoDemain"]})
+        analysedDict.update({"CouleurTEMPOJour":registreDict["CouleurTEMPOJour"]})
+        analysedDict.update({"CouleurDemain":registreDict["CouleurTEMPODemain"]})
 
 
     #Nom et type de compteur
@@ -651,7 +651,6 @@ def analyseTrame(syllabus, dataFormat, trameDict):
 
     #Détermination de la periode tarifaire en cours
     analysedDict = periodeEnCours(analysedDict)
-
 
     #Horaire Heures Pleines Heures Creuses
     if "PJOURF+1" in trameDict :

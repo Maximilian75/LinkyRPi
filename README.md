@@ -36,7 +36,7 @@ Le matériel se compose de :
 
 - Un Raspberry Pi (modèle 1b ou supérieur) avec sa carte SD et son alimentation.
 - Une carte d’interface permettant le raccordement du Raspberry-Pi au compteur électrique.
-- [Un écran LDC tactile](https://www.amazon.fr/gp/product/B085NH94KV/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1). 
+- [Un écran LDC tactile](https://www.amazon.fr/gp/product/B085NH94KV/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1).
 - Des câbles de connexion :
   - [Un câble HDMI plat](o%09https:/www.amazon.fr/gp/product/B07R6CWPH1/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1).
   - [Un câble USB pour alimenter l’écran LCD et transmettre les informations tactiles](o%09https:/www.amazon.fr/gp/product/B01N7ZE55F/ref=ppx_yo_dt_b_asin_title_o03_s01?ie=UTF8&psc=1).
@@ -350,8 +350,11 @@ Description=LinkyRPi Listen
 After=multi-user.target LinkyRPiGUI.service
 [Service]
 Type=idle
-ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiListen.py > /home/pi/LinkyRPi/LinkyRPiListen.log 2>&1
+ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiListen.py
+StandardOutput=append:/home/pi/LinkyRPi/log/LinkyRPiListen.log
+StandardError=append:/home/pi/LinkyRPi/log/LinkyRPiListen.err
 WorkingDirectory=/home/pi/LinkyRPi
+Environment=PYTHONUNBUFFERED=1
 User=pi
 [Install]
 WantedBy=multi-user.target
@@ -375,8 +378,11 @@ After=syslog.target network.target multi-user.target nodm.service systemd-user-s
 [Service]
 Type=idle
 Environment=DISPLAY=:0
-ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiGUI.py > /home/pi/LinkyRPi/LinkyRPiGUI.log 2>&1
+ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiGUI.py
+StandardOutput=append:/home/pi/LinkyRPi/log/LinkyRPiGUI.log
+StandardError=append:/home/pi/LinkyRPi/log/LinkyRPiGUI.err
 WorkingDirectory=/home/pi/LinkyRPi
+Environment=PYTHONUNBUFFERED=1
 User=pi
 Restart=always
 RestartSec=5
@@ -423,8 +429,11 @@ Description=LinkyRPi DB
 After=syslog.target network.target multi-user.target nodm.service systemd-user-sessions.service runlevel5.target graphical.target
 [Service]
 Type=idle
-ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiDB.py > /home/pi/LinkyRPi/LinkyRPiDB.log 2>&1
+ExecStart=/usr/bin/python3 /home/pi/LinkyRPi/LinkyRPiDB.py
+StandardOutput=append:/home/pi/LinkyRPi/log/LinkyRPiDB.log
+StandardError=append:/home/pi/LinkyRPi/log/LinkyRPiDB.err
 WorkingDirectory=/home/pi/LinkyRPi
+Environment=PYTHONUNBUFFERED=1
 User=pi
 Restart=always
 RestartSec=5
@@ -450,7 +459,7 @@ Il est donc désormais possible d’y accéder :
 
 - Soit par SQL dans un terminal Postgres
 - Soit par SQL via PgAdmin
-- Soit par un outil de BI tel que [Tableau](https://www.tableau.com/fr-fr) ou [Qlik](https://www.qlik.com/fr-fr/) par exemple.
+- Soit par un outil de BI tel que [Tableau](https://www.tableau.com/fr-fr) ou [Qlik](https://www.qlik.com/fr-fr/) par exemple. Personnellement j'ai opté pour [Knime](https://www.knime.com/).
 
 # Note concernant la copie et l'utilisation de LinkyRPi
 LinkyRPi est un logiciel libre ; vous pouvez le redistribuer ou le modifier suivant les termes de la GNU General Public License telle que publiée par la Free Software Foundation ; soit la version 3 de la licence, soit (à votre gré) toute version ultérieure.

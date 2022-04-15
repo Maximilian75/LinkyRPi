@@ -1,0 +1,627 @@
+=============================================================================
+Démarrage du process listenner : 27-Jun-2022 (08:44:20.215741)
+[[92mOK[0m] Queue UI créée
+[[93mWA[0m] La queue DB existe deja
+[[92mOK[0m] Détection du mode de fonctionnement de la TIC...
+[[92mOK[0m] Baud rate détecté : 9600
+[[92mOK[0m] TIC en mode STANDARD
+ADSC	032176211020	&
+
+[[92mOK[0m] Mise en écoute en mode STANDARD
+[[92mOK[0m] Lecture trames
+[[92m>>[0m] Debut de trame détecté à 08:44:24.728546
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160258
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063657
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045812
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063657
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00233
+[[92m>>[0m] SINSTS1 : 00233
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92mOK[0m] Enregistrement de la trame courante dans le fichier /home/pi/LinkyRPi/log/032176211020.log
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160302
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063657
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045812
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063657
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00233
+[[92m>>[0m] SINSTS1 : 00233
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160306
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063658
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045813
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063658
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00233
+[[92m>>[0m] SINSTS1 : 00233
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160310
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063658
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045813
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063658
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00234
+[[92m>>[0m] SINSTS1 : 00234
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160314
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063658
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045813
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063658
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00234
+[[92m>>[0m] SINSTS1 : 00234
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160319
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063658
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045813
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063658
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00233
+[[92m>>[0m] SINSTS1 : 00233
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160323
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063659
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045814
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063659
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 240
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00237
+[[92m>>[0m] SINSTS1 : 00237
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160326
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063659
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045814
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063659
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 240
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00235
+[[92m>>[0m] SINSTS1 : 00235
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160330
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063659
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045814
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063659
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 240
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00236
+[[92m>>[0m] SINSTS1 : 00236
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160333
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063659
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045814
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063659
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 240
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00237
+[[92m>>[0m] SINSTS1 : 00237
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+[[92m>>[0m] ADSC : 032176211020
+[[92m>>[0m] VTIC : 02
+[[92m>>[0m] DATE : E220725160342
+[[92m>>[0m] NGTF :      TEMPO      
+[[92m>>[0m] LTARF :     HP  BLEU    
+[[92m>>[0m] EAST : 000063660
+[[92m>>[0m] EASF01 : 000017845
+[[92m>>[0m] EASF02 : 000045815
+[[92m>>[0m] EASF03 : 000000000
+[[92m>>[0m] EASF04 : 000000000
+[[92m>>[0m] EASF05 : 000000000
+[[92m>>[0m] EASF06 : 000000000
+[[92m>>[0m] EASF07 : 000000000
+[[92m>>[0m] EASF08 : 000000000
+[[92m>>[0m] EASF09 : 000000000
+[[92m>>[0m] EASF10 : 000000000
+[[92m>>[0m] EASD01 : 000063660
+[[92m>>[0m] EASD02 : 000000000
+[[92m>>[0m] EASD03 : 000000000
+[[92m>>[0m] EASD04 : 000000000
+[[92m>>[0m] IRMS1 : 001
+[[92m>>[0m] IRMS2 : 000
+[[92m>>[0m] IRMS3 : 000
+[[92m>>[0m] URMS1 : 238
+[[92m>>[0m] URMS2 : 235
+[[92m>>[0m] URMS3 : 237
+[[92m>>[0m] PREF : 09
+[[92m>>[0m] PCOUP : 09
+[[92m>>[0m] SINSTS : 00233
+[[92m>>[0m] SINSTS1 : 00233
+[[92m>>[0m] SINSTS2 : 00000
+[[92m>>[0m] SINSTS3 : 00000
+[[92m>>[0m] SMAXSN : 00984
+[[92m>>[0m] SMAXSN1 : 00984
+[[92m>>[0m] SMAXSN2 : 00000
+[[92m>>[0m] SMAXSN3 : 00705
+[[92m>>[0m] SMAXSN-1 : 00994
+[[92m>>[0m] SMAXSN1-1 : 00994
+[[92m>>[0m] SMAXSN2-1 : 00219
+[[92m>>[0m] SMAXSN3-1 : 00000
+[[92m>>[0m] CCASN : 00288
+[[92m>>[0m] CCASN-1 : 00140
+[[92m>>[0m] UMOY1 : 238
+[[92m>>[0m] UMOY2 : 236
+[[92m>>[0m] UMOY3 : 237
+[[92m>>[0m] STGE : 013A0401
+[[92m>>[0m] MSG1 : PAS DE          MESSAGE         
+[[92m>>[0m] PRM : 12230969599206
+[[92m>>[0m] RELAIS : 000
+[[92m>>[0m] NTARF : 02
+[[92m>>[0m] NJOURF : 00
+[[92m>>[0m] NJOURF+1 : 00
+[[92m>>[0m] PJOURF+1 : 00004001 06004002 22004001 NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE NONUTILE
+[[92m>>[0m] TICMODE : Standard
+[[92mOK[0m] Fin de trame détectée
+=============================================================================
+Démarrage du process listenner : 27-Jun-2022 (08:44:23.230394)
+[[92mOK[0m] Queue UI créée
+[[93mWA[0m] La queue DB existe deja
+[[92mOK[0m] Détection du mode de fonctionnement de la TIC...
+=============================================================================
+Démarrage du process listenner : 30-Jul-2022 (12:03:17.678508)
+[[92mOK[0m] Queue UI créée
+[[92mOK[0m] Détection du mode de fonctionnement de la TIC...
