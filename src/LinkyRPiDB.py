@@ -19,6 +19,7 @@ import uuid
 import schedule
 import time
 import linkyRPiTranslate
+from time import sleep
 
 # On ouvre le fichier de param et on recup les param
 config = configparser.RawConfigParser()
@@ -110,7 +111,7 @@ def initAbonnement(analysedDict) :
 #Ouverture de la pile FIFO pour communication avec la DB
 activeDBVal = config.get('POSTGRESQL','active')
 if activeDBVal == "True" :
-if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Process DB Activé")
+    if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Process DB Activé")
     activeDB = True
     queueName = config.get('POSIX','queueDB')
     queueDepth = int(config.get('POSIX','depthDB'))
