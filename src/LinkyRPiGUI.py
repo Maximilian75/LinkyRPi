@@ -864,7 +864,7 @@ def initGUI(analysedDict) :
         valuePuissanceMaxAtteintePhase2.grid(row=5, column=2, sticky=tk.E, padx=10, pady=10)
         valuePuissanceMaxAtteintePhase3 = tk.Label(tensionFrame, textvariable = PuissanceMaxAtteintePhase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         valuePuissanceMaxAtteintePhase3.grid(row=5, column=3, sticky=tk.E, padx=10, pady=10)
-        unitPuissanceMaxAtteinte = tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitPuissanceMaxAtteinte = tk.Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         unitPuissanceMaxAtteinte.grid(row=5, column=4, sticky=tk.E, padx=10, pady=10)
 
         LabelPuissanceApparenteMaxN1 = tk.Label(tensionFrame, text="Puissance maximale hier :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
@@ -875,7 +875,7 @@ def initGUI(analysedDict) :
         valuePuissanceApparenteMaxN1Phase2.grid(row=6, column=2, sticky=tk.E, padx=10, pady=10)
         valuePuissanceApparenteMaxN1Phase3 = tk.Label(tensionFrame, textvariable = PuissanceApparenteMaxN1Phase3, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         valuePuissanceApparenteMaxN1Phase3.grid(row=6, column=3, sticky=tk.E, padx=10, pady=10)
-        unitPuissanceApparenteMaxN1= tk.Label(tensionFrame, text="V", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+        unitPuissanceApparenteMaxN1= tk.Label(tensionFrame, text="VA", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
         unitPuissanceApparenteMaxN1.grid(row=6, column=4, sticky=tk.E, padx=10, pady=10)
 
         if analysedDict["ModeTIC"] == "Historique" :
@@ -1864,9 +1864,9 @@ while True:
         #On initialise la UI (seulement à réception de la 1ere trame)
         if not initUI :
             if ldebug>1 : print("Première trame reçue")
-            if ldebug>2 : print("------------------------------------>")
-            if ldebug>2 : print(analysedDict)
-            if ldebug>2 : print("<------------------------------------")
+            if ldebug>8 : print("------------------------------------>")
+            if ldebug>8 : print(analysedDict)
+            if ldebug>8 : print("<------------------------------------")
 
             initGUI(analysedDict)
             refreshStatus()
@@ -1883,62 +1883,115 @@ while True:
         if "DateHeureLinky" in analysedDict :
             DATE.set(analysedDict["DateHeureLinky"])
 
-        # Calcul de l'intensité max
+        # Calcul de l'intensité max et des intensités instantannées
+        # Nb: les intensités instantannées sont calculées sur base de la puissance instantannée et de la tension instantannée,
+        #     suivant la formule P = U.I
+        #     Cela donne une intensité instantannée plus précise que celle fournie par le compteur qui est donnée sous forme d'Entier
+        
+        #Pour compteurs Monophasés
         if analysedDict["TypeCompteur"] == "MONO" :
             iMax = analysedDict["IntensiteSouscrite"] * 5
+            u1 = analysedDict["TensionEfficacePhase1"]
+            p1 = analysedDict["PuissanceApparente"]
+
+            if (u1 == 0) :
+                i1 = 0
+            else :
+                i1 = p1 / u1
+
+            # Trace de la courbe d'intensité pour compteur monophasé ou triphasé phase 1
+            if "IntensiteInstantaneePhase1" in analysedDict :
+                IINST1.set("P1 : " + format(i1,'.3f') + " A")
+                coords, newListe = intensite(i1, liste, xscale, iMax)
+
+                liste = []
+                liste = newListe
+                # On efface la courbe
+                if len(liste) > 2 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    canvas.delete(courbeP)
+
+                #Et on la recrée
+                if len(liste) > 1 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    courbeP = canvas.create_line(fill=colorPhase1, *coords)
+
+
+        #Pour compteurs Triphasés
         else :
-            iMax = analysedDict["IntensiteInstantaneePhase1"] * 5 / 3
+            iMax = analysedDict["IntensiteSouscrite"] * 5 / 3
+            u1 = analysedDict["TensionEfficacePhase1"]
+            p1 = analysedDict["PuissanceApparentePhase1"]
+            u2 = analysedDict["TensionEfficacePhase2"]
+            p2 = analysedDict["PuissanceApparentePhase2"]
+            u3 = analysedDict["TensionEfficacePhase3"]
+            p3 = analysedDict["PuissanceApparentePhase3"]
 
-        # Trace de la courbe d'intensité pour compteur monophasé ou triphasé phase 1
-        if "IntensiteInstantaneePhase1" in analysedDict :
-            IINST1.set("Phase 1 : " + str(analysedDict["IntensiteInstantaneePhase1"]) + " A")
-            coords, newListe = intensite(analysedDict["IntensiteInstantaneePhase1"], liste, xscale, iMax)
+            if (u1 == 0) :
+                i1 = 0
+            else :
+                i1 = p1 / u1
 
-            liste = []
-            liste = newListe
-            # On efface la courbe
-            if len(liste) > 2 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                canvas.delete(courbeP)
+            if (u2 == 0) :
+                i2 = 0
+            else :
+                i2 = p2 / u2
 
-            #Et on la recrée
-            if len(liste) > 1 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                courbeP = canvas.create_line(fill=colorPhase1, *coords)
+            if (u3 == 0) :
+                i3 = 0
+            else :
+                i3 = p3 / u3
 
-        # Trace de la courbe d'intensité pour compteur triphasé (phase 2)
-        if "IntensiteInstantaneePhase2" in analysedDict :
-            IINST2.set("Phase 2 : " + str(analysedDict["IntensiteInstantaneePhase2"]) + " A")
-            coords, newListe = intensite(analysedDict["IntensiteInstantaneePhase2"], liste, xscale, iMax)
+            # Trace de la courbe d'intensité pour compteur monophasé ou triphasé phase 1
+            if "IntensiteInstantaneePhase1" in analysedDict :
+                IINST1.set("P1 : " + format(i1,'.3f') + " A")
+                coordsP1, newListe = intensite(i1, listeP1, xscale, iMax)
 
-            liste = []
-            liste = newListe
-            # On efface la courbe
-            if len(liste) > 2 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                canvas.delete(courbeP)
+                listeP1 = []
+                listeP1 = newListe
+                # On efface la courbe
+                if len(listeP1) > 2 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    canvas.delete(courbeP1)
 
-            #Et on la recrée
-            if len(liste) > 1 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                courbeP = canvas.create_line(fill=colorPhase2, *coords)
+                #Et on la recrée
+                if len(listeP1) > 1 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    courbeP1 = canvas.create_line(fill=colorPhase1, *coordsP1)
 
-        # Trace de la courbe d'intensité pour compteur triphasé (phase 3)
-        if "IntensiteInstantaneePhase3" in analysedDict :
-            IINST3.set("Phase 3 : " + str(analysedDict["IntensiteInstantaneePhase3"]) + " A")
-            coords, newListe = intensite(analysedDict["IntensiteInstantaneePhase3"], liste, xscale, iMax)
+            # Trace de la courbe d'intensité pour compteur triphasé (phase 2)
+            if "IntensiteInstantaneePhase2" in analysedDict :
+                IINST2.set("P2 : " + format(i2,'.3f') + " A")
+                coordsP2, newListe = intensite(i2, listeP2, xscale, iMax)
 
-            liste = []
-            liste = newListe
-            # On efface la courbe
-            if len(liste) > 2 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                canvas.delete(courbeP)
+                listeP2 = []
+                listeP2 = newListe
+                # On efface la courbe
+                if len(listeP2) > 2 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    canvas.delete(courbeP2)
 
-            #Et on la recrée
-            if len(liste) > 1 :
-                #canvas.pack(expand=YES, fill=BOTH)
-                courbeP = canvas.create_line(fill=colorPhase3, *coords)
+                #Et on la recrée
+                if len(listeP2) > 1 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    courbeP2 = canvas.create_line(fill=colorPhase2, *coordsP2)
+
+            # Trace de la courbe d'intensité pour compteur triphasé (phase 3)
+            if "IntensiteInstantaneePhase3" in analysedDict :
+                IINST3.set("P3 : " + format(i3,'.3f') + " A")
+                coordsP3, newListe = intensite(i3, listeP3, xscale, iMax)
+
+                listeP3 = []
+                listeP3 = newListe
+                # On efface la courbe
+                if len(listeP3) > 2 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    canvas.delete(courbeP3)
+
+                #Et on la recrée
+                if len(listeP3) > 1 :
+                    #canvas.pack(expand=YES, fill=BOTH)
+                    courbeP3 = canvas.create_line(fill=colorPhase3, *coordsP3)
 
 
 
