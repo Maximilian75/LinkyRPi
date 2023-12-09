@@ -36,7 +36,7 @@ Le matériel se compose de :
 
 - Un Raspberry Pi (modèle 1b ou supérieur) avec sa carte SD et son alimentation.
 - Une carte d’interface permettant le raccordement du Raspberry-Pi au compteur électrique.
-- [Un écran LDC tactile](https://www.amazon.fr/gp/product/B085NH94KV/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1).
+- [Un écran LCD tactile](https://www.amazon.fr/gp/product/B085NH94KV/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1).
 - Des câbles de connexion :
   - [Un câble HDMI plat](o%09https:/www.amazon.fr/gp/product/B07R6CWPH1/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1).
   - [Un câble USB pour alimenter l’écran LCD et transmettre les informations tactiles](o%09https:/www.amazon.fr/gp/product/B01N7ZE55F/ref=ppx_yo_dt_b_asin_title_o03_s01?ie=UTF8&psc=1).

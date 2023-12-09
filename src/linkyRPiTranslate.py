@@ -121,7 +121,7 @@ def generateSyllabus() :
     syllabus.update({"PPOINTE":"ProfilProchainJourPointe"})
     syllabus.update({"TICMODE":"ModeTIC"})
 
-    #On crée un dictionnaire indiquand, pour chaque clé du dictionnaire traduit, si la donnée est numérique ou alpha
+    #On crée un dictionnaire indiquant, pour chaque clé du dictionnaire traduit, si la donnée est numérique ou alpha
     dataFormat.update({"AdresseCompteur":"char"})
     dataFormat.update({"CacheBorneDistributeur":"char"})
     dataFormat.update({"ContactSec":"char"})
@@ -237,10 +237,159 @@ def generateSyllabus() :
     dataFormat.update({"EnergieActiveSoutireeDistributeurIndex3":"int"})
     dataFormat.update({"EnergieActiveSoutireeDistributeurIndex4":"int"})
     dataFormat.update({"CodeTarifEnCours":"char"})
+    dataFormat.update({"TypeCompteur":"char"})
+    dataFormat.update({"NomCompteur":"char"})
 
 
     return syllabus, dataFormat
 
+#=================================================================
+#=== Détermination du topic MQTT correspondant à chaque valeur ===
+#=================================================================
+#~Structure : ["Topic MQTT", "Nom", "Unité de mesure", "Icône"]
+def getMQTTTopic() :
+    MQTTTopic = {}
+
+    #INFO COMPTEUR
+    MQTTTopic.update({"AdresseCompteur":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:MapMarkerOutline"]})
+    MQTTTopic.update({"TypeCompteur":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:MeterElectricOutline"]})
+    MQTTTopic.update({"NomCompteur":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:MeterElectricOutline"]})
+    MQTTTopic.update({"DateHeureLinky":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:WrenchClock"]})
+    MQTTTopic.update({"Fonctionnement":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:SwapHorizontal"]})
+    MQTTTopic.update({"HorairesHC":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:SunClockOutline"]})
+    MQTTTopic.update({"NumeroJourCalendrierFournisseur":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:CalendarAlert"]})
+    MQTTTopic.update({"NumeroProchainJourCalendrierFournisseur":["LinkyRPi/InfoCompteur/", "Value", "", "mdi:CalendarArrowRight"]})
+    MQTTTopic.update({"PRM":["LinkyRPi/InfoCompteur/", "Value", "", ""]})
+    MQTTTopic.update({"ProfilProchainJourCalendrierFournisseur":["LinkyRPi/InfoCompteur/", "Value", "", ""]})
+    MQTTTopic.update({"RegistreModeTIC":["LinkyRPi/InfoCompteur/", "Value", "", ""]})
+    MQTTTopic.update({"Relais":["LinkyRPi/InfoCompteur/", "Value", "", ""]})
+    MQTTTopic.update({"SensEnergieActive":["LinkyRPi/InfoCompteur/", "Value", "", ""]})
+    MQTTTopic.update({"SortieCommEuridis":["LinkyRPi/InfoCompteur/Euridis/", "Value", "", ""]})
+    MQTTTopic.update({"StatutCPL":["LinkyRPi/InfoCompteur/CPL/", "Value", "", ""]})
+    MQTTTopic.update({"SynchroCPL":["LinkyRPi/InfoCompteur/CPL/", "Value", "", ""]})
+    MQTTTopic.update({"VersionTIC":["LinkyRPi/InfoCompteur/", "Value", "", ""]})
+
+    #STATUS
+    MQTTTopic.update({"CacheBorneDistributeur":["LinkyRPi/Status/", "Value", "", "mdi:door-closed-cancel"]})
+    MQTTTopic.update({"ContactSec":["LinkyRPi/Status/", "Value", "", "mdi:electric-switch"]})
+    MQTTTopic.update({"HorlogeDegradee":["LinkyRPi/Status/", "Value", "", ""]})
+    MQTTTopic.update({"MessageCourt":["LinkyRPi/Status/", "Value", "", ""]})
+    MQTTTopic.update({"MessageUltraCourt":["LinkyRPi/Status/", "Value", "", ""]})
+    MQTTTopic.update({"ModeTIC":["LinkyRPi/Status/", "Value", "", ""]})
+    MQTTTopic.update({"MotEtat":["LinkyRPi/Status/", "Value", "", ""]})
+    MQTTTopic.update({"OrganeDeCoupure":["LinkyRPi/Status/", "Value", "", ""]})
+    MQTTTopic.update({"PresenceDesPotentiels":["LinkyRPi/Status/", "Value", "", ""]})
+
+    #ABONNEMENT
+    MQTTTopic.update({"IntensiteSouscrite":["LinkyRPi/Abonnement/", "Value", "A", ""]})
+    MQTTTopic.update({"NumeroTarifEnCours":["LinkyRPi/Abonnement/", "Value", "", ""]})
+    MQTTTopic.update({"PeriodeTarifaireEnCours":["LinkyRPi/Abonnement/", "Value", "", ""]})
+    MQTTTopic.update({"PuissanceCoupure":["LinkyRPi/Abonnement/", "Value", "kVA", ""]})
+    MQTTTopic.update({"TarifEnCoursD":["LinkyRPi/Abonnement/", "Value", "", ""]})
+    MQTTTopic.update({"TarifEnCoursF":["LinkyRPi/Abonnement/", "Value", "", ""]})
+    MQTTTopic.update({"TarifSouscrit":["LinkyRPi/Abonnement/", "Value", "", ""]})
+    MQTTTopic.update({"CodeTarifEnCours":["LinkyRPi/Abonnement/", "Value", "", ""]})
+
+    #TEMPO
+    MQTTTopic.update({"CouleurDemain":["LinkyRPi/Tempo/", "Value", "", ""]})
+    MQTTTopic.update({"CouleurTEMPODemain":["LinkyRPi/Tempo/", "Value", "", ""]})
+    MQTTTopic.update({"CouleurTEMPOJour":["LinkyRPi/Tempo/", "Value", "", ""]})
+
+    #EJP
+    MQTTTopic.update({"DebutPointeMobile1":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"DebutPointeMobile2":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"DebutPointeMobile3":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"FinPointeMobile1":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"FinPointeMobile2":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"FinPointeMobile3":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"PointeMobile":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"PreavisPointesMobiles":["LinkyRPi/EJP/", "Value", "", ""]})
+    MQTTTopic.update({"ProfilProchainJourPointe":["LinkyRPi/EJP/", "Value", "", ""]})
+
+    #ALERTE
+    MQTTTopic.update({"DepassementPuissance":["LinkyRPi/Alerte/", "Value", "A", ""]})
+    MQTTTopic.update({"DepassementPuissancePhase1":["LinkyRPi/Alerte/", "Value", "A", ""]})
+    MQTTTopic.update({"DepassementPuissancePhase2":["LinkyRPi/Alerte/", "Value", "A", ""]})
+    MQTTTopic.update({"DepassementPuissancePhase3":["LinkyRPi/Alerte/", "Value", "A", ""]})
+    MQTTTopic.update({"DepassementPuissanceRef":["LinkyRPi/Alerte/", "Value", "A", ""]})
+    MQTTTopic.update({"SurtensionPhase":["LinkyRPi/Alerte/", "Value", "", ""]})
+
+    #PRODUCTION
+    MQTTTopic.update({"EnergieActiveInjectéeTotale":["LinkyRPi/Production/", "Value", "Wh", ""]})
+    MQTTTopic.update({"EnergieRéactiveQ1Totale":["LinkyRPi/Production/", "Value", "VArh", ""]})
+    MQTTTopic.update({"EnergieRéactiveQ2Totale":["LinkyRPi/Production/", "Value", "VArh", ""]})
+    MQTTTopic.update({"EnergieRéactiveQ3Totale":["LinkyRPi/Production/", "Value", "VArh", ""]})
+    MQTTTopic.update({"EnergieRéactiveQ4Totale":["LinkyRPi/Production/", "Value", "VArh", ""]})
+
+    #INDEX
+    MQTTTopic.update({"Index00":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index01":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index02":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index03":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index04":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index05":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index06":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index07":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index08":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index09":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"Index10":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexBase":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexEJPNormale":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexEJPPointe":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHC":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHCJB":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHCJR":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHCJW":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHP":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHPJB":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHPJR":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexHPJW":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"IndexTotal":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"EnergieActiveSoutireeDistributeurIndex1":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"EnergieActiveSoutireeDistributeurIndex3":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"EnergieActiveSoutireeDistributeurIndex2":["LinkyRPi/Index/", "Value", "Wh", ""]})
+    MQTTTopic.update({"EnergieActiveSoutireeDistributeurIndex4":["LinkyRPi/Index/", "Value", "Wh", ""]})
+
+    #MESURE
+    MQTTTopic.update({"IntensiteInstantanee":["LinkyRPi/Mesure/Intensite/Instant/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteInstantaneePhase1":["LinkyRPi/Mesure/Intensite/Instant/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteInstantaneePhase2":["LinkyRPi/Mesure/Intensite/Instant/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteInstantaneePhase3":["LinkyRPi/Mesure/Intensite/Instant/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteMax":["LinkyRPi/Mesure/Intensite/Max/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteMaxPhase1":["LinkyRPi/Mesure/Intensite/Max/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteMaxPhase2":["LinkyRPi/Mesure/Intensite/Max/", "Value", "A", ""]})
+    MQTTTopic.update({"IntensiteMaxPhase3":["LinkyRPi/Mesure/Intensite/Max/", "Value", "A", ""]})
+
+    MQTTTopic.update({"PointN-1CourbeChargeActiveInjectée":["LinkyRPi/Mesure/Charge/", "Value", "W", ""]})
+    MQTTTopic.update({"PointN-1CourbeChargeActiveSoutiree":["LinkyRPi/Mesure/Charge/", "Value", "W", ""]})
+    MQTTTopic.update({"PointNCourbeChargeActiveInjectée":["LinkyRPi/Mesure/Charge/", "Value", "W", ""]})
+    MQTTTopic.update({"PointNCourbeChargeActiveSoutiree":["LinkyRPi/Mesure/Charge/", "Value", "W", ""]})
+
+    MQTTTopic.update({"PuissanceApparente":["LinkyRPi/Mesure/Puissance/Instant/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparentePhase1":["LinkyRPi/Mesure/Puissance/Instant/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparentePhase2":["LinkyRPi/Mesure/Puissance/Instant/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparentePhase3":["LinkyRPi/Mesure/Puissance/Instant/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteInstantanéeInjectée":["LinkyRPi/Mesure/Puissance/Instant/", "Value", "VA", ""]})
+
+    MQTTTopic.update({"PuissanceMaxAtteinte":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceMaxAtteintePhase1":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceMaxAtteintePhase2":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceMaxAtteintePhase3":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteMaxN-1":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteMaxN-1Phase1":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteMaxN-1Phase2":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteMaxN-1Phase3":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteMaxInjectée":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+    MQTTTopic.update({"PuissanceApparenteMaxInjectéeN-1":["LinkyRPi/Mesure/Puissance/Max/", "Value", "VA", ""]})
+
+    MQTTTopic.update({"TensionEfficacePhase1":["LinkyRPi/Mesure/Tension/Instant/", "Value", "V", ""]})
+    MQTTTopic.update({"TensionEfficacePhase2":["LinkyRPi/Mesure/Tension/Instant/", "Value", "V", ""]})
+    MQTTTopic.update({"TensionEfficacePhase3":["LinkyRPi/Mesure/Tension/Instant/", "Value", "V", ""]})
+    MQTTTopic.update({"TensionMoyennePhase1":["LinkyRPi/Mesure/Tension/Moyenne/", "Value", "V", ""]})
+    MQTTTopic.update({"TensionMoyennePhase3":["LinkyRPi/Mesure/Tension/Moyenne/", "Value", "V", ""]})
+    MQTTTopic.update({"TensionMoyennePhase2":["LinkyRPi/Mesure/Tension/Moyenne/", "Value", "V", ""]})
+
+    return MQTTTopic
 
 
 #===============================================================================

@@ -36,9 +36,6 @@ config = configparser.RawConfigParser()
 config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
 ldebug = int(config.get('PARAM','debuglevel'))
 
-traceFile = config.get('PARAM','traceFile')
-traceFreq = int(config.get('PARAM','traceFreq'))
-
 #Liste de toutes les mesures d'une trame Linky
 list_measures = []
 
@@ -57,32 +54,17 @@ class bcolors:
     RESET = '\033[0m' #RESET COLOR
 
 
-#Ouverture de la pile FIFO pour communication avec la UI
-queueName = config.get('POSIX','queueGUI')
-queueDepth = int(config.get('POSIX','depthGUI'))
+#Ouverture de la pile FIFO pour communication avec la le dispatcher
+queueName = config.get('POSIX','queueDispatch')
+queueDepth = int(config.get('POSIX','depthDispatch'))
 try:
     q1 = posix_ipc.MessageQueue(queueName, posix_ipc.O_CREX, max_messages=queueDepth)
-    if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Queue UI créée")
+    if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Queue Dispatcher créée")
 except :
-    if ldebug>0 : print("[" + bcolors.WARNING + "WA" + bcolors.RESET + "] La queue UI existe deja")
+    if ldebug>0 : print("[" + bcolors.WARNING + "WA" + bcolors.RESET + "] La queue Dispatcher existe deja")
     q1 = posix_ipc.MessageQueue(queueName)
 
 
-
-#Ouverture de la pile FIFO pour communication avec la DB
-activeDBVal = config.get('POSTGRESQL','active')
-if activeDBVal == "True" :
-    activeDB = True
-    queueName = config.get('POSIX','queueDB')
-    queueDepth = int(config.get('POSIX','depthDB'))
-    try:
-        q2 = posix_ipc.MessageQueue(queueName, posix_ipc.O_CREX)
-        if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Queue DB créée")
-    except :
-        if ldebug>0 : print("[" + bcolors.WARNING + "WA" + bcolors.RESET + "] La queue DB existe deja")
-        q2 = posix_ipc.MessageQueue(queueName)
-else :
-    activeDB = False
 
 #==============================================================================#
 # Initialisation du process                                                    #
@@ -152,10 +134,10 @@ def treatmesure(mesureCode,mesureValue,mesureValue2) :
     #Du coup on bypass l'horodatage pour ne garder que la valeur
     if mesureCode in ["SMAXSN","SMAXSN1","SMAXSN2","SMAXSN3","SMAXSN-1","SMAXSN1-1","SMAXSN2-1","SMAXSN3-1","SMAXIN","SMAXIN-1","CCASN","CCASN-1","CCAIN","CCAIN-1","UMOY1","UMOY2","UMOY3","DPM1","FPM1","DPM2","FPM2","DPM3","FPM3"] :
         mesure = (mesureCode, mesureValue2.strip("\n"))
-        if ldebug>3 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue2.strip("\n"))
+        if ldebug>9 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue2.strip("\n"))
     else :
         mesure = (mesureCode, mesureValue)
-        if ldebug>3 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue)
+        if ldebug>9 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue)
 
     list_measures.append(mesure)
     return list_measures
@@ -182,19 +164,6 @@ def treattrame(list_measures):
     trameJson = json.dumps(analysedDict, indent=4)
     q1.send(trameJson)
 
-    #On trace le dictionnaire dans un fichier texte (si actif)
-    writeToFile(analysedDict)
-
-    #Si la DB est en ligne on sauvegarde les données
-    if activeDB :
-        q2.send(trameJson)
-
-    #On vide le tampon de trame pour traiter la suivante
-    del list_measures[:]
-
-
-
-
 
 #==============================================================================#
 # Traitement des exceptions                                                    #
@@ -206,39 +175,8 @@ def treaterror(errEvent,errCode,errValue) :
 
 
 #==============================================================================#
-# Trace de la trame dans un fichier texte (pratique pour faire du debug)       #
-#==============================================================================#
-def writeToFile(analysedDict) :
-
-    global nextTrace
-
-    config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
-    traceFile = config.get('PARAM','traceFile')
-    traceFreq = config.get('PARAM','traceFreq')
-
-    if traceFile and (time.monotonic() >= nextTrace) :
-        tracePath = config.get('PATH','tracePath')
-
-        #On trace les trames dans un fichier en cas de besoin, c'est pratique pour debugger la GUI sans faire tourner le listener !
-        if "AdresseCompteur" in analysedDict :
-            filename = config.get('PATH','tracePath') + "/" + analysedDict["AdresseCompteur"] + ".log"
-        else :
-            filename = config.get('PATH','tracePath') + "/000000000000.log"
-
-        #Ouverture du fichier de log des trame
-        f = open(filename,'a')
-        f.write(str(analysedDict) + "\n")
-        f.close()
-        if ldebug>0 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Enregistrement de la trame courante dans le fichier " + filename)
-
-        #Calcul de l'heure de la prochaine trace
-        nextTrace = time.monotonic() + int(traceFreq)
-
-#==============================================================================#
 # PRODEDURE PRINCIPALE                                                         #
 #==============================================================================#
-nextTrace = time.monotonic()
-
 modeTIC = ""
 while modeTIC == "" :
     modeTIC = init()

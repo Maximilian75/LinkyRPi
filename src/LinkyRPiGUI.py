@@ -257,22 +257,66 @@ def timerDownDB():
 
 
 #===============================================================================
+#=== Boutons Switch MQ Active                                                ===
+#===============================================================================
+def switchMQ():
+    flagMQActive    = config.get('MQTT','MQTTactive')
+
+    if flagMQActive == "True" :
+        config.set('MQTT', 'MQTTactive', 'False')
+        ButtonMQActive.config(image=OFFButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    else :
+        config.set('MQTT', 'MQTTactive', 'True')
+        ButtonMQActive.config(image=ONButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+    flagMQActive    = config.get('MQTT','MQTTactive')
+
+
+#===============================================================================
+#=== Scale MQTT                                                              ===
+#===============================================================================
+def timerUpMQ():
+    refreshMQ = int(config.get('MQTT','refreshMQTT'))
+    if refreshMQ < 600 :
+        refreshMQ = refreshMQ + 1
+        config.set('MQTT', 'refreshMQTT', str(refreshMQ))
+        timerMQTT.set(str(refreshMQ) + " s")
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+
+def timerDownMQ():
+    refreshMQ = int(config.get('MQTT','refreshMQTT'))
+    if refreshMQ > 1 :
+        refreshMQ = refreshMQ - 1
+        config.set('MQTT', 'refreshMQTT', str(refreshMQ))
+        timerMQTT.set(str(refreshMQ) + " s")
+
+    with open(r'LinkyRPi.conf', 'w') as configfile :
+        config.write(configfile)
+
+
+#===============================================================================
 #=== Boutons Switch FILE Active                                              ===
 #===============================================================================
 def switchFile():
-    flagFileActive    = config.get('PARAM','traceFile')
+    flagFileActive    = config.get('PARAM','traceActive')
 
     if flagFileActive == "True" :
-        config.set('PARAM', 'traceFile', 'False')
+        config.set('PARAM', 'traceActive', 'False')
         ButtonFileActive.config(image=OFFButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
     else :
-        config.set('PARAM', 'traceFile', 'True')
+        config.set('PARAM', 'traceActive', 'True')
         ButtonFileActive.config(image=ONButton, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
 
     with open(r'LinkyRPi.conf', 'w') as configfile :
         config.write(configfile)
 
-    flagFileActive    = config.get('PARAM','traceFile')
+    flagFileActive    = config.get('PARAM','traceActive')
 
 #===============================================================================
 #=== Scale File                                                              ===
@@ -1191,8 +1235,9 @@ def initGUI(analysedDict) :
 #=== Init de la frame PARAMETRES                                             ===
 #===============================================================================
 def initParam() :
-    global ButtonDBActive, ValueDebug, scaleDBVal, scaleFileVal, timerDB, timerFile
+    global ButtonDBActive, ValueDebug, scaleDBVal, scaleFileVal, timerDB, timerFile, timerMQTT, ButtonMQActive
     global cmdIcon, rebootIcon, ONButton, OFFButton, flecheD, flecheG
+    global valueDB, DBSTATE, valueMQ, MQSTATE
 
     cmdIcon         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/cmd.png")
     rebootIcon      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/reboot.png")
@@ -1207,15 +1252,19 @@ def initParam() :
     refreshPlage    = config.get('PARAM','refreshPlage')
     refreshStats    = config.get('PARAM','refreshStats')
     refreshIndex    = config.get('PARAM','refreshIndex')
-    flagFileActive  = config.get('PARAM','traceFile')
+    flagFileActive  = config.get('PARAM','traceActive')
     refreshFile     = config.get('PARAM','traceFreq')
     LinkyRPiVersion = config.get('PARAM','version')
+    MQTTActive      = config.get('MQTT','MQTTActive')
+    refreshMQTT     = config.get('MQTT','refreshMQTT')
 
     PARAMTITLE = tk.StringVar()
     PARAMTITLE.set("Paramètres de l'application")
     paramTitle = tk.Label(paramFrameT, textvariable = PARAMTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
     paramTitle.grid(row=0, column=0, columnspan = 12, padx=300, ipadx=15, ipady=15)
 
+    #Paramétrage du module d'envoi vers la DB
+    DBSTATE = tk.StringVar()
     LabelDBActive = tk.Label(paramFrameT, text="Enregistrement en DB : ", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
     LabelDBActive.grid(row=1, column=0, sticky=tk.E, padx=10, pady=(50,15))
     if flagDBActive == "True" :
@@ -1232,24 +1281,47 @@ def initParam() :
     DBRefreshValue.grid(row=1, column=3, sticky=tk.W, padx=10, pady=(50,15), ipadx=3, ipady=3)
     ButtonDBPlus = tk.Button(paramFrameT, image=flecheD, bg=labelBg, borderwidth=0, command=timerUpDB, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
     ButtonDBPlus.grid(row=1, column=4, sticky=tk.W, padx=10, pady=(50,15))
+    valueDB = tk.Label(paramFrameT, textvariable = DBSTATE, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueDB.grid(row=1, column=5, columnspan=10, sticky=tk.W, padx=10, pady=(50,15))
 
+    #Paramétrage du module d'envoi MQTT
+    MQSTATE = tk.StringVar()
+    LabelMQActive = tk.Label(paramFrameT, text="Envoi vers broker MQTT : ", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelMQActive.grid(row=2, column=0, sticky=tk.E, padx=10, pady=(15))
+    if MQTTActive == "True" :
+        ButtonMQActive = tk.Button(paramFrameT, image=ONButton, bg=labelBg, borderwidth=0, command=switchMQ, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    else :
+        ButtonMQActive = tk.Button(paramFrameT, image=OFFButton, bg=labelBg, borderwidth=0, command=switchMQ, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonMQActive.grid(row=2, column=1, sticky=tk.W, padx=10, pady=15)
 
+    ButtonMQMoins = tk.Button(paramFrameT, image=flecheG, bg=labelBg, borderwidth=0, command=timerDownMQ, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonMQMoins.grid(row=2, column=2, sticky=tk.W, padx=10, pady=(5))
+    timerMQTT = tk.StringVar()
+    timerMQTT.set(str(refreshMQTT) + " s")
+    MQRefreshValue = tk.Label(paramFrameT, textvariable=timerMQTT, font=(textFont,textSizeMedium), relief=tk.RIDGE, bg=labelBg, fg=labelColor)
+    MQRefreshValue.grid(row=2, column=3, sticky=tk.W, padx=10, pady=(15), ipadx=3, ipady=3)
+    ButtonMQPlus = tk.Button(paramFrameT, image=flecheD, bg=labelBg, borderwidth=0, command=timerUpMQ, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
+    ButtonMQPlus.grid(row=2, column=4, sticky=tk.W, padx=10, pady=(15))
+    valueMQ = tk.Label(paramFrameT, textvariable = MQSTATE, font=(textFont,textSizeMedium), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueMQ.grid(row=2, column=5, columnspan=10, sticky=tk.W, padx=10, pady=15)
+
+    #Paramétrage du module d'écriture dans un fichier texte
     LabelFileActive = tk.Label(paramFrameT, text="Enregistrement en Fichier : ", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-    LabelFileActive.grid(row=2, column=0, sticky=tk.E, padx=10, pady=15)
+    LabelFileActive.grid(row=3, column=0, sticky=tk.E, padx=10, pady=15)
     if flagFileActive == "True" :
         ButtonFileActive = tk.Button(paramFrameT, image=ONButton, bg=labelBg, borderwidth=0, command=switchFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
     else :
         ButtonFileActive = tk.Button(paramFrameT, image=OFFButton, bg=labelBg, borderwidth=0, command=switchFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
-    ButtonFileActive.grid(row=2, column=1, sticky=tk.W, padx=10, pady=15)
+    ButtonFileActive.grid(row=3, column=1, sticky=tk.W, padx=10, pady=15)
 
     ButtonFileMoins = tk.Button(paramFrameT, image=flecheG, bg=labelBg, borderwidth=0, command=timerDownFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
-    ButtonFileMoins.grid(row=2, column=2, sticky=tk.W, padx=10, pady=15)
+    ButtonFileMoins.grid(row=3, column=2, sticky=tk.W, padx=10, pady=15)
     timerFile = tk.StringVar()
     timerFile.set(str(refreshFile) + " s")
     FileRefreshValue = tk.Label(paramFrameT, textvariable=timerFile, font=(textFont,textSizeMedium), relief=tk.RIDGE, bg=labelBg, fg=labelColor)
-    FileRefreshValue.grid(row=2, column=3, sticky=tk.W, padx=10, pady=15, ipadx=3, ipady=3)
+    FileRefreshValue.grid(row=3, column=3, sticky=tk.W, padx=10, pady=15, ipadx=3, ipady=3)
     ButtonFilePlus = tk.Button(paramFrameT, image=flecheD, bg=labelBg, borderwidth=0, command=timerUpFile, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
-    ButtonFilePlus.grid(row=2, column=4, sticky=tk.W, padx=10, pady=15)
+    ButtonFilePlus.grid(row=3, column=4, sticky=tk.W, padx=10, pady=15)
 
     # Boutons du bas de l'écran
     cmdButton = tk.Button(paramFrameB, text="Cmd", command=cmd, image=cmdIcon, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
@@ -1257,6 +1329,27 @@ def initParam() :
 
     rebootButton = tk.Button(paramFrameB, text="Reboot", command=reboot, image=rebootIcon, bg=labelBg, borderwidth=0, activebackground=labelBg, highlightbackground=labelBg, highlightcolor=labelBg, highlightthickness=0)
     rebootButton.grid(row=0, column=1, padx=20)
+
+
+    #Etat de la DB
+    OScmd = "ps aux|grep 'LinkyRPiDB.py'|grep -v grep|awk '{print $2}'"
+    result = subprocess.run(OScmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["DBSTATE"] :
+    if result == '' :
+        valueDB.config(fg="red")
+        DBSTATE.set("No Run")
+    else :
+        valueDB.config(fg="green")
+        DBSTATE.set("PID = " + result.rstrip("\n"))
+
+    #Etat du client MQTT
+    OScmd = "ps aux|grep 'LinkyRPiMQTT.py'|grep -v grep|awk '{print $2}'"
+    result = subprocess.run(OScmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["MQSTATE"] :
+    if result == '' :
+        valueMQ.config(fg="red")
+        MQSTATE.set("No Run")
+    else :
+        valueMQ.config(fg="green")
+        MQSTATE.set("PID = " + result.rstrip("\n"))
 
 
 
@@ -1276,12 +1369,12 @@ def initStatus() :
     valueListener = tk.Label(statusFrame, textvariable = LISTEN, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
     valueListener.grid(row=1, column=1, columnspan=10, sticky=tk.W, padx=10, pady=10)
 
-    global DBSTATE, valueDB
-    DBSTATE = tk.StringVar()
-    LabelDB = tk.Label(statusFrame, text="Etat du process DB :", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-    LabelDB.grid(row=2, column=0, sticky=tk.E, padx=10, pady=10)
-    valueDB = tk.Label(statusFrame, textvariable = DBSTATE, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
-    valueDB.grid(row=2, column=1, columnspan=10, sticky=tk.W, padx=10, pady=10)
+    global DSTATE, valueDispatch
+    DSTATE = tk.StringVar()
+    LabelDi = tk.Label(statusFrame, text="Etat du proc. Dispatcher :", font=(textFont,textSizeBig,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    LabelDi.grid(row=2, column=0, sticky=tk.E, padx=10, pady=10)
+    valueDispatch = tk.Label(statusFrame, textvariable = DSTATE, font=(textFont,textSizeBig), relief=tk.FLAT, bg=labelBg, fg=labelColor)
+    valueDispatch.grid(row=2, column=1, columnspan=10, sticky=tk.W, padx=10, pady=10)
 
     global LANIP, valueIP
     LANIP = tk.StringVar()
@@ -1352,26 +1445,18 @@ def initStatus() :
         valueListener.config(fg="green")
         LISTEN.set("Running, PID = " + result.rstrip("\n"))
 
-    #Etat de la DB
-    cmd = "ps aux|grep 'LinkyRPiDB.py'|grep -v grep|awk '{print $2}'"
-    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["DBSTATE"] :
+    #Etat du Dispatcher
+    cmd = "ps aux|grep 'LinkyRPiDispatch.py'|grep -v grep|awk '{print $2}'"
+    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["DISTATE"] :
     if result == '' :
-        valueDB.config(fg="red")
-        DBSTATE.set("Not runnung")
+        valueDispatch.config(fg="red")
+        DSTATE.set("Not runnung")
     else :
-        valueDB.config(fg="green")
-        DBSTATE.set("Running, PID = " + result.rstrip("\n"))
-
-
+        valueDispatch.config(fg="green")
+        DSTATE.set("Running, PID = " + result.rstrip("\n"))
 
     master.update_idletasks()
     master.update()
-
-
-
-
-
-
 
 
 #===============================================================================
@@ -1428,15 +1513,15 @@ def refreshStatus():
         valueListener.config(fg="green")
         LISTEN.set("Running, PID = " + result.rstrip("\n"))
 
-    #Etat de la DB
-    cmd = "ps aux|grep 'LinkyRPiDB.py'|grep -v grep|awk '{print $2}'"
-    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["DBSTATE"] :
+    #Etat du Dispatcher
+    cmd = "ps aux|grep 'LinkyRPiDispatch.py'|grep -v grep|awk '{print $2}'"
+    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')#    if trameDict["DISTATE"] :
     if result == '' :
-        valueDB.config(fg="red")
-        DBSTATE.set("Not runnung")
+        valueDispatch.config(fg="red")
+        DSTATE.set("Not runnung")
     else :
-        valueDB.config(fg="green")
-        DBSTATE.set("Running, PID = " + result.rstrip("\n"))
+        valueDispatch.config(fg="green")
+        DSTATE.set("Running, PID = " + result.rstrip("\n"))
 
     #Registre
     if "ContactSec" in analysedDict :
@@ -1887,7 +1972,7 @@ while True:
         # Nb: les intensités instantannées sont calculées sur base de la puissance instantannée et de la tension instantannée,
         #     suivant la formule P = U.I
         #     Cela donne une intensité instantannée plus précise que celle fournie par le compteur qui est donnée sous forme d'Entier
-        
+
         #Pour compteurs Monophasés
         if analysedDict["TypeCompteur"] == "MONO" :
             iMax = analysedDict["IntensiteSouscrite"] * 5

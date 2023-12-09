@@ -149,8 +149,6 @@ if activeDB :
         quit()
 
 
-    nextTrace = time.monotonic()
-
     #On part en boucle infinie
     while True:
 
@@ -294,12 +292,8 @@ if activeDB :
             query = "".join([queryInsert[:-2], ")" , queryValues[:-2], ")"])
             #print(query)
 
-            if (time.monotonic() >= nextTrace) :
-                cursor.execute(query)
-                connection.commit()
-                config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
-                refreshDB = config.get('POSTGRESQL','refreshDB')
-                nextTrace = time.monotonic() + int(refreshDB)
+            cursor.execute(query)
+            connection.commit()
 
 else :
     if ldebug>0 : print("[" + bcolors.FAIL + "WA" + bcolors.RESET + "] Dodo...")
