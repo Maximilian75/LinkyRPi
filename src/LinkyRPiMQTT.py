@@ -46,9 +46,12 @@ else :
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("Connected to MQTT Broker!")
+        print("Connected to MQTT Broker at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
     else:
-        print("Failed to connect, return code %d\n", rc)
+        print("Failed to connect at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + rc)
+
+def on_disconnect(client, userdata, rc):
+   print("Disconected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + rc)
 
 
 #Connexion au broker MQTT
@@ -57,39 +60,18 @@ port = int(config.get('MQTT', 'MQTTPort'))
 client = mqtt.Client()
 client.username_pw_set(config.get('MQTT', 'MQTTUser'), config.get('MQTT', 'MQTTPass'))
 client.on_connect = on_connect
+client.on_disconnect = on_disconnect
 
 notConnected = True
 while notConnected :
     try :
         client.connect(broker, port)
-        print("Connected to MQTT Broker!")
         notConnected = False
     except :
-        print("Failed to connect")
         time.sleep(1)
 
+client.loop_start()
 while True:
-    client.publish("LinkyRPi/Status/Execution","ON")
-
-    cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
-    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-    if (result != '') and (result != 'wlan0: error fetching interface information: Device not found') :
-        client.publish("LinkyRPi/Network/Ethernet/AdresseIP",result.rstrip("\n"))
-
-    #Etat de la connexion WiFi
-    cmd = "ifconfig wlan0|grep 'inet '|cut -d' ' -f 10"
-    result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-    if result != '' :
-        client.publish("LinkyRPi/Network/WiFi/AdresseIP",result.rstrip("\n"))
-        cmd2 = "iwconfig wlan0|grep Quality|cut -d '=' -f 2|cut -d ' ' -f 1"
-        result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-        client.publish("LinkyRPi/Network/WiFi/Force",int(result2.split("/")[0]) / int(result2.split("/")[1]) * 100)
-        cmd2 = "iwconfig wlan0|grep ESSID|cut -d ':' -f 2"
-        result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-        client.publish("LinkyRPi/Network/WiFi/Name",result2.rstrip("\n"))
-
-
-
 
     # On lit une trame dans la queue de dispatching
     try :
@@ -101,6 +83,26 @@ while True:
         trameReceived = False
 
     if trameReceived :
+
+        client.publish("LinkyRPi/Status/Execution","ON")
+
+        cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
+        result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+        if (result != '') and (result != 'wlan0: error fetching interface information: Device not found') :
+            client.publish("LinkyRPi/Network/Ethernet/AdresseIP",result.rstrip("\n"))
+
+        #Etat de la connexion WiFi
+        cmd = "ifconfig wlan0|grep 'inet '|cut -d' ' -f 10"
+        result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+        if result != '' :
+            client.publish("LinkyRPi/Network/WiFi/AdresseIP",result.rstrip("\n"))
+            cmd2 = "iwconfig wlan0|grep Quality|cut -d '=' -f 2|cut -d ' ' -f 1"
+            result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+            client.publish("LinkyRPi/Network/WiFi/Force",int(result2.split("/")[0]) / int(result2.split("/")[1]) * 100)
+            cmd2 = "iwconfig wlan0|grep ESSID|cut -d ':' -f 2"
+            result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+            client.publish("LinkyRPi/Network/WiFi/Name",result2.rstrip("\n"))
+
         analysedDict = dict(msgJson)
         for key in analysedDict :
             MFormat = dataFormat[key]
@@ -111,5 +113,14 @@ while True:
                 MValue = '{"' + MQTTTopic[key][1] + '": "' + analysedDict[key] + '", "unit_of_measurement": "' + MQTTTopic[key][2] + '", "icon": "' + MQTTTopic[key][3] + '"}'
             else :
                 MValue = '{"' + MQTTTopic[key][1] + '": ' + str(analysedDict[key]) + ', "unit_of_measurement": "' + MQTTTopic[key][2] + '", "icon": "' + MQTTTopic[key][3] + '"}'
-            client.publish(MTopic, MValue)
+
+            try :
+                client.publish(MTopic, MValue)
+                #print("Published on MQTT at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+                trameReceived = False
+            except :
+                print("Error while pushing at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
             #print(MTopic)
+
+    else :
+        time.sleep(1)
