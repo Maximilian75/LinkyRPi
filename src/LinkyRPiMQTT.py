@@ -48,10 +48,10 @@ def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT Broker at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
     else:
-        print("Failed to connect at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + rc)
+        print("Failed to connect at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + string(rc))
 
 def on_disconnect(client, userdata, rc):
-   print("Disconected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + rc)
+   print("Disconected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + string(rc))
 
 
 #Connexion au broker MQTT
