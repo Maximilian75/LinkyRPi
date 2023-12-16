@@ -57,9 +57,16 @@ port = int(config.get('MQTT', 'MQTTPort'))
 client = mqtt.Client()
 client.username_pw_set(config.get('MQTT', 'MQTTUser'), config.get('MQTT', 'MQTTPass'))
 client.on_connect = on_connect
-client.connect(broker, port)
 
-
+notConnected = True
+while notConnected :
+    try :
+        client.connect(broker, port)
+        print("Connected to MQTT Broker!")
+        notConnected = False
+    except :
+        print("Failed to connect")
+        time.sleep(1)
 
 while True:
     client.publish("LinkyRPi/Status/Execution","ON")
