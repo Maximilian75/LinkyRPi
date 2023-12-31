@@ -162,7 +162,10 @@ def treattrame(list_measures):
 
     #On envoie le dictionnaire traduit à la UI sous forme de Json
     trameJson = json.dumps(analysedDict, indent=4)
-    q1.send(trameJson)
+    try:
+        q1.send(trameJson, timeout = 0)
+    except:
+        pass
 
 
 #==============================================================================#

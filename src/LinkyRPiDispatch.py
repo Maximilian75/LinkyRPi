@@ -127,12 +127,19 @@ while True:
 
         # Forward direct vers la GUI
         #print("Envoi vers la GUI")
-        queueGUI.send(trameJson)
+        try:
+            queueGUI.send(trameJson, timeout = 0)
+        except:
+            pass
 
         # Si envoi vers la DB activé
         if (DBActive == "True") and (time.monotonic() >= nextTraceDB) :
             #print("Envoi vers la DB")
-            queueDB.send(trameJson)
+            try:
+                queueDB.send(trameJson, timeout = 0)
+            except:
+                pass
+
             DBFreq = config.get('POSTGRESQL','refreshDB')
             nextTraceDB = time.monotonic() + int(DBFreq)
 
@@ -140,7 +147,11 @@ while True:
         # Si envoi vers MQTT activé
         if (MQTTActive == "True") and (time.monotonic() >= nextTraceMQTT) :
             #print("Envoi MQTT")
-            queueMQTT.send(trameJson)
+            try:
+                queueMQTT.send(trameJson, timeout = 0)
+            except:
+                pass
+
             MQTTFreq = config.get('MQTT','refreshMQTT')
             nextTraceMQTT = time.monotonic() + int(MQTTFreq)
 
@@ -148,6 +159,10 @@ while True:
         # Si enregistrement trame dans un fichier activé
         if (traceActive == "True") and (time.monotonic() >= nexttraceActive) :
             #print("Trace dans fichier")
-            writeToFile(analysedDict)
+            try:
+                writeToFile(analysedDict)
+            except:
+                pass
+                
             traceFreq = int(config.get('PARAM','traceFreq'))
             nexttraceActive = time.monotonic() + int(TraceFreq)
