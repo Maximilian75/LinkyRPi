@@ -104,12 +104,14 @@ nextTraceDB = time.monotonic()
 nextTraceMQTT = time.monotonic()
 nexttraceActive = time.monotonic()
 
+traceActive = config.get('PARAM','traceActive')
+MQTTActive = config.get('MQTT','MQTTActive')
+DBActive = config.get('POSTGRESQL','active')
+
 while True:
 
 
-    traceActive = config.get('PARAM','traceActive')
-    MQTTActive = config.get('MQTT','MQTTActive')
-    DBActive = config.get('POSTGRESQL','active')
+
 
     # On lit une trame dans la queue de dispatching
     try :
@@ -140,18 +142,20 @@ while True:
             except:
                 pass
 
+            DBActive = config.get('POSTGRESQL','active')
             DBFreq = config.get('POSTGRESQL','refreshDB')
             nextTraceDB = time.monotonic() + int(DBFreq)
 
 
         # Si envoi vers MQTT activé
         if (MQTTActive == "True") and (time.monotonic() >= nextTraceMQTT) :
-            #print("Envoi MQTT")
+            print("Envoi MQTT")
             try:
                 queueMQTT.send(trameJson, timeout = 0)
             except:
                 pass
 
+            MQTTActive = config.get('MQTT','MQTTActive')
             MQTTFreq = config.get('MQTT','refreshMQTT')
             nextTraceMQTT = time.monotonic() + int(MQTTFreq)
 
@@ -163,6 +167,7 @@ while True:
                 writeToFile(analysedDict)
             except:
                 pass
-                
+
+            traceActive = config.get('PARAM','traceActive')
             traceFreq = int(config.get('PARAM','traceFreq'))
             nexttraceActive = time.monotonic() + int(TraceFreq)

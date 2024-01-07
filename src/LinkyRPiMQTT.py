@@ -8,6 +8,7 @@ import linkyRPiTranslate
 import paho.mqtt.client as mqtt
 import sys
 import os
+import psutil
 
 
 print("=============================================================================")
@@ -48,10 +49,10 @@ def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT Broker at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
     else:
-        print("Failed to connect at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + string(rc))
+        print("Failed to connect at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code : " + str (rc))
 
 def on_disconnect(client, userdata, rc):
-   print("Disconected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code " + string(rc))
+   print("Disconected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code : " + str (rc))
 
 
 #Connexion au broker MQTT
@@ -83,8 +84,21 @@ while True:
         trameReceived = False
 
     if trameReceived :
-
+        print("Trame received...")
+        #On push les stats du Raspberry Pi
         client.publish("LinkyRPi/Status/Execution","ON")
+        client.publish("LinkyRPi/Status/CpuPercent",psutil.cpu_percent())
+        #client.publish("LinkyRPi/Status/CpuAverage",psutil.getloadavg())
+
+        memory = psutil.virtual_memory()
+        client.publish("LinkyRPi/Status/RamAvailable",round(memory.available/1024.0/1024.0,1))
+        client.publish("LinkyRPi/Status/RamTotal",round(memory.total/1024.0/1024.0,1))
+        client.publish("LinkyRPi/Status/RamPercent",memory.percent)
+
+        disk = psutil.disk_usage('/')
+        client.publish("LinkyRPi/Status/SDAvailable",round(disk.free/1024.0/1024.0/1024.0,1))
+        client.publish("LinkyRPi/Status/SDTotal",round(disk.total/1024.0/1024.0/1024.0,1))
+        client.publish("LinkyRPi/Status/SDPercent",disk.percent)
 
         cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
         result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
