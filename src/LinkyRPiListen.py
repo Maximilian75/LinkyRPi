@@ -130,6 +130,12 @@ def init():
 # Traitement de la mesure lue                                                  #
 #==============================================================================#
 def treatmesure(mesureCode,mesureValue,mesureValue2) :
+
+    # La puissance de coupure est exprimée en kVA alors que les puissances mesurées sont en VA. On passe donc PCOUP en VA pour faciliter la comparaison
+    if mesureCode == "PCOUP" :
+        mesureValue = str(int(mesureValue) * 1000)
+        print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue)
+
     #Les codes ci-dessous contiennent 2 valeurs : un horodatage + la valeur en question.
     #Du coup on bypass l'horodatage pour ne garder que la valeur
     if mesureCode in ["SMAXSN","SMAXSN1","SMAXSN2","SMAXSN3","SMAXSN-1","SMAXSN1-1","SMAXSN2-1","SMAXSN3-1","SMAXIN","SMAXIN-1","CCASN","CCASN-1","CCAIN","CCAIN-1","UMOY1","UMOY2","UMOY3","DPM1","FPM1","DPM2","FPM2","DPM3","FPM3"] :
@@ -153,7 +159,7 @@ def treattrame(list_measures):
     mesure = ("TICMODE", modeTIC)
     list_measures.append(mesure)
     if ldebug>2 : print("[" + bcolors.OK + ">>" + bcolors.RESET + "] TICMODE : " + modeTIC)
-    if ldebug>1 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Fin de trame détectée")
+    if ldebug>1 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Fin de trame détectée à " + (datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)")))
     if ldebug>1 : print("--------------------------------------------------------------------------------")
 
     #On traduit la trame reçue en un dictionnaire agnostique du type de fonctionnement de la TIC
@@ -167,6 +173,7 @@ def treattrame(list_measures):
     except:
         pass
 
+    list_measures.clear()
 
 #==============================================================================#
 # Traitement des exceptions                                                    #

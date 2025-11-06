@@ -284,7 +284,7 @@ def getMQTTTopic() :
     MQTTTopic.update({"IntensiteSouscrite":["LinkyRPi/Abonnement/", "Value", "A", ""]})
     MQTTTopic.update({"NumeroTarifEnCours":["LinkyRPi/Abonnement/", "Value", "", ""]})
     MQTTTopic.update({"PeriodeTarifaireEnCours":["LinkyRPi/Abonnement/", "Value", "", ""]})
-    MQTTTopic.update({"PuissanceCoupure":["LinkyRPi/Abonnement/", "Value", "kVA", ""]})
+    MQTTTopic.update({"PuissanceCoupure":["LinkyRPi/Abonnement/", "Value", "VA", ""]})
     MQTTTopic.update({"TarifEnCoursD":["LinkyRPi/Abonnement/", "Value", "", ""]})
     MQTTTopic.update({"TarifEnCoursF":["LinkyRPi/Abonnement/", "Value", "", ""]})
     MQTTTopic.update({"TarifSouscrit":["LinkyRPi/Abonnement/", "Value", "", ""]})

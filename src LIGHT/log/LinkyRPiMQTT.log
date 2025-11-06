@@ -1,0 +1,39 @@
+=============================================================================
+Démarrage du process MQTT : 19-Oct-2025 (14:20:52.491673)
+Connected to MQTT Broker at 19-Oct-2025 (14:20:52.662393)
+Disconected at 19-Oct-2025 (15:20:56.777241), return code : Unspecified error
+Connected to MQTT Broker at 19-Oct-2025 (15:20:57.789863)
+798), return code : Normal disconnection
+Trying to reconnect...
+Reconnected at 16-Aug-2025 (08:55:19.271066)
+Connected to MQTT Broker at 16-Aug-2025 (08:55:23.860363)
+Error while pushing at 16-Aug-2025 (08:55:41.368287)
+invalid literal for int() with base 10: ''
+Disconected at 16-Aug-2025 (08:55:41.369796), return code : Normal disconnection
+Trying to reconnect...
+Reconnected at 16-Aug-2025 (08:56:26.903913)
+Connected to MQTT Broker at 16-Aug-2025 (08:56:29.442927)
+Disconected at 22-Aug-2025 (10:46:57.744938), return code : Unspecified error
+Connected to MQTT Broker at 22-Aug-2025 (10:47:28.775524)
+Disconected at 05-Sep-2025 (19:17:51.441940), return code : Unspecified error
+Connected to MQTT Broker at 05-Sep-2025 (19:18:23.142856)
+Error while pushing at 13-Sep-2025 (10:14:36.551227)
+invalid literal for int() with base 10: ''
+Disconected at 13-Sep-2025 (10:14:36.552644), return code : Normal disconnection
+Trying to reconnect...
+Reconnected at 13-Sep-2025 (10:15:22.314129)
+Connected to MQTT Broker at 13-Sep-2025 (10:15:26.879672)
+Error while pushing at 13-Sep-2025 (10:15:37.497304)
+invalid literal for int() with base 10: ''
+Disconected at 13-Sep-2025 (10:15:37.498710), return code : Normal disconnection
+Trying to reconnect...
+Reconnected at 13-Sep-2025 (10:16:29.512010)
+Connected to MQTT Broker at 13-Sep-2025 (10:16:29.599892)
+Disconected at 13-Sep-2025 (10:16:29.601364), return code : Unspecified error
+Connected to MQTT Broker at 13-Sep-2025 (10:16:30.611310)
+Disconected at 20-Sep-2025 (15:03:18.118669), return code : Unspecified error
+Connected to MQTT Broker at 20-Sep-2025 (15:05:30.190591)
+Error while pushing at 18-Oct-2025 (12:10:31.064065)
+invalid literal for int() with base 10: ''
+Disconected at 18-Oct-2025 (12:10:31.065340), return code : Normal disconnection
+Trying to reconnect...

@@ -84,7 +84,6 @@ while True:
         trameReceived = False
 
     if trameReceived :
-        print("Trame received...")
         #On push les stats du Raspberry Pi
         client.publish("LinkyRPi/Status/Execution","ON")
         client.publish("LinkyRPi/Status/CpuPercent",psutil.cpu_percent())

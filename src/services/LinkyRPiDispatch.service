@@ -1,0 +1,13 @@
+[Unit]
+Description=LinkyRPi Dispatching
+After=multi-user.target LinkyRPiDispatch.service
+[Service]
+Type=idle
+ExecStart=/home/pi/.venv/bin/python3 /home/pi/LinkyRPi/LinkyRPiDispatch.py
+StandardOutput=file:/home/pi/LinkyRPi/log/LinkyRPiDispatch.log
+StandardError=file:/home/pi/LinkyRPi/log/LinkyRPiDispatch.err
+WorkingDirectory=/home/pi/LinkyRPi
+Environment=PYTHONUNBUFFERED=1
+User=pi
+[Install]
+WantedBy=multi-user.target

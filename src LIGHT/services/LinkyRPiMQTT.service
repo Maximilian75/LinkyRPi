@@ -1,0 +1,15 @@
+[Unit]
+Description=LinkyRPi MQTT
+After=syslog.target network.target multi-user.target nodm.service systemd-user-sessions.service runlevel5.target graphical.target
+[Service]
+Type=idle
+ExecStart=/home/linkyrpi/.venv/bin/python3 /home/linkyrpi/LinkyRPi/LinkyRPiMQTT.py
+StandardOutput=file:/home/linkyrpi/LinkyRPi/log/LinkyRPiMQTT.log
+StandardError=file:/home/linkyrpi/LinkyRPi/log/LinkyRPiMQTT.err
+WorkingDirectory=/home/linkyrpi/LinkyRPi
+Environment=PYTHONUNBUFFERED=1
+User=linkyrpi
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target default.target

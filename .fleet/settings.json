@@ -1,0 +1,17 @@
+{
+    "backend.maxHeapSizeMb": 1487,
+    "plugins": [
+        {
+            "type": "add",
+            "pluginName": "fleet.ai"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.javascript.ai"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.python.ai"
+        }
+    ]
+}

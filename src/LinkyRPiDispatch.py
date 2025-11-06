@@ -110,19 +110,22 @@ DBActive = config.get('POSTGRESQL','active')
 
 while True:
 
-
+    msgLog = (datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
 
 
     # On lit une trame dans la queue de dispatching
     try :
         msg = queueDispatch.receive(timeout = 1)
         trameReceived = True
+        msgLog = msgLog + " // Trame lue"
     except Exception as e:
         #La queue est vide, on reboucle direct
         trameReceived = False
+        msgLog = msgLog + " // Trame NON-lue"
 
 
     if trameReceived :
+
         msgJson = json.loads(msg[0])
         analysedDict = dict(msgJson)
         trameJson = json.dumps(analysedDict, indent=4)
@@ -131,7 +134,9 @@ while True:
         #print("Envoi vers la GUI")
         try:
             queueGUI.send(trameJson, timeout = 0)
+            msgLog = msgLog + " // Push GUI"
         except:
+            msgLog = msgLog + " // No-Push GUI"
             pass
 
         # Si envoi vers la DB activé
@@ -139,7 +144,9 @@ while True:
             #print("Envoi vers la DB")
             try:
                 queueDB.send(trameJson, timeout = 0)
+                msgLog = msgLog + " // Push DB"
             except:
+                msgLog = msgLog + " // No-Push DB"
                 pass
 
             DBActive = config.get('POSTGRESQL','active')
@@ -149,10 +156,11 @@ while True:
 
         # Si envoi vers MQTT activé
         if (MQTTActive == "True") and (time.monotonic() >= nextTraceMQTT) :
-            print("Envoi MQTT")
             try:
                 queueMQTT.send(trameJson, timeout = 0)
+                msgLog = msgLog + " // Push MQTT"
             except:
+                msgLog = msgLog + " // No-Push MQTT"
                 pass
 
             MQTTActive = config.get('MQTT','MQTTActive')
@@ -165,9 +173,14 @@ while True:
             #print("Trace dans fichier")
             try:
                 writeToFile(analysedDict)
+                msgLog = msgLog + " // Push FILE"
             except:
+                msgLog = msgLog + " // No-Push FILE"
                 pass
 
             traceActive = config.get('PARAM','traceActive')
             traceFreq = int(config.get('PARAM','traceFreq'))
             nexttraceActive = time.monotonic() + int(TraceFreq)
+
+        if ldebug>1 : print(msgLog)
+        msgLog = ""

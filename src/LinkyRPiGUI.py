@@ -46,14 +46,16 @@ mq = posix_ipc.MessageQueue(queueName, posix_ipc.O_CREAT, max_messages=queueDept
 # Dans le cas où la variable d'environnement DISPLAY ne serait pas définie, on la définie
 # Ceci afin d'indiquer sur quel écran on veut afficher la UI (0.0 étant l'écran connecté au port HDMI du Raspberry)
 if os.environ.get('DISPLAY','') == '':
-    #print('no display found. Using :0.0')
+    if ldebug>1 : print('no display found. Using :0.0')
     os.environ.__setitem__('DISPLAY', ':0.0')
 
 # On desactive le screen saver parce que ça fait chier et que le réveil via l'écran tactile ne fonctionne pas des masses
 cmd = "xset -dpms"
 result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+if ldebug>1 : print(result)
 cmd = "xset s off"
 result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+if ldebug>1 : print(result)
 
 notebookBgColor    = config.get('GUICSS','notebookBgColor')
 notebookBgLight    = config.get('GUICSS','notebookBgLight')
@@ -351,6 +353,7 @@ def initGUI(analysedDict) :
     if ldebug>0 : print("Initialisation de la GUI...")
 
     #Definition des voyants et boutons
+    if ldebug>1 : print(" - Chargement des icones")
     global voyantNoir, voyantBleu, voyantBlanc, voyantRouge, voyantHC, voyantHP, voyantWE, miniVoyantNoir, miniVoyantVert
     global signalIcon, cmdIcon, rebootIcon, ONButton, OFFButton, flecheD, flecheG, boutonFonce, boutonClair
     voyantNoir      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/NOIR.png")
@@ -369,6 +372,7 @@ def initGUI(analysedDict) :
 
 
     #On définit les caractéristiques de la GUI
+    if ldebug>1 : print(" - Chargement de la configuration")
     notebookBgColor  = config.get('GUICSS','notebookBgColor')
     notebookBgLight  = config.get('GUICSS','notebookBgLight')
     notebookBgMedium = config.get('GUICSS','notebookBgMedium')
@@ -388,20 +392,24 @@ def initGUI(analysedDict) :
     # Frame producteur (seulement en mode PRODUCTEUR)
     if "Fonctionnement" in analysedDict :
         if analysedDict["Fonctionnement"] != "Producteur" :
+            if ldebug>2 : print("   - Frame 'Producteur' instanciée")
             productFrame.destroy()
     else :
         productFrame.destroy()
+        if ldebug>2 : print("   - Pas de frame 'Producteur'")
 
 
     # Frame du REGISTRE (uniquement si la TIC est en mode STANDARD)
     if analysedDict["ModeTIC"] == "Historique" :
         registreFrame.destroy()
+        if ldebug>2 : print(" - TIC en mode 'Historique'")
 
 
 
     #===============================================================================
     #=== Population de la frame INFORMATIONS                                     ===
     #===============================================================================
+    if ldebug>2 : print("   - Instantiation de la frame 'Informations'")
     INFOTITLE = tk.StringVar()
     INFOTITLE.set("Informations compteur & abonnement")
     infoTitle = tk.Label(infoFrame, textvariable = INFOTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
@@ -519,6 +527,7 @@ def initGUI(analysedDict) :
     #===============================================================================
     #=== Population de la frame INDEX                                            ===
     #===============================================================================
+    if ldebug>2 : print("   - Instantiation de la frame 'Index'")
     global BASE, HCHC, HCHP, HWE, EJPHN, EJPHPM
     global BBRHCJB, BBRHPJB, BBRHCJW, BBRHPJW, BBRHCJR, BBRHPJR
     global IndexTotal, IndexHPH, IndexHPB, IndexHCH, IndexHCB
@@ -787,6 +796,7 @@ def initGUI(analysedDict) :
     #===============================================================================
     #=== Population de la frame TENSIONS & PUISSANCES                            ===
     #===============================================================================
+    if ldebug>2 : print("   - Instanciation de la frame 'Tensions et puissances'")
     global PresenceDesPotentiels, PuissanceApparente, PuissanceApparentePhase1, PuissanceApparentePhase2, PuissanceApparentePhase3
     global PuissanceMaxAtteinte, PuissanceMaxAtteintePhase1, PuissanceMaxAtteintePhase2, PuissanceMaxAtteintePhase3
     global PuissanceApparenteMaxN1, PuissanceApparenteMaxN1Phase1, PuissanceApparenteMaxN1Phase2, PuissanceApparenteMaxN1Phase3
@@ -933,6 +943,7 @@ def initGUI(analysedDict) :
     #===============================================================================
     #=== Population de la frame Intensités                                       ===
     #===============================================================================
+    if ldebug>2 : print("   - Instantiation de la frame 'Intensités'")
     global xscale, xscaleButton, IINST, IINST1, IINST2, IINST3, v
     IINST  = tk.StringVar()
     IINST1 = tk.StringVar()
@@ -1004,6 +1015,7 @@ def initGUI(analysedDict) :
     #===============================================================================
     #=== Population de la frame REGISTRE                                         ===
     #===============================================================================
+    if ldebug>2 : print("   - Instantiation de la frame 'Registre'")
     REGISTRETITLE = tk.StringVar()
     REGISTRETITLE.set("Etat du registre du compteur")
     registreTitle = tk.Label(registreFrame, textvariable = REGISTRETITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
@@ -1141,6 +1153,7 @@ def initGUI(analysedDict) :
     #===============================================================================
     #=== Population de la frame STATUS                                           ===
     #===============================================================================
+    if ldebug>2 : print("   - Instantiation de la frame 'Status'")
     MTIC = tk.StringVar()
     MTIC.set(analysedDict["ModeTIC"])
     LabelMTIC = tk.Label(statusFrame, text="Mode de la TIC :", font=(textFont,textSizeMedium,"bold"), relief=tk.FLAT, bg=labelBg, fg=labelColor)
@@ -1238,6 +1251,8 @@ def initParam() :
     global ButtonDBActive, ValueDebug, scaleDBVal, scaleFileVal, timerDB, timerFile, timerMQTT, ButtonMQActive
     global cmdIcon, rebootIcon, ONButton, OFFButton, flecheD, flecheG
     global valueDB, DBSTATE, valueMQ, MQSTATE
+
+    if ldebug>2 : print("   - Instantiation de la frame 'Paramètres'")
 
     cmdIcon         = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/cmd.png")
     rebootIcon      = tk.PhotoImage(master=master, file=config.get('PATH','iconPath') + "/reboot.png")
@@ -1357,6 +1372,8 @@ def initParam() :
 #=== Init de la frame STATUS                                                 ===
 #===============================================================================
 def initStatus() :
+    if ldebug>2 : print(" - Init de la frame 'Status'")
+
     STATUSTITLE = tk.StringVar()
     STATUSTITLE.set("Statut de l'application et du compteur")
     statusTitle = tk.Label(statusFrame, textvariable = STATUSTITLE, font=(textFont,textSizeBig), bg=labelBg, fg=titleColor, relief=tk.GROOVE)
@@ -1466,6 +1483,8 @@ def refreshStatus():
 
     global analysedDict, DATE
 
+    if ldebug>2 : print(" - Refresh des données 'Status'")
+
     #Etat de la connexion LAN
     cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
     result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
@@ -1574,6 +1593,9 @@ def refreshStatus():
 def refreshPlages():
 
     global analysedDict
+
+    if ldebug>1 : print(" - Refresh des plages horaires")
+
     if "PeriodeTarifaireEnCours" in analysedDict :
         if analysedDict["PeriodeTarifaireEnCours"] == 'HC' :
             HPHCIcon.configure(image=voyantHC)
@@ -1660,6 +1682,8 @@ def refreshPlages():
 #===============================================================================
 def refreshIndex():
     global analysedDict
+
+    if ldebug>1 : print(" - Refresh des index")
 
     if "IndexBase" in analysedDict :
         valueIndex = int(analysedDict["IndexBase"]) / 1000
@@ -1757,6 +1781,9 @@ def refreshIndex():
 #=== Calcul des coordonnées de la courbe                                             ===#
 #=======================================================================================#
 def intensite(intensite, liste, xscale, iMax) :
+
+    if ldebug>3 : print(" - Calcul des coordonnées de la courbe")
+
     newListe = []
 
     # Ici on gere la liste des valeurs d'intensité et on la limite à 700 valeurs (car max 700 pixels pour la courbe)
@@ -1795,6 +1822,8 @@ def intensite(intensite, liste, xscale, iMax) :
 #=== Refresh des tensions et puissances                                              ===#
 #=======================================================================================#
 def refreshTension(analysedDict) :
+
+    if ldebug>1 : print(" - Refresh des tensions")
 
     if "TensionEfficacePhase1" in analysedDict :
         TensionEfficacePhase1.set(analysedDict["TensionEfficacePhase1"])
@@ -1857,6 +1886,8 @@ def refreshTension(analysedDict) :
 #=== Refresh des voyants du RELAIS                                                   ===#
 #=======================================================================================#
 def refreshRelais(analysedDict) :
+
+    if ldebug>1 : print(" - Refresh du relais")
 
     if "Relais" in analysedDict :
         if analysedDict["Relais"][0] == "0" :
@@ -1942,6 +1973,7 @@ while True:
         trameReceived = True
     except Exception as e:
         #La queue est vide, on reboucle direct
+        #print("Queue vide")
         trameReceived = False
 
     if trameReceived :
