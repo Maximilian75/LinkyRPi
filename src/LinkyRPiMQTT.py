@@ -16,7 +16,7 @@ print("Démarrage du process MQTT : " + datetime.now().strftime("%d-%b-%Y (%H:%M
 
 # On ouvre le fichier de param et on recup les param
 config = configparser.RawConfigParser()
-config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
+config.read('/home/linkyrpi/LinkyRPi/LinkyRPi.conf')
 ldebug = int(config.get('PARAM','debuglevel'))
 
 syllabus, dataFormat = linkyRPiTranslate.generateSyllabus()
@@ -45,20 +45,20 @@ else :
     activeMQTT = False
 
 
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc, properties):
     if rc == 0:
         print("Connected to MQTT Broker at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
     else:
         print("Failed to connect at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code : " + str (rc))
 
-def on_disconnect(client, userdata, rc):
+def on_disconnect(client, userdata, flags, rc, properties):
    print("Disconected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)") + ", return code : " + str (rc))
 
 
 #Connexion au broker MQTT
 broker = config.get('MQTT', 'MQTTAddress')
 port = int(config.get('MQTT', 'MQTTPort'))
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.username_pw_set(config.get('MQTT', 'MQTTUser'), config.get('MQTT', 'MQTTPass'))
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
@@ -84,56 +84,70 @@ while True:
         trameReceived = False
 
     if trameReceived :
-        #On push les stats du Raspberry Pi
-        client.publish("LinkyRPi/Status/Execution","ON")
-        client.publish("LinkyRPi/Status/CpuPercent",psutil.cpu_percent())
-        #client.publish("LinkyRPi/Status/CpuAverage",psutil.getloadavg())
+        try :
+            #On push les stats du Raspberry Pi
+            client.publish("LinkyRPi/Status/Execution","ON")
+            client.publish("LinkyRPi/Status/CpuPercent",psutil.cpu_percent())
+            #client.publish("LinkyRPi/Status/CpuAverage",psutil.getloadavg())
 
-        memory = psutil.virtual_memory()
-        client.publish("LinkyRPi/Status/RamAvailable",round(memory.available/1024.0/1024.0,1))
-        client.publish("LinkyRPi/Status/RamTotal",round(memory.total/1024.0/1024.0,1))
-        client.publish("LinkyRPi/Status/RamPercent",memory.percent)
+            memory = psutil.virtual_memory()
+            client.publish("LinkyRPi/Status/RamAvailable",round(memory.available/1024.0/1024.0,1))
+            client.publish("LinkyRPi/Status/RamTotal",round(memory.total/1024.0/1024.0,1))
+            client.publish("LinkyRPi/Status/RamPercent",memory.percent)
 
-        disk = psutil.disk_usage('/')
-        client.publish("LinkyRPi/Status/SDAvailable",round(disk.free/1024.0/1024.0/1024.0,1))
-        client.publish("LinkyRPi/Status/SDTotal",round(disk.total/1024.0/1024.0/1024.0,1))
-        client.publish("LinkyRPi/Status/SDPercent",disk.percent)
+            disk = psutil.disk_usage('/')
+            client.publish("LinkyRPi/Status/SDAvailable",round(disk.free/1024.0/1024.0/1024.0,1))
+            client.publish("LinkyRPi/Status/SDTotal",round(disk.total/1024.0/1024.0/1024.0,1))
+            client.publish("LinkyRPi/Status/SDPercent",disk.percent)
 
-        cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
-        result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-        if (result != '') and (result != 'wlan0: error fetching interface information: Device not found') :
-            client.publish("LinkyRPi/Network/Ethernet/AdresseIP",result.rstrip("\n"))
+            #cmd = "ifconfig eth0|grep 'inet '|cut -d' ' -f 10"
+            #result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+            #if (result != '') and (result != 'wlan0: error fetching interface information: Device not found') :
+            #    client.publish("LinkyRPi/Network/Ethernet/AdresseIP",result.rstrip("\n"))
 
-        #Etat de la connexion WiFi
-        cmd = "ifconfig wlan0|grep 'inet '|cut -d' ' -f 10"
-        result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-        if result != '' :
-            client.publish("LinkyRPi/Network/WiFi/AdresseIP",result.rstrip("\n"))
-            cmd2 = "iwconfig wlan0|grep Quality|cut -d '=' -f 2|cut -d ' ' -f 1"
-            result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-            client.publish("LinkyRPi/Network/WiFi/Force",int(result2.split("/")[0]) / int(result2.split("/")[1]) * 100)
-            cmd2 = "iwconfig wlan0|grep ESSID|cut -d ':' -f 2"
-            result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
-            client.publish("LinkyRPi/Network/WiFi/Name",result2.rstrip("\n"))
+            #Etat de la connexion WiFi
+            cmd = "ifconfig wlan0|grep 'inet '|cut -d' ' -f 10"
+            result = subprocess.run(cmd,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+            if result != '' :
+                client.publish("LinkyRPi/Network/WiFi/AdresseIP",result.rstrip("\n"))
+                cmd2 = "iwconfig wlan0|grep Quality|cut -d '=' -f 2|cut -d ' ' -f 1"
+                result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+                client.publish("LinkyRPi/Network/WiFi/Force",int(result2.split("/")[0]) / int(result2.split("/")[1]) * 100)
+                cmd2 = "iwconfig wlan0|grep ESSID|cut -d ':' -f 2"
+                result2 = subprocess.run(cmd2,stdout=subprocess.PIPE,shell=True).stdout.decode('utf-8')
+                client.publish("LinkyRPi/Network/WiFi/Name",result2.rstrip("\n"))
 
-        analysedDict = dict(msgJson)
-        for key in analysedDict :
-            MFormat = dataFormat[key]
-            MTopic = MQTTTopic[key][0] + key
-            if MFormat == "char" :
-                analysedDict[key] = analysedDict[key].replace("\n", "")
-                analysedDict[key] = analysedDict[key].replace("\r", "")
-                MValue = '{"' + MQTTTopic[key][1] + '": "' + analysedDict[key] + '", "unit_of_measurement": "' + MQTTTopic[key][2] + '", "icon": "' + MQTTTopic[key][3] + '"}'
-            else :
-                MValue = '{"' + MQTTTopic[key][1] + '": ' + str(analysedDict[key]) + ', "unit_of_measurement": "' + MQTTTopic[key][2] + '", "icon": "' + MQTTTopic[key][3] + '"}'
+            analysedDict = dict(msgJson)
+            print(analysedDict)
+            for key in analysedDict :
+                MFormat = dataFormat[key]
+                MTopic = MQTTTopic[key][0] + key
+                if MFormat == "char" :
+                    analysedDict[key] = analysedDict[key].replace("\n", "")
+                    analysedDict[key] = analysedDict[key].replace("\r", "")
+                    MValue = '{"' + MQTTTopic[key][1] + '": "' + analysedDict[key] + '", "unit_of_measurement": "' + MQTTTopic[key][2] + '", "icon": "' + MQTTTopic[key][3] + '"}'
+                else :
+                    MValue = '{"' + MQTTTopic[key][1] + '": ' + str(analysedDict[key]) + ', "unit_of_measurement": "' + MQTTTopic[key][2] + '", "icon": "' + MQTTTopic[key][3] + '"}'
 
-            try :
                 client.publish(MTopic, MValue)
-                #print("Published on MQTT at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
                 trameReceived = False
-            except :
-                print("Error while pushing at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
-            #print(MTopic)
+        except Exception as e:
+            print("Error while pushing at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+            print(e)
+            client.disconnect()
+            notConnected = True
+            time.sleep(10)
+            print("Trying to reconnect...")
+
+            while notConnected :
+                try :
+                    client.connect(broker, port)
+                    notConnected = False
+                    print("Reconnected at " + datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+                except :
+                    time.sleep(1)
+
+                client.loop_start()
 
     else :
         time.sleep(1)

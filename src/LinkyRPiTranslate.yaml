@@ -1,0 +1,1180 @@
+entities:
+  # TIC Historique
+  - tic_code: "ADCO"
+    friendly_name: "AdresseCompteur"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/AdresseCompteur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MapMarkerOutline"
+
+  - tic_code: "OPTARIF"
+    friendly_name: "TarifSouscrit"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/TarifSouscrit"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:cash-multiple"
+
+  - tic_code: "ISOUSC"
+    friendly_name: "IntensiteSouscrite"
+    publish_frequency: 86400
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Abonnement/IntensiteSouscrite"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "BASE"
+    friendly_name: "Index00"
+    publish_frequency: 5
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/LinkyRPi/Index/"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "HCHC"
+    friendly_name: "Index01"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index01"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "HCHP"
+    friendly_name: "Index02"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index02"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EJPHN"
+    friendly_name: "Index01"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index01"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EJPHPM"
+    friendly_name: "Index02"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index02"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "BBRHCJB"
+    friendly_name: "Index01"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index01"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "BBRHCJW"
+    friendly_name: "Index03"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index03"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "BBRHCJR"
+    friendly_name: "Index05"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index05"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "BBRHPJB"
+    friendly_name: "Index02"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index02"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "BBRHPJW"
+    friendly_name: "Index04"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index04"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "BBRHPJR"
+    friendly_name: "Index06"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index06"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "PEJP"
+    friendly_name: "ProfilProchainJourPointe"
+    publish_frequency: 600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/ProfilProchainJourPointe"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:calendar-alert"
+
+  - tic_code: "PTEC"
+    friendly_name: "CodeTarifEnCours"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/CodeTarifEnCours"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:cash-multiple"
+
+  - tic_code: "DEMAIN"
+    friendly_name: "CouleurTEMPODemain"
+    publish_frequency: 600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Tempo/CouleurTEMPODemain"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:calendar-today"
+
+  - tic_code: "IINST"
+    friendly_name: "IntensiteInstantanee"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantanee"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IINST1"
+    friendly_name: "IntensiteInstantaneePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantaneePhase1"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IINST2"
+    friendly_name: "IntensiteInstantaneePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantaneePhase2"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IINST3"
+    friendly_name: "IntensiteInstantaneePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantaneePhase3"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "ADPS"
+    friendly_name: "DepassementPuissance"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Alerte/DepassementPuissance"
+    device_class: "problem"
+    unit_of_measurement: ""
+    icon: "mdi:alert"
+
+  - tic_code: "IMAX"
+    friendly_name: "IntensiteMax"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Max/IntensiteMax"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IMAX1"
+    friendly_name: "IntensiteMaxPhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Max/IntensiteMaxPhase1"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IMAX2"
+    friendly_name: "IntensiteMaxPhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Max/IntensiteMaxPhase2"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IMAX3"
+    friendly_name: "IntensiteMaxPhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Max/IntensiteMaxPhase3"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "PMAX"
+    friendly_name: "PuissanceMaxAtteinte"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceMaxAtteinte"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "PAPP"
+    friendly_name: "PuissanceApparente"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Instant/PuissanceApparente"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "HHPHC"
+    friendly_name: "HorairesHC"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/HorairesHC"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SunClockOutline"
+
+  - tic_code: "MOTDETAT"
+    friendly_name: "MotEtat"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/MotEtat"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:information-outline"
+
+  - tic_code: "PPOT"
+    friendly_name: "PresenceDesPotentiels"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/PresenceDesPotentiels"
+    device_class: "problem"
+    unit_of_measurement: ""
+    icon: "mdi:FlashAlertOutline"
+
+  - tic_code: "ADIR1"
+    friendly_name: "DepassementPuissancePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Alerte/DepassementPuissancePhase1"
+    device_class: "problem"
+    unit_of_measurement: "A"
+    icon: "mdi:FlashAlertOutline"
+
+  - tic_code: "ADIR2"
+    friendly_name: "DepassementPuissancePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Alerte/DepassementPuissancePhase2"
+    device_class: "problem"
+    unit_of_measurement: "A"
+    icon:
+
+  - tic_code: "ADIR3"
+    friendly_name: "DepassementPuissancePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Alerte/DepassementPuissancePhase3"
+    device_class: "problem"
+    unit_of_measurement: "A"
+    icon: "mdi:FlashAlertOutline"
+
+  # TIC Standard
+  - tic_code: "ADSC"
+    friendly_name: "AdresseCompteur"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/AdresseCompteur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MapMarkerOutline"
+
+  - tic_code: "VTIC"
+    friendly_name: "VersionTIC"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/VersionTIC"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:InformationOutline"
+
+  - tic_code: "DATE"
+    friendly_name: "DateHeureLinky"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/DateHeureLinky"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:WrenchClock"
+
+  - tic_code: "NGTF"
+    friendly_name: "TarifSouscrit"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/TarifSouscrit"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CashMultiple"
+
+  - tic_code: "EAST"
+    friendly_name: "Index00"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index00"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF01"
+    friendly_name: "Index01"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index01"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF02"
+    friendly_name: "Index02"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index02"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF03"
+    friendly_name: "Index03"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index03"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF04"
+    friendly_name: "Index04"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index04"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF05"
+    friendly_name: "Index05"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index05"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF06"
+    friendly_name: "Index06"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index06"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF07"
+    friendly_name: "Index07"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index06"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF08"
+    friendly_name: "Index08"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index06"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF09"
+    friendly_name: "Index09"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index06"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASF10"
+    friendly_name: "Index10"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/Index06"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASD01"
+    friendly_name: "EnergieActiveSoutireeDistributeurIndex1"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/EnergieActiveSoutireeDistributeurIndex1"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASD02"
+    friendly_name: "EnergieActiveSoutireeDistributeurIndex2"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/EnergieActiveSoutireeDistributeurIndex2"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASD03"
+    friendly_name: "EnergieActiveSoutireeDistributeurIndex3"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/EnergieActiveSoutireeDistributeurIndex3"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EASD04"
+    friendly_name: "EnergieActiveSoutireeDistributeurIndex4"
+    publish_frequency: 10
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Index/EnergieActiveSoutireeDistributeurIndex4"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "EAIT"
+    friendly_name: "EnergieActiveInjectéeTotale"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Production/EnergieActiveInjectéeTotale"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "ERQ1"
+    friendly_name: "EnergieRéactiveQ1Totale"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Production/EnergieRéactiveQ1Totale"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "ERQ2"
+    friendly_name: "EnergieRéactiveQ2Totale"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Production/EnergieRéactiveQ2Totale"
+    device_class: "power"
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "ERQ3"
+    friendly_name: "EnergieRéactiveQ3Totale"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Production/EnergieRéactiveQ3Totale"
+    device_class:
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "ERQ4"
+    friendly_name: "EnergieRéactiveQ4Totale"
+    publish_frequency: 2
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Production/EnergieRéactiveQ4Totale"
+    device_class:
+    unit_of_measurement: "kWh"
+    icon: "mdi:counter"
+
+  - tic_code: "IRMS1"
+    friendly_name: "IntensiteInstantaneePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantaneePhase1"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IRMS2"
+    friendly_name: "IntensiteInstantaneePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantaneePhase2"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "IRMS3"
+    friendly_name: "IntensiteInstantaneePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Intensite/Instant/IntensiteInstantaneePhase3"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "URMS1"
+    friendly_name: "TensionEfficacePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Tension/Instant/TensionEfficacePhase1"
+    device_class: "voltage"
+    unit_of_measurement: "V"
+    icon: "mdi:sine-wave"
+
+  - tic_code: "URMS2"
+    friendly_name: "TensionEfficacePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Tension/Instant/TensionEfficacePhase2"
+    device_class: "voltage"
+    unit_of_measurement: "V"
+    icon: "mdi:sine-wave"
+
+  - tic_code: "URMS3"
+    friendly_name: "TensionEfficacePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Tension/Instant/TensionEfficacePhase3"
+    device_class: "voltage"
+    unit_of_measurement: "V"
+    icon: "mdi:sine-wave"
+
+  - tic_code: "PREF"
+    friendly_name: "IntensiteSouscrite"
+    publish_frequency: 3600
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Abonnement/IntensiteSouscrite"
+    device_class: "current"
+    unit_of_measurement: "A"
+    icon: "mdi:current-ac"
+
+  - tic_code: "PCOUP"
+    friendly_name: "PuissanceCoupure"
+    publish_frequency: 3600
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Abonnement/PuissanceCoupure"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SINSTS"
+    friendly_name: "PuissanceApparente"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Instant/PuissanceApparente"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SINSTS1"
+    friendly_name: "PuissanceApparentePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Instant/PuissanceApparentePhase1"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SINSTS2"
+    friendly_name: "PuissanceApparentePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Instant/PuissanceApparentePhase2"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SINSTS3"
+    friendly_name: "PuissanceApparentePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Instant/PuissanceApparentePhase3"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN"
+    friendly_name: "PuissanceMaxAtteinte"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceMaxAtteinte"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN1"
+    friendly_name: "PuissanceMaxAtteintePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceMaxAtteintePhase1"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN2"
+    friendly_name: "PuissanceMaxAtteintePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceMaxAtteintePhase2"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN3"
+    friendly_name: "PuissanceMaxAtteintePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceMaxAtteintePhase3"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN-1"
+    friendly_name: "PuissanceApparenteMaxN-1"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceApparenteMaxN-1"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN1-1"
+    friendly_name: "PuissanceApparenteMaxN-1Phase1"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceApparenteMaxN-1Phase1"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN2-1"
+    friendly_name: "PuissanceApparenteMaxN-1Phase2"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceApparenteMaxN-1Phase2"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXSN3-1"
+    friendly_name: "PuissanceApparenteMaxN-1Phase3"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceApparenteMaxN-1Phase3"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SINSTI"
+    friendly_name: "PuissanceApparenteInstantanéeInjectée"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Instant/PuissanceApparenteInstantanéeInjectée"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXIN"
+    friendly_name: "PuissanceApparenteMaxInjectée"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceApparenteMaxInjectée"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "SMAXIN-1"
+    friendly_name: "PuissanceApparenteMaxInjectéeN-1"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Puissance/Max/PuissanceApparenteMaxInjectéeN-1"
+    device_class: "power"
+    unit_of_measurement: "VA"
+    icon: "mdi:flash"
+
+  - tic_code: "CCASN"
+    friendly_name: "PointNCourbeChargeActiveSoutiree"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Charge/PointNCourbeChargeActiveSoutiree"
+    device_class: "power"
+    unit_of_measurement: "kW"
+    icon: "mdi:chart-line"
+
+  - tic_code: "CCASN-1"
+    friendly_name: "PointN-1CourbeChargeActiveSoutiree"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Charge/PointN-1CourbeChargeActiveSoutiree"
+    device_class: "power"
+    unit_of_measurement: "kW"
+    icon: "mdi:chart-line"
+
+  - tic_code: "CCAIN"
+    friendly_name: "PointNCourbeChargeActiveInjectée"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Charge/PointNCourbeChargeActiveInjectée"
+    device_class: "power"
+    unit_of_measurement: "kW"
+    icon: "mdi:chart-line"
+
+  - tic_code: "CCAIN-1"
+    friendly_name: "PointN-1CourbeChargeActiveInjectée"
+    publish_frequency: 60
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Charge/PointN-1CourbeChargeActiveInjectée"
+    device_class: "power"
+    unit_of_measurement: "kW"
+    icon: "mdi:chart-line"
+
+  - tic_code: "UMOY1"
+    friendly_name: "TensionMoyennePhase1"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Tension/Moyenne/TensionMoyennePhase1"
+    device_class: "power"
+    unit_of_measurement: "V"
+    icon: "mdi:sine-wave"
+
+  - tic_code: "UMOY2"
+    friendly_name: "TensionMoyennePhase2"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Tension/Moyenne/TensionMoyennePhase2"
+    device_class: "voltage"
+    unit_of_measurement: "V"
+    icon: "mdi:sine-wave"
+
+  - tic_code: "UMOY3"
+    friendly_name: "TensionMoyennePhase3"
+    publish_frequency: 1
+    data_format: "int"
+    mqtt_topic: "LinkyRPi/Mesure/Tension/Moyenne/TensionMoyennePhase3"
+    device_class: "voltage"
+    unit_of_measurement: "V"
+    icon: "mdi:sine-wave"
+
+  - tic_code: "DPM1"
+    friendly_name: "DebutPointeMobile1"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/DebutPointeMobile1"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClockIn"
+
+  - tic_code: "FPM1"
+    friendly_name: "FinPointeMobile1"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/FinPointeMobile1"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClockOut"
+
+  - tic_code: "DPM2"
+    friendly_name: "DebutPointeMobile2"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/DebutPointeMobile2"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClockIn"
+
+  - tic_code: "FPM2"
+    friendly_name: "FinPointeMobile2"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/FinPointeMobile2"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClockOut"
+
+  - tic_code: "DPM3"
+    friendly_name: "DebutPointeMobile3"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/DebutPointeMobile3"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClockIn"
+
+  - tic_code: "FPM3"
+    friendly_name: "FinPointeMobile3"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/FinPointeMobile3"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClockOut"
+
+  - tic_code: "MSG1"
+    friendly_name: "MessageCourt"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/MessageCourt"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MessageText"
+
+  - tic_code: "MSG2"
+    friendly_name: "MessageUltraCourt"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/MessageUltraCourt"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MessageProcessing"
+
+  - tic_code: "PRM"
+    friendly_name: "PRM"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/PRM"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MapMarkerOutline"
+
+  - tic_code: "NTARF"
+    friendly_name: "CodeTarifEnCours"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/CodeTarifEnCours"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CashMultiple"
+
+  - tic_code: "NJOURF"
+    friendly_name: "NumeroJourCalendrierFournisseur"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/NumeroJourCalendrierFournisseur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CalendarAlert"
+
+  - tic_code: "NJOURF+1"
+    friendly_name: "NumeroProchainJourCalendrierFournisseur"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/NumeroProchainJourCalendrierFournisseur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CalendarArrowRight"
+
+  - tic_code: "PJOURF+1"
+    friendly_name: "ProfilProchainJourCalendrierFournisseur"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/ProfilProchainJourCalendrierFournisseur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CalendarArrowRight"
+
+  - tic_code: "PPOINTE"
+    friendly_name: "ProfilProchainJourPointe"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/ProfilProchainJourPointe"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:calendar-alert"
+
+  - tic_code: "RELAIS"
+    friendly_name: "Relais"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/Relais"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:Hexadecimal"
+
+
+  # Données extraites
+  - tic_code: "X_CN"
+    friendly_name: "NomCompteur"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/NomCompteur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MeterElectricOutline"
+
+  - tic_code: "X_CT"
+    friendly_name: "TypeCompteur"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/TypeCompteur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:MeterElectricOutline"
+
+  - tic_code: "X_CS"
+    friendly_name: "ContactSec"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/ContactSec"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:electric-switch"
+
+  - tic_code: "X_OC"
+    friendly_name: "OrganeDeCoupure"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/OrganeDeCoupure"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:power-plug-off"
+
+  - tic_code: "X_BD"
+    friendly_name: "CacheBorneDistributeur"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/CacheBorneDistributeur"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:door-closed-cancel"
+
+  - tic_code: "X_SP"
+    friendly_name: "SurtensionPhase"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Alerte/SurtensionPhase"
+    device_class: "problem"
+    unit_of_measurement: ""
+    icon: "mdi:FlashAlertOutline"
+
+  - tic_code: "X_DP"
+    friendly_name: "DepassementPuissanceRef"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Alerte/DepassementPuissanceRef"
+    device_class: "problem"
+    unit_of_measurement: ""
+    icon: "mdi:alert"
+
+  - tic_code: "X_FO"
+    friendly_name: "Fonctionnement"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteurFonctionnement"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SwapHorizontal"
+
+  - tic_code: "X_SE"
+    friendly_name: "SensEnergieActive"
+    publish_frequency: 60
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/SensEnergieActive"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ArrowLeftRightBoldOutline"
+
+  - tic_code: "X_TF"
+    friendly_name: "TarifEnCoursF"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/TarifEnCoursF"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CashMultiple"
+
+  - tic_code: "X_TD"
+    friendly_name: "TarifEnCoursD"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/TarifEnCoursD"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CashMultiple"
+
+  - tic_code: "X_HD"
+    friendly_name: "HorlogeDegradee"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Status/HorlogeDegradee"
+    device_class: "problem"
+    unit_of_measurement: ""
+    icon: "mdi:ClockAlertOutline"
+
+  - tic_code: "X_MT"
+    friendly_name: "ModeTIC"
+    publish_frequency: 86400
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/ModeTIC"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon:  "mdi:AutoMode"
+
+  - tic_code: "X_CE"
+    friendly_name: "SortieCommEuridis"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/Euridis/SortieCommEuridis"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:Export"
+
+  - tic_code: "X_CP"
+    friendly_name: "StatutCPL"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/CPL/StatutCPL"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ListStatus"
+
+  - tic_code: "X_SC"
+    friendly_name: "SynchroCPL"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/CPL/SynchroCPL"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SyncAlert"
+
+  - tic_code: "X_CT"
+    friendly_name: "CouleurTEMPOJour"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Tempo/CouleurTEMPOJour"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:InvertColors"
+
+  - tic_code: "X_CD"
+    friendly_name: "CouleurTEMPODemain"
+    publish_frequency: 600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Tempo/CouleurTEMPODemain"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:InvertColors"
+
+  - tic_code: "X_PP"
+    friendly_name: "PreavisPointesMobiles"
+    publish_frequency: 10
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/PreavisPointesMobiles"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClipboardTextClockOutline"
+
+  - tic_code: "X_PM"
+    friendly_name: "PointeMobile"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/EJP/PointeMobile"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:ClipboardTextClock"
+
+  - tic_code: "X_TA"
+    friendly_name: "TarifSouscritClair"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/TarifSouscritClais"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CashMultiple"
+
+  - tic_code: "X_PT"
+    friendly_name: "PeriodeTarifaireEnCours"
+    publish_frequency: 1
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/Abonnement/PeriodeTarifaireEnCours"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:CashMultiple"
+
+  - tic_code: "X_H1"
+    friendly_name: "HorairesHC1"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/HorairesHC1"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SunClock"
+
+  - tic_code: "X_H2"
+    friendly_name: "HorairesHC2"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/HorairesHC2"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SunClock"
+
+  - tic_code: "X_H3"
+    friendly_name: "HorairesHC3"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/HorairesHC3"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SunClock"
+
+  - tic_code: "X_H4"
+    friendly_name: "HorairesHC4"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/HorairesHC4"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SunClock"
+
+  - tic_code: "X_H5"
+    friendly_name: "HorairesHC5"
+    publish_frequency: 3600
+    data_format: "char"
+    mqtt_topic: "LinkyRPi/InfoCompteur/HorairesHC5"
+    device_class: "none"
+    unit_of_measurement: ""
+    icon: "mdi:SunClock"
+
+
+
+
+
+
