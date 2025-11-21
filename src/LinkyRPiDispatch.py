@@ -13,7 +13,7 @@ print("Démarrage du process dispatcher : " + datetime.now().strftime("%d-%b-%Y 
 
 # On ouvre le fichier de param et on recup les param
 config = configparser.RawConfigParser()
-config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
+config.read('/home/linkyrpi/LinkyRPi/LinkyRPi.conf')
 ldebug = int(config.get('PARAM','debuglevel'))
 
 #Definition de la classe bcolors pour afficher des traces en couleur à l'écran
@@ -107,6 +107,7 @@ nexttraceActive = time.monotonic()
 traceActive = config.get('PARAM','traceActive')
 MQTTActive = config.get('MQTT','MQTTActive')
 DBActive = config.get('POSTGRESQL','active')
+GUIActive = config.get('GUICSS','GUIActive')
 
 while True:
 
@@ -132,12 +133,19 @@ while True:
 
         # Forward direct vers la GUI
         #print("Envoi vers la GUI")
-        try:
-            queueGUI.send(trameJson, timeout = 0)
-            msgLog = msgLog + " // Push GUI"
-        except:
-            msgLog = msgLog + " // No-Push GUI"
-            pass
+
+        # Si envoi vers la DB activé
+        if (GUIActive == "True") and (time.monotonic() >= nextTraceGUI) :
+            try:
+                queueGUI.send(trameJson, timeout = 0)
+                msgLog = msgLog + " // Push GUI"
+            except:
+                msgLog = msgLog + " // No-Push GUI"
+                pass
+
+            GUIActive = config.get('GUICSS','GUIActive')
+            GUIFreq = config.get('GUICSS','refreshGUI')
+            nextTraceGUI = time.monotonic() + int(GUIFreq)
 
         # Si envoi vers la DB activé
         if (DBActive == "True") and (time.monotonic() >= nextTraceDB) :
@@ -166,7 +174,7 @@ while True:
             MQTTActive = config.get('MQTT','MQTTActive')
             MQTTFreq = config.get('MQTT','refreshMQTT')
             nextTraceMQTT = time.monotonic() + int(MQTTFreq)
-
+            #if ldebug>9 : print(trameJson)
 
         # Si enregistrement trame dans un fichier activé
         if (traceActive == "True") and (time.monotonic() >= nexttraceActive) :

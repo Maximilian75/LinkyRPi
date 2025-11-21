@@ -33,7 +33,7 @@ syllabus, dataFormat = linkyRPiTranslate.generateSyllabus()
 
 # On ouvre le fichier de param et on recup les param
 config = configparser.RawConfigParser()
-config.read('/home/pi/LinkyRPi/LinkyRPi.conf')
+config.read('/home/linkyrpi/LinkyRPi/LinkyRPi.conf')
 ldebug = int(config.get('PARAM','debuglevel'))
 
 #Liste de toutes les mesures d'une trame Linky
@@ -130,11 +130,9 @@ def init():
 # Traitement de la mesure lue                                                  #
 #==============================================================================#
 def treatmesure(mesureCode,mesureValue,mesureValue2) :
-
     # La puissance de coupure est exprimée en kVA alors que les puissances mesurées sont en VA. On passe donc PCOUP en VA pour faciliter la comparaison
     if mesureCode == "PCOUP" :
         mesureValue = str(int(mesureValue) * 1000)
-        print("[" + bcolors.OK + ">>" + bcolors.RESET + "]" , mesureCode + " : " + mesureValue)
 
     #Les codes ci-dessous contiennent 2 valeurs : un horodatage + la valeur en question.
     #Du coup on bypass l'horodatage pour ne garder que la valeur
@@ -162,9 +160,17 @@ def treattrame(list_measures):
     if ldebug>1 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Fin de trame détectée à " + (datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)")))
     if ldebug>1 : print("--------------------------------------------------------------------------------")
 
+
     #On traduit la trame reçue en un dictionnaire agnostique du type de fonctionnement de la TIC
     analysedDict = {}
-    analysedDict = linkyRPiTranslate.analyseTrame(syllabus, dataFormat, dict(list_measures))
+
+    try :
+        analysedDict = linkyRPiTranslate.analyseTrame(syllabus, dataFormat, dict(list_measures))
+        if ldebug>5 : print("[" + bcolors.OK + "OK" + bcolors.RESET + "] Traduction trame")
+    except :
+        if ldebug>5 : print("[" + bcolors.FAIL + "KO" + bcolors.RESET + "] Probleme de traduction trame : ")
+        if ldebug>5 : print(list_measures)
+
 
     #On envoie le dictionnaire traduit à la UI sous forme de Json
     trameJson = json.dumps(analysedDict, indent=4)

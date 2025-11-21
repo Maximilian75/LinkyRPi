@@ -725,7 +725,9 @@ def detOptionTarif(opTarif) :
     elif optionTarif == "TEMPO" :
         nomTarif = "TEMPO"
     else :
-        nomTarif = "".join(["Tarif inconnu : ", optionTarif])
+        if nomTarif == "" or nomTarif[:13] == "Tarif inconnu" :
+            nomTarif = "".join(["Tarif inconnu : ", optionTarif])
+
 
     return nomTarif
 
